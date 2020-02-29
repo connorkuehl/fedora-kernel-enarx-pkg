@@ -56,7 +56,7 @@ Summary: The Linux kernel
 %global zipsed -e 's/\.ko$/\.ko.xz/'
 %endif
 
-# define buildid .local
+%define buildid .sgx.26
 
 %if 0%{?fedora}
 %define primary_target fedora
@@ -857,6 +857,12 @@ Patch102: 0001-virt-vbox-Add-vbg_set_host_capabilities-helper-funct.patch
 Patch103: 0001-virt-vbox-Add-support-for-the-new-VBG_IOCTL_ACQUIRE_.patch
 Patch104: 0001-virt-vbox-Add-a-few-new-vmmdev-request-types-to-the-.patch
 Patch105: 0001-virt-vbox-Log-unknown-ioctl-requests-as-error.patch
+# Git trees.
+
+# Standalone patches
+# 100 - Generic long running patches
+Patch100: 1000-sgx-26.patch
+
 
 # Thinkpad dual fan control
 Patch107: 0001-platform-x86-thinkpad_acpi-Add-support-for-dual-fan-.patch
