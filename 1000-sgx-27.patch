@@ -1,7 +1,45 @@
-From a9ce665bf17f7c4e7fab447c9ac32b71afe134d5 Mon Sep 17 00:00:00 2001
+From d152d32bf583cdfeff899e50067f0a20d053d618 Mon Sep 17 00:00:00 2001
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Date: Sat, 30 Nov 2019 01:13:03 +0200
+Subject: [PATCH 01/22] x86/sgx: Update MAINTAINERS
+
+Add the maintainer information for the SGX subsystem.
+
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ MAINTAINERS | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fcd79fc38928..6dca914d6926 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8722,6 +8722,17 @@ F:	Documentation/x86/intel_txt.rst
+ F:	include/linux/tboot.h
+ F:	arch/x86/kernel/tboot.c
+ 
++INTEL SGX
++M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
++M:	Sean Christopherson <sean.j.christopherson@intel.com>
++L:	linux-sgx@vger.kernel.org
++S:	Maintained
++Q:	https://patchwork.kernel.org/project/intel-sgx/list/
++T:	git https://github.com/jsakkine-intel/linux-sgx.git
++F:	arch/x86/include/uapi/asm/sgx.h
++F:	arch/x86/kernel/cpu/sgx/*
++K:	\bSGX_
++
+ INTERCONNECT API
+ M:	Georgi Djakov <georgi.djakov@linaro.org>
+ L:	linux-pm@vger.kernel.org
+-- 
+2.24.1
+
+
+From fee890e5f99fce4bca8a5341ed16b1e25c81665f Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 Date: Thu, 1 Nov 2018 18:21:42 -0700
-Subject: [PATCH 01/22] x86/cpufeatures: x86/msr: Add Intel SGX hardware bits
+Subject: [PATCH 02/22] x86/cpufeatures: x86/msr: Add Intel SGX hardware bits
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -154,10 +192,10 @@ index 4ea8584682f9..dbe534d5153f 100644
  
  #endif /* _ASM_X86_DISABLED_FEATURES_H */
 diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index ebe1685e92dd..a5e580097c95 100644
+index d5e517d1c3dd..e190293c8923 100644
 --- a/arch/x86/include/asm/msr-index.h
 +++ b/arch/x86/include/asm/msr-index.h
-@@ -564,6 +564,7 @@
+@@ -566,6 +566,7 @@
  #define FEAT_CTL_LOCKED				BIT(0)
  #define FEAT_CTL_VMX_ENABLED_INSIDE_SMX		BIT(1)
  #define FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX	BIT(2)
@@ -193,7 +231,7 @@ index 52c9bfbbdb2a..db0c676b2eb0 100644
  	eax = cpuid_eax(0x80000000);
  	c->extended_cpuid_level = eax;
 diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
-index e9b62498fe75..91f3f37d08bc 100644
+index f3327cb56edf..42ae9fb06987 100644
 --- a/tools/arch/x86/include/asm/cpufeatures.h
 +++ b/tools/arch/x86/include/asm/cpufeatures.h
 @@ -13,7 +13,7 @@
@@ -205,7 +243,7 @@ index e9b62498fe75..91f3f37d08bc 100644
  #define NBUGINTS			1	   /* N 32-bit bug flags */
  
  /*
-@@ -237,6 +237,7 @@
+@@ -238,6 +238,7 @@
  /* Intel-defined CPU features, CPUID level 0x00000007:0 (EBX), word 9 */
  #define X86_FEATURE_FSGSBASE		( 9*32+ 0) /* RDFSBASE, WRFSBASE, RDGSBASE, WRGSBASE instructions*/
  #define X86_FEATURE_TSC_ADJUST		( 9*32+ 1) /* TSC adjustment MSR 0x3B */
@@ -213,7 +251,7 @@ index e9b62498fe75..91f3f37d08bc 100644
  #define X86_FEATURE_BMI1		( 9*32+ 3) /* 1st group bit manipulation extensions */
  #define X86_FEATURE_HLE			( 9*32+ 4) /* Hardware Lock Elision */
  #define X86_FEATURE_AVX2		( 9*32+ 5) /* AVX2 instructions */
-@@ -367,6 +368,10 @@
+@@ -369,6 +370,10 @@
  #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
  #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
  
@@ -228,10 +266,10 @@ index e9b62498fe75..91f3f37d08bc 100644
 2.24.1
 
 
-From 4c812c36c95e177c0459e4aaccd70cab51494568 Mon Sep 17 00:00:00 2001
+From 7d12939bfb050d5facc52d9a9bec136fd98c8bcf Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 Date: Thu, 1 Nov 2018 18:21:52 -0700
-Subject: [PATCH 02/22] x86/cpufeatures: x86/msr: Intel SGX Launch Control
+Subject: [PATCH 03/22] x86/cpufeatures: x86/msr: Intel SGX Launch Control
  hardware bits
 
 Add X86_FEATURE_SGX_LC, which informs whether or not the CPU supports SGX
@@ -277,10 +315,10 @@ index 42ae9fb06987..bc5ad93cbeb6 100644
  /* AMD-defined CPU features, CPUID level 0x80000007 (EBX), word 17 */
  #define X86_FEATURE_OVERFLOW_RECOV	(17*32+ 0) /* MCA overflow recovery support */
 diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index a5e580097c95..a0776c262820 100644
+index e190293c8923..bae17ea2c8fe 100644
 --- a/arch/x86/include/asm/msr-index.h
 +++ b/arch/x86/include/asm/msr-index.h
-@@ -564,6 +564,7 @@
+@@ -566,6 +566,7 @@
  #define FEAT_CTL_LOCKED				BIT(0)
  #define FEAT_CTL_VMX_ENABLED_INSIDE_SMX		BIT(1)
  #define FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX	BIT(2)
@@ -288,7 +326,7 @@ index a5e580097c95..a0776c262820 100644
  #define FEAT_CTL_SGX_ENABLED			BIT(18)
  #define FEAT_CTL_LMCE_ENABLED			BIT(20)
  
-@@ -584,6 +585,12 @@
+@@ -586,6 +587,12 @@
  #define MSR_IA32_UCODE_WRITE		0x00000079
  #define MSR_IA32_UCODE_REV		0x0000008b
  
@@ -305,10 +343,10 @@ index a5e580097c95..a0776c262820 100644
 2.24.1
 
 
-From ed96526fd51ea701f310ec78b024536a486d39a0 Mon Sep 17 00:00:00 2001
+From fa4eda99520350c2f122d1d2ac13ee5fea94b310 Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 Date: Thu, 1 Nov 2018 18:21:46 -0700
-Subject: [PATCH 03/22] x86/mm: x86/sgx: Signal SIGSEGV with PF_SGX
+Subject: [PATCH 04/22] x86/mm: x86/sgx: Signal SIGSEGV with PF_SGX
 
 Include SGX bit to the PF error codes and throw SIGSEGV with PF_SGX when
 a #PF with SGX set happens.
@@ -375,10 +413,10 @@ index fa4ea09593ab..dee9504cde79 100644
 2.24.1
 
 
-From 899efe1d48e202988aad48815918161de429357a Mon Sep 17 00:00:00 2001
+From aa7328a95a75e9001572383aed6933f6d2369fed Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Thu, 1 Nov 2018 18:21:50 -0700
-Subject: [PATCH 04/22] x86/sgx: Add SGX microarchitectural data structures
+Subject: [PATCH 05/22] x86/sgx: Add SGX microarchitectural data structures
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -802,10 +840,10 @@ index 000000000000..dbd652be9b53
 2.24.1
 
 
-From d7fca9358794c5ab816817e8f93deb90cb6f1978 Mon Sep 17 00:00:00 2001
+From 8e87a705ed32203d92e9e241fdaa07ac3197a92c Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Thu, 1 Nov 2018 18:21:55 -0700
-Subject: [PATCH 05/22] x86/sgx: Add wrappers for ENCLS leaf functions
+Subject: [PATCH 06/22] x86/sgx: Add wrappers for ENCLS leaf functions
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -1083,10 +1121,10 @@ index 000000000000..30132edddcd6
 2.24.1
 
 
-From 17a9685692578fa98c682f906a7e141956c7e7d0 Mon Sep 17 00:00:00 2001
+From 0eb2b8aa159360903dcdcf14ee0107d3ae77144a Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 Date: Thu, 1 Nov 2018 18:21:45 -0700
-Subject: [PATCH 06/22] x86/cpu/intel: Detect SGX supprt
+Subject: [PATCH 07/22] x86/cpu/intel: Detect SGX supprt
 
 Configure SGX as part of feature control MSR initialization and update
 the associated X86_FEATURE flags accordingly.  Because the kernel will
@@ -1186,10 +1224,10 @@ index 0268185bef94..b16b71a6da74 100644
 2.24.1
 
 
-From 516a2194c0acdeefde12414025ba8f5be3feed6d Mon Sep 17 00:00:00 2001
+From 5a79af2d18e95484554d56b3943f2e6e5d9bf6d0 Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 Date: Thu, 1 Nov 2018 18:21:56 -0700
-Subject: [PATCH 07/22] x86/sgx: Enumerate and track EPC sections
+Subject: [PATCH 08/22] x86/sgx: Enumerate and track EPC sections
 
 Enumerate Enclave Page Cache (EPC) sections via CPUID and add the data
 structures necessary to track EPC pages so that they can be allocated,
@@ -1592,10 +1630,10 @@ index 000000000000..aad30980be32
 2.24.1
 
 
-From d1dbf858790b11294e26fb9a8e0d3b9b88b535b4 Mon Sep 17 00:00:00 2001
+From 0dc9fc13e0b31e3ec202e9cb5582c78ee6b72206 Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Thu, 1 Nov 2018 18:21:57 -0700
-Subject: [PATCH 08/22] x86/sgx: Add functions to allocate and free EPC pages
+Subject: [PATCH 09/22] x86/sgx: Add functions to allocate and free EPC pages
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -1706,10 +1744,10 @@ index aad30980be32..aa85f85412d8 100644
 2.24.1
 
 
-From 756229cac1f615791c0eb2c736169f7f64f87b45 Mon Sep 17 00:00:00 2001
+From 47be294d8689f62e0568073cc53966b6fc257602 Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 Date: Wed, 10 Jul 2019 14:33:50 -0700
-Subject: [PATCH 09/22] mm: Introduce vm_ops->may_mprotect()
+Subject: [PATCH 10/22] mm: Introduce vm_ops->may_mprotect()
 
 Add vm_ops()->may_mprotect() to check additional constrains set by a
 subsystem for a mprotect() call.
@@ -1767,10 +1805,10 @@ index 7a8e84f86831..c0cb40e23b43 100644
 2.24.1
 
 
-From 649d500083f4ba9a77604e0a5a5bd0003672dde2 Mon Sep 17 00:00:00 2001
+From 98695c30c7e161be426e99c1450d99252c738016 Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Thu, 1 Nov 2018 18:21:58 -0700
-Subject: [PATCH 10/22] x86/sgx: Linux Enclave Driver
+Subject: [PATCH 11/22] x86/sgx: Linux Enclave Driver
 
 Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
 can be used by applications to set aside private regions of code and
@@ -1809,12 +1847,13 @@ for page addition (i.e. for producers) and mapping of the enclave (i.e. for
 consumers)
 
 Cc: linux-security-module@vger.kernel.org
-Cc: Nathaniel McCallum <npmccallum@redhat.com>
 Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
 Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
 Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
+Tested-by: Jethro Beekman <jethro@fortanix.com>
+Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
  .../userspace-api/ioctl/ioctl-number.rst      |   1 +
@@ -1822,12 +1861,12 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  arch/x86/kernel/cpu/sgx/Makefile              |   3 +
  arch/x86/kernel/cpu/sgx/driver.c              | 194 +++++
  arch/x86/kernel/cpu/sgx/driver.h              |  30 +
- arch/x86/kernel/cpu/sgx/encl.c                | 329 +++++++++
+ arch/x86/kernel/cpu/sgx/encl.c                | 336 +++++++++
  arch/x86/kernel/cpu/sgx/encl.h                |  87 +++
  arch/x86/kernel/cpu/sgx/ioctl.c               | 697 ++++++++++++++++++
  arch/x86/kernel/cpu/sgx/main.c                |  12 +-
  arch/x86/kernel/cpu/sgx/reclaim.c             |   1 +
- 10 files changed, 1419 insertions(+), 1 deletion(-)
+ 10 files changed, 1426 insertions(+), 1 deletion(-)
  create mode 100644 arch/x86/include/uapi/asm/sgx.h
  create mode 100644 arch/x86/kernel/cpu/sgx/driver.c
  create mode 100644 arch/x86/kernel/cpu/sgx/driver.h
@@ -2168,10 +2207,10 @@ index 000000000000..e4063923115b
 +#endif /* __ARCH_X86_SGX_DRIVER_H__ */
 diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
 new file mode 100644
-index 000000000000..cd2b8dbb0eca
+index 000000000000..f349697c7508
 --- /dev/null
 +++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -0,0 +1,329 @@
+@@ -0,0 +1,336 @@
 +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
 +// Copyright(c) 2016-18 Intel Corporation.
 +
@@ -2380,6 +2419,13 @@ index 000000000000..cd2b8dbb0eca
 +{
 +	unsigned long idx, idx_start, idx_end;
 +	struct sgx_encl_page *page;
++
++	/*
++	 * Disallow RIE tasks as their VMA permissions might conflict with the
++	 * enclave page permissions.
++	 */
++	if (!!(current->personality & READ_IMPLIES_EXEC))
++		return -EACCES;
 +
 +	/* PROT_NONE always succeeds. */
 +	if (!vm_prot_bits)
@@ -3353,10 +3399,238 @@ index 215371588a25..9e6d3e147aa2 100644
 2.24.1
 
 
-From 135b97414355d65bb4bcd8b72a3552d58340a922 Mon Sep 17 00:00:00 2001
+From 9c020e2faef4af858b858488f9f6f46a7ce937d1 Mon Sep 17 00:00:00 2001
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Date: Fri, 5 Apr 2019 15:36:38 -0700
+Subject: [PATCH 12/22] docs: x86/sgx: Document SGX micro architecture and
+ kernel internals
+
+Document Intel SGX micro architecture and kernel internals. The motivation
+is to make the core ideas approachable by keeping a fairly high abstraction
+level. Fine-grained micro architecture details can be looked up from Intel
+SDM Volume 3D.
+
+Cc: linux-doc@vger.kernel.org
+Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ Documentation/x86/index.rst |   1 +
+ Documentation/x86/sgx.rst   | 187 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 188 insertions(+)
+ create mode 100644 Documentation/x86/sgx.rst
+
+diff --git a/Documentation/x86/index.rst b/Documentation/x86/index.rst
+index a8de2fbc1caa..971f30a7d166 100644
+--- a/Documentation/x86/index.rst
++++ b/Documentation/x86/index.rst
+@@ -31,3 +31,4 @@ x86-specific Documentation
+    usb-legacy-support
+    i386/index
+    x86_64/index
++   sgx
+diff --git a/Documentation/x86/sgx.rst b/Documentation/x86/sgx.rst
+new file mode 100644
+index 000000000000..cd4abe65b494
+--- /dev/null
++++ b/Documentation/x86/sgx.rst
+@@ -0,0 +1,187 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++============
++Architecture
++============
++
++Introduction
++============
++
++*Software Guard eXtensions (SGX)* is a set of instructions that enable ring-3
++applications to set aside private regions of code and data. These regions are
++called enclaves. An enclave can be entered to a fixed set of entry points. Only
++a CPU running inside the enclave can access its code and data.
++
++SGX support can be determined by
++
++	``grep sgx /proc/cpuinfo``
++
++Enclave Page Cache
++==================
++
++SGX utilizes an *Enclave Page Cache (EPC)* to store pages that are associated
++with an enclave. It is contained in a BIOS reserved region of physical memory.
++Unlike pages used for regular memory, pages can only be accessed outside the
++enclave for different purposes with the instructions **ENCLS**, **ENCLV** and
++**ENCLU**.
++
++Direct memory accesses to an enclave can be only done by a CPU executing inside
++the enclave. An enclave can be entered with **ENCLU[EENTER]** to a fixed set of
++entry points. However, a CPU executing inside the enclave can do outside memory
++accesses.
++
++Page Types
++----------
++
++**SGX Enclave Control Structure (SECS)**
++   Enclave's address range, attributes and other global data are defined
++   by this structure.
++
++**Regular (REG)**
++   Regular EPC pages contain the code and data of an enclave.
++
++**Thread Control Structure (TCS)**
++   Thread Control Structure pages define the entry points to an enclave and
++   track the execution state of an enclave thread.
++
++**Version Array (VA)**
++   Version Array pages contain 512 slots, each of which can contain a version
++   number for a page evicted from the EPC.
++
++Enclave Page Cache Map
++----------------------
++
++The processor tracks EPC pages via the *Enclave Page Cache Map (EPCM)*.  EPCM
++contains an entry for each EPC page, which describes the owning enclave, access
++rights and page type among the other things.
++
++The permissions from EPCM is consulted if and only if walking the kernel page
++tables succeeds. The total permissions are thus a conjunction between page table
++and EPCM permissions.
++
++For all intents and purposes the SGX architecture allows the processor to
++invalidate all EPCM entries at will, i.e. requires that software be prepared to
++handle an EPCM fault at any time. The contents of EPC are encrypted with an
++ephemeral key, which is lost on power transitions.
++
++EPC management
++==============
++
++EPC pages do not have ``struct page`` instances. They are IO memory from kernel
++perspective. The consequence is that they are always mapped as shared memory.
++Kernel defines ``/dev/sgx/enclave`` that can be mapped as ``MAP_SHARED`` to
++define the address range for an enclave.
++
++EPC Over-subscription
++=====================
++
++When the amount of free EPC pages goes below a low watermark the swapping thread
++starts reclaiming pages. The pages that do not have the **A** bit set are
++selected as victim pages.
++
++Launch Control
++==============
++
++SGX provides a launch control mechanism. After all enclave pages have been
++copied, kernel executes **ENCLS[EINIT]**, which initializes the enclave. Only
++after this the CPU can execute inside the enclave.
++
++This leaf function takes an RSA-3072 signature of the enclave measurement and an
++optional cryptographic token. Linux does not take advantage of launch tokens.
++The instruction checks that the signature is signed with the key defined in
++**IA32_SGXLEPUBKEYHASH?** MSRs and the measurement is correct. If so, the
++enclave is allowed to be executed.
++
++MSRs can be configured by the BIOS to be either readable or writable. Linux
++supports only writable configuration in order to give full control to the kernel
++on launch control policy. Readable configuration requires the use of previously
++mentioned launch tokens.
++
++The current kernel implementation supports only writable MSRs. The launch is
++performed by setting the MSRs to the hash of the enclave signer's public key.
++The alternative would be to have *a launch enclave* that would be signed with
++the key set into MSRs, which would then generate launch tokens for other
++enclaves. This would only make sense with read-only MSRs, and thus the option
++has been discarded.
++
++Attestation
++===========
++
++Local Attestation
++-----------------
++
++In local attestation an enclave creates a **REPORT** data structure with
++**ENCLS[EREPORT]**, which describes the origin of an enclave. In particular, it
++contains a AES-CMAC of the enclave contents signed with a report key unique to
++each processor. All enclaves have access to this key.
++
++This mechanism can also be used in addition as a communication channel as the
++**REPORT** data structure includes a 64-byte field for variable information.
++
++Remote Attestation
++------------------
++
++For remote attestation (aka provisioning) there are multiple options available:
++
++* EPID based scheme, which requires the use of Intel managed attestation
++  service.
++* ECDSA based scheme, which allows a 3rd party to act as an attestation service.
++
++Intel provides an open source *quoting enclave (QE)* and *provisioning
++certification enclave (PCE)* for the ECDSA based scheme. PCE acts as the
++CA for the local QE's.
++
++Intel also provides a proprietary binary version of the PCE. This is a
++necessity when the software needs to prove to be running inside a legit enclave
++on real hardware.
++
++The use of remote attestation must be strictly controlled because it allows to
++get access to the provisioning keys to attest to a remote party that the
++software is running inside a legitimate enclave on real hardware. This could be
++potentially used by malware, and thus must be protected.
++
++Enclaves can attest their identity when **ATTRIBUTES.PROVISIONKEY** is set in
++SECS. This attribute authorizes **ENCLS[EGETKEY]** to access provisioning keys.
++
++References
++----------
++
++"Intel® Software Guard Extensions: EPID Provisioning and Attestation Services"
++   https://software.intel.com/sites/default/files/managed/57/0e/ww10-2016-sgx-provisioning-and-attestation-final.pdf
++
++"Supporting Third Party Attestation for Intel® SGX with Intel® Data Center
++Attestation Primitives"
++   https://software.intel.com/sites/default/files/managed/f1/b8/intel-sgx-support-for-third-party-attestation.pdf
++
++Usage Models
++============
++
++Shared Library
++--------------
++
++Sensitive data and the code that acts on it is partitioned from the application
++into a separate library. The library is then linked as a DSO which can be loaded
++into an enclave. The application can then make individual function calls into
++the enclave through special SGX instructions. A run-time within the enclave is
++configured to marshal function parameters into and out of the enclave and to
++call the correct library function.
++
++Application Container
++---------------------
++
++An application may be loaded into a container enclave which is specially
++configured with a library OS and run-time which permits the application to run.
++The enclave run-time and library OS work together to execute the application
++when a thread enters the enclave.
++
++======================
++Enclave access control
++======================
++
++Each enclave holds an shmem file as a backing storage for the reclaimed
++pages. ``/dev/sgx/enclave`` is essentially a privileged resource since the
++backing storage is not accounted to any of the processes associated with an
++enclave.
++
++Enclave files can be forked or sent through UDS sockets so that creation
++(more privileged) and usage (less privileged) can be sanely divided.
+-- 
+2.24.1
+
+
+From 1c21a2d2eb8c35384a28ba055e87c5a049955346 Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Tue, 3 Sep 2019 17:26:52 +0300
-Subject: [PATCH 11/22] selftests/x86: Recurse into subdirectories
+Subject: [PATCH 13/22] selftests/x86: Recurse into subdirectories
 
 Recurse into a list of subdirectories defined by SUBDIRS when running
 x86 selftests. Override run_tests, install, emit_tests and clean
@@ -3440,10 +3714,10 @@ index 5d49bfec1e9a..dee6dadeba61 100644
 2.24.1
 
 
-From 259951fa4fe08b9b90d8a6fda6c7fc1b406a8fa0 Mon Sep 17 00:00:00 2001
+From 597d94307e6954571cac6efb963456515f27fa44 Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Tue, 3 Sep 2019 17:26:51 +0300
-Subject: [PATCH 12/22] selftests/x86: Add a selftest for SGX
+Subject: [PATCH 14/22] selftests/x86: Add a selftest for SGX
 
 Add a selftest for SGX. It is a trivial test where a simple enclave
 copies one 64-bit word of memory between two memory locations given to
@@ -4576,10 +4850,10 @@ index 000000000000..d76f21f19187
 2.24.1
 
 
-From d1d238b925b9bdeb83e3242fc1b3684fabf0b70b Mon Sep 17 00:00:00 2001
+From f11550f85d876ab4237b3d43a5dd23ff7eacc187 Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Mon, 17 Dec 2018 18:32:19 +0200
-Subject: [PATCH 13/22] x86/sgx: Add provisioning
+Subject: [PATCH 15/22] x86/sgx: Add provisioning
 
 In order to provide a mechanism for devilering provisoning rights:
 
@@ -4757,10 +5031,10 @@ index 83513cdfd1c0..262001df3ae4 100644
 2.24.1
 
 
-From 0f4903a82f5db3a45c000e6103c2bef432611801 Mon Sep 17 00:00:00 2001
+From 697e32661df39c6045ad25a5f2bbf2ebbdd780df Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Thu, 1 Nov 2018 18:22:00 -0700
-Subject: [PATCH 14/22] x86/sgx: Add a page reclaimer
+Subject: [PATCH 16/22] x86/sgx: Add a page reclaimer
 
 There is a limited amount of SGX reserved memory available. Therefore,
 some of it must be copied to the regular memory, and only subset kept in
@@ -4810,7 +5084,7 @@ index d90114cec1c3..997a7f4117c5 100644
  	mutex_init(&encl->lock);
  	INIT_LIST_HEAD(&encl->mm_list);
 diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index cd2b8dbb0eca..312f954c5c07 100644
+index f349697c7508..dc597fdfd0dd 100644
 --- a/arch/x86/kernel/cpu/sgx/encl.c
 +++ b/arch/x86/kernel/cpu/sgx/encl.c
 @@ -9,11 +9,86 @@
@@ -4939,7 +5213,7 @@ index cd2b8dbb0eca..312f954c5c07 100644
  out:
  	mutex_unlock(&encl->lock);
  	return ret;
-@@ -277,6 +371,7 @@ int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
+@@ -284,6 +378,7 @@ int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
   */
  void sgx_encl_destroy(struct sgx_encl *encl)
  {
@@ -4947,7 +5221,7 @@ index cd2b8dbb0eca..312f954c5c07 100644
  	struct sgx_encl_page *entry;
  	struct radix_tree_iter iter;
  	void **slot;
-@@ -287,6 +382,13 @@ void sgx_encl_destroy(struct sgx_encl *encl)
+@@ -294,6 +389,13 @@ void sgx_encl_destroy(struct sgx_encl *encl)
  		entry = *slot;
  
  		if (entry->epc_page) {
@@ -4961,7 +5235,7 @@ index cd2b8dbb0eca..312f954c5c07 100644
  			sgx_free_page(entry->epc_page);
  			encl->secs_child_cnt--;
  			entry->epc_page = NULL;
-@@ -301,6 +403,19 @@ void sgx_encl_destroy(struct sgx_encl *encl)
+@@ -308,6 +410,19 @@ void sgx_encl_destroy(struct sgx_encl *encl)
  		sgx_free_page(encl->secs.epc_page);
  		encl->secs.epc_page = NULL;
  	}
@@ -4981,7 +5255,7 @@ index cd2b8dbb0eca..312f954c5c07 100644
  }
  
  /**
-@@ -327,3 +442,221 @@ void sgx_encl_release(struct kref *ref)
+@@ -334,3 +449,221 @@ void sgx_encl_release(struct kref *ref)
  
  	kfree(encl);
  }
@@ -6026,10 +6300,10 @@ index aa85f85412d8..0c481e6f2c95 100644
 2.24.1
 
 
-From 6d2e0d533ec9666e109120fd51ccac9eb9813f1c Mon Sep 17 00:00:00 2001
+From 3b194f244a8702c67fe2ce2a4ae9a3207019f2ba Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Thu, 1 Nov 2018 18:22:02 -0700
-Subject: [PATCH 15/22] x86/sgx: ptrace() support for the SGX driver
+Subject: [PATCH 17/22] x86/sgx: ptrace() support for the SGX driver
 
 Add VMA callbacks for ptrace() that can be used with debug enclaves.
 With debug enclaves data can be read and write the memory word at a time
@@ -6041,10 +6315,10 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  1 file changed, 88 insertions(+)
 
 diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 312f954c5c07..22186d89042a 100644
+index dc597fdfd0dd..d6a19bdd1921 100644
 --- a/arch/x86/kernel/cpu/sgx/encl.c
 +++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -320,6 +320,7 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+@@ -327,6 +327,7 @@ int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
  	return 0;
  }
  
@@ -6052,7 +6326,7 @@ index 312f954c5c07..22186d89042a 100644
  static int sgx_vma_mprotect(struct vm_area_struct *vma, unsigned long start,
  			    unsigned long end, unsigned long prot)
  {
-@@ -327,10 +328,97 @@ static int sgx_vma_mprotect(struct vm_area_struct *vma, unsigned long start,
+@@ -334,10 +335,97 @@ static int sgx_vma_mprotect(struct vm_area_struct *vma, unsigned long start,
  				calc_vm_prot_bits(prot, 0));
  }
  
@@ -6154,10 +6428,10 @@ index 312f954c5c07..22186d89042a 100644
 2.24.1
 
 
-From 5d172896169849888d266a99e92955337b51d50d Mon Sep 17 00:00:00 2001
+From 3a98d25fb886c2840f0f56a718feb9ca1f3733ae Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 Date: Fri, 15 Mar 2019 10:42:27 -0700
-Subject: [PATCH 16/22] x86/vdso: Add support for exception fixup in vDSO
+Subject: [PATCH 18/22] x86/vdso: Add support for exception fixup in vDSO
  functions
 
 The basic concept and implementation is very similar to the kernel's
@@ -6255,7 +6529,7 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  create mode 100644 arch/x86/entry/vdso/extable.h
 
 diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 2b75e80f6b41..629053b77e4a 100644
+index 433a1259f61d..657e01d34d02 100644
 --- a/arch/x86/entry/vdso/Makefile
 +++ b/arch/x86/entry/vdso/Makefile
 @@ -26,7 +26,7 @@ VDSO32-$(CONFIG_IA32_EMULATION)	:= y
@@ -6515,10 +6789,10 @@ index bbcdc7b8f963..b5d23470f56b 100644
 2.24.1
 
 
-From d40c5ea00a5b5b2259fa4bf4756ee773a1af89de Mon Sep 17 00:00:00 2001
+From 220c44828221385a72ec924ea9210c92870cb7b1 Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 Date: Fri, 15 Mar 2019 10:42:28 -0700
-Subject: [PATCH 17/22] x86/fault: Add helper function to sanitize error code
+Subject: [PATCH 19/22] x86/fault: Add helper function to sanitize error code
 
 Add helper function to sanitize error code to prepare for vDSO exception
 fixup, which will expose the error code to userspace and runs before
@@ -6590,10 +6864,10 @@ index dee9504cde79..6b662d272af6 100644
 2.24.1
 
 
-From 36061c2a9f5150cbc908d9a52cb5276abc00a198 Mon Sep 17 00:00:00 2001
+From dddd75eccb59ce10e3f027c2c0b25b59077fcec0 Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 Date: Fri, 15 Mar 2019 10:42:29 -0700
-Subject: [PATCH 18/22] x86/traps: Attempt to fixup exceptions in vDSO before
+Subject: [PATCH 20/22] x86/traps: Attempt to fixup exceptions in vDSO before
  signaling
 
 vDSO functions can now leverage an exception fixup mechanism similar to
@@ -6715,90 +6989,26 @@ index 6b662d272af6..42965b47b52f 100644
 2.24.1
 
 
-From 600275696f94474760a4c2198b4cb6ad824adb81 Mon Sep 17 00:00:00 2001
+From 28b54b84848825b0c9566e14bbd6d0885cc87496 Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 Date: Fri, 5 Apr 2019 15:36:37 -0700
-Subject: [PATCH 19/22] x86/vdso: Add __vdso_sgx_enter_enclave() to wrap SGX
- enclave transitions
+Subject: [PATCH 21/22] x86/vdso: Implement a vDSO for Intel SGX enclave call
 
-Intel Software Guard Extensions (SGX) introduces a new CPL3-only enclave
-mode that runs as a sort of black box shared object that is hosted by an
-untrusted normal CPL3 process.
+An SGX runtime must be aware of the exceptions, which happen inside an
+enclave. Introduce a vDSO call that wraps EENTER/ERESUME cycle and returns
+the CPU exception back to the caller exactly when it happens.
 
-Skipping over a great deal of gory architecture details[1], SGX was
-designed in such a way that the host process can utilize a library to
-build, launch and run an enclave.  This is roughly analogous to how
-e.g. libc implementations are used by most applications so that the
-application can focus on its business logic.
+Kernel fixups the exception information to RDI, RSI and RDX. The SGX call
+vDSO handler fills this information to the user provided buffer or
+alternatively trigger user provided callback at the time of the exception.
 
-The big gotcha is that because enclaves can generate *and* handle
-exceptions, any SGX library must be prepared to handle nearly any
-exception at any time (well, any time a thread is executing in an
-enclave).  In Linux, this means the SGX library must register a
-signal handler in order to intercept relevant exceptions and forward
-them to the enclave (or in some cases, take action on behalf of the
-enclave).  Unfortunately, Linux's signal mechanism doesn't mesh well
-with libraries, e.g. signal handlers are process wide, are difficult
-to chain, etc...  This becomes particularly nasty when using multiple
-levels of libraries that register signal handlers, e.g. running an
-enclave via cgo inside of the Go runtime.
-
-In comes vDSO to save the day.  Now that vDSO can fixup exceptions,
-add a function, __vdso_sgx_enter_enclave(), to wrap enclave transitions
-and intercept any exceptions that occur when running the enclave.
-
-__vdso_sgx_enter_enclave() does NOT adhere to the x86-64 ABI and instead
-uses a custom calling convention.  The primary motivation is to avoid
-issues that arise due to asynchronous enclave exits.  The x86-64 ABI
-requires that EFLAGS.DF, MXCSR and FCW be preserved by the callee, and
-unfortunately for the vDSO, the aformentioned registers/bits are not
-restored after an asynchronous exit, e.g. EFLAGS.DF is in an unknown
-state while MXCSR and FCW are reset to their init values.  So the vDSO
-cannot simply pass the buck by requiring enclaves to adhere to the
-x86-64 ABI.  That leaves three somewhat reasonable options:
-
-  1) Save/restore non-volatile GPRs, MXCSR and FCW, and clear EFLAGS.DF
-
-     + 100% compliant with the x86-64 ABI
-     + Callable from any code
-     + Minimal documentation required
-     - Restoring MXCSR/FCW is likely unnecessary 99% of the time
-     - Slow
-
-  2) Save/restore non-volatile GPRs and clear EFLAGS.DF
-
-     + Mostly compliant with the x86-64 ABI
-     + Callable from any code that doesn't use SIMD registers
-     - Need to document deviations from x86-64 ABI, i.e. MXCSR and FCW
-
-  3) Require the caller to save/restore everything.
-
-     + Fast
-     + Userspace can pass all GPRs to the enclave (minus EAX, RBX and RCX)
-     - Custom ABI
-     - For all intents and purposes must be called from an assembly wrapper
-
-__vdso_sgx_enter_enclave() implements option (3).  The custom ABI is
-mostly a documentation issue, and even that is offset by the fact that
-being more similar to hardware's ENCLU[EENTER/ERESUME] ABI reduces the
-amount of documentation needed for the vDSO, e.g. options (2) and (3)
-would need to document which registers are marshalled to/from enclaves.
-Requiring an assembly wrapper imparts minimal pain on userspace as SGX
-libraries and/or applications need a healthy chunk of assembly, e.g. in
-the enclave, regardless of the vDSO's implementation.
-
-Note, the C-like pseudocode describing the assembly routine is wrapped
-in a non-existent macro instead of in a comment to trick kernel-doc into
-auto-parsing the documentation and function prototype.  This is a double
-win as the pseudocode is intended to aid kernel developers, not userland
-enclave developers.
-
-[1] Documentation/x86/sgx/1.Architecture.rst
+The calling convention is custom and does not follow System V x86-64 ABI.
 
 Suggested-by: Andy Lutomirski <luto@amacapital.net>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Co-developed-by: Cedric Xing <cedric.xing@intel.com>
 Signed-off-by: Cedric Xing <cedric.xing@intel.com>
+Tested-by: Jethro Beekman <jethro@fortanix.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
  arch/x86/entry/vdso/Makefile             |   2 +
@@ -6809,7 +7019,7 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  create mode 100644 arch/x86/entry/vdso/vsgx_enter_enclave.S
 
 diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 629053b77e4a..d1d609d1626e 100644
+index 657e01d34d02..fa50c76a17a8 100644
 --- a/arch/x86/entry/vdso/Makefile
 +++ b/arch/x86/entry/vdso/Makefile
 @@ -24,6 +24,7 @@ VDSO32-$(CONFIG_IA32_EMULATION)	:= y
@@ -7083,10 +7293,10 @@ index 57d0d30c79b3..e196cfd44b70 100644
 2.24.1
 
 
-From 9a28807aa2483ca3412258ba0fa41de4cf18334c Mon Sep 17 00:00:00 2001
+From 673f3c31060491e40ccb0d6fad11a87c80300735 Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Tue, 15 Oct 2019 16:36:00 +0300
-Subject: [PATCH 20/22] selftests/x86: Add vDSO selftest for SGX
+Subject: [PATCH 22/22] selftests/x86: Add vDSO selftest for SGX
 
 Expand the selftest by invoking the enclave by using
 __vdso_sgx_enter_enclave() in addition to direct ENCLS[EENTER].
@@ -7322,267 +7532,6 @@ index bf72068ada23..a4072c5ecce7 100644
 +		  void *tcs, struct sgx_enclave_exception *ei, void *cb);
 +
  #endif /* SGX_CALL_H */
--- 
-2.24.1
-
-
-From bf198265094b827d26dc0f8f61c6333bb149f3ac Mon Sep 17 00:00:00 2001
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Sat, 30 Nov 2019 01:13:03 +0200
-Subject: [PATCH 21/22] x86/sgx: Update MAINTAINERS
-
-Add the maintainer information for the SGX subsystem.
-
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f74871a22c42..3bf62bf6be65 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8721,6 +8721,17 @@ F:	Documentation/x86/intel_txt.rst
- F:	include/linux/tboot.h
- F:	arch/x86/kernel/tboot.c
- 
-+INTEL SGX
-+M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-+M:	Sean Christopherson <sean.j.christopherson@intel.com>
-+L:	linux-sgx@vger.kernel.org
-+S:	Maintained
-+Q:	https://patchwork.kernel.org/project/intel-sgx/list/
-+T:	git https://github.com/jsakkine-intel/linux-sgx.git
-+F:	arch/x86/include/uapi/asm/sgx.h
-+F:	arch/x86/kernel/cpu/sgx/*
-+K:	\bSGX_
-+
- INTERCONNECT API
- M:	Georgi Djakov <georgi.djakov@linaro.org>
- L:	linux-pm@vger.kernel.org
--- 
-2.24.1
-
-
-From 123067671525e3cf78081ff58dfa30e78cf898df Mon Sep 17 00:00:00 2001
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Fri, 5 Apr 2019 15:36:38 -0700
-Subject: [PATCH 22/22] docs: x86/sgx: Document SGX micro architecture and
- kernel internals
-
-Document Intel SGX micro architecture and kernel internals. The motivation
-is to make the core ideas approachable by keeping a fairly high abstraction
-level. Fine-grained micro architecture details can be looked up from Intel
-SDM Volume 3D.
-
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: linux-doc@vger.kernel.org
-Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- Documentation/x86/index.rst |   1 +
- Documentation/x86/sgx.rst   | 182 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 183 insertions(+)
- create mode 100644 Documentation/x86/sgx.rst
-
-diff --git a/Documentation/x86/index.rst b/Documentation/x86/index.rst
-index a8de2fbc1caa..971f30a7d166 100644
---- a/Documentation/x86/index.rst
-+++ b/Documentation/x86/index.rst
-@@ -31,3 +31,4 @@ x86-specific Documentation
-    usb-legacy-support
-    i386/index
-    x86_64/index
-+   sgx
-diff --git a/Documentation/x86/sgx.rst b/Documentation/x86/sgx.rst
-new file mode 100644
-index 000000000000..ccffb45b4f4d
---- /dev/null
-+++ b/Documentation/x86/sgx.rst
-@@ -0,0 +1,182 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+============
-+Architecture
-+============
-+
-+Introduction
-+============
-+
-+*Software Guard eXtensions (SGX)* is a set of instructions that enable ring-3
-+applications to set aside private regions of code and data. These regions are
-+called enclaves. An enclave can be entered to a fixed set of entry points. Only
-+a CPU running inside the enclave can access its code and data.
-+
-+SGX support can be determined by
-+
-+	``grep /proc/cpuinfo``
-+
-+Enclave Page Cache
-+==================
-+
-+SGX utilizes an *Enclave Page Cache (EPC)* to store pages that are associated
-+with an enclave. It is contained in a BIOS reserved region of physical memory.
-+Unlike pages used for regular memory, pages can only be accessed outside the
-+enclave for different purposes with the instructions **ENCLS**, **ENCLV** and
-+**ENCLU**.
-+
-+Direct memory accesses to an enclave can be only done by a CPU executing inside
-+the enclave. An enclave can be entered with **ENCLU[EENTER]** to a fixed set of
-+entry points. However, a CPU executing inside the enclave can do outside memory
-+accesses.
-+
-+Page Types
-+----------
-+
-+**SGX Enclave Control Structure (SECS)**
-+   Enclave's address range, attributes and other global data are defined
-+   by this structure.
-+
-+**Regular (REG)**
-+   Regular EPC pages contain the code and data of an enclave.
-+
-+**Thread Control Structure (TCS)**
-+   Thread Control Structure pages define the entry points to an enclave and
-+   track the execution state of an enclave thread.
-+
-+**Version Array (VA)**
-+   Version Array pages contain 512 slots, each of which can contain a version
-+   number for a page evicted from the EPC.
-+
-+Enclave Page Cache Map
-+----------------------
-+
-+The processor tracks EPC pages via the *Enclave Page Cache Map (EPCM)*.  EPCM
-+contains an entry for each EPC page, which describes the owning enclave, access
-+rights and page type among the other things.
-+
-+The permissions from EPCM is consulted if and only if walking the kernel page
-+tables succeeds. The total permissions are thus a conjunction between page table
-+and EPCM permissions.
-+
-+For all intents and purposes the SGX architecture allows the processor to
-+invalidate all EPCM entries at will, i.e. requires that software be prepared to
-+handle an EPCM fault at any time. The contents of EPC are encrypted with an
-+ephemeral key, which is lost on power transitions.
-+
-+EPC management
-+==============
-+
-+EPC pages do not have ``struct page`` instances. They are IO memory from kernel
-+perspective. The consequence is that they are always mapped as shared memory.
-+Kernel defines ``/dev/sgx/enclave`` that can be mapped as ``MAP_SHARED`` to
-+define the address range for an enclave.
-+
-+EPC Over-subscription
-+=====================
-+
-+When the amount of free EPC pages goes below a low watermark the swapping thread
-+starts reclaiming pages. The pages that do not have the **A** bit set are
-+selected as victim pages. Each enclave holds an shmem file as a backing storage
-+for reclaimed pages.
-+
-+Launch Control
-+==============
-+
-+SGX provides a launch control mechanism. After all enclave pages have been
-+copied, kernel executes **ENCLS[EINIT]**, which initializes the enclave. Only
-+after this the CPU can execute inside the enclave.
-+
-+This leaf function takes an RSA-3072 signature of the enclave measurement and an
-+optional cryptographic token. Linux does not take advantage of launch tokens.
-+The instruction checks that the signature is signed with the key defined in
-+**IA32_SGXLEPUBKEYHASH?** MSRs and the measurement is correct. If so, the
-+enclave is allowed to be executed.
-+
-+MSRs can be configured by the BIOS to be either readable or writable. Linux
-+supports only writable configuration in order to give full control to the kernel
-+on launch control policy. Readable configuration requires the use of previously
-+mentioned launch tokens.
-+
-+The current kernel implementation supports only writable MSRs. The launch is
-+performed by setting the MSRs to the hash of the enclave signer's public key.
-+The alternative would be to have *a launch enclave* that would be signed with
-+the key set into MSRs, which would then generate launch tokens for other
-+enclaves. This would only make sense with read-only MSRs, and thus the option
-+has been discarded.
-+
-+Attestation
-+===========
-+
-+Local Attestation
-+-----------------
-+
-+In local attestation an enclave creates a **REPORT** data structure with
-+**ENCLS[EREPORT]**, which describes the origin of an enclave. In particular, it
-+contains a AES-CMAC of the enclave contents signed with a report key unique to
-+each processor. All enclaves have access to this key.
-+
-+This mechanism can also be used in addition as a communication channel as the
-+**REPORT** data structure includes a 64-byte field for variable information.
-+
-+Remote Attestation
-+------------------
-+
-+For remote attestation (aka provisioning) there are multiple options available:
-+
-+* EPID based scheme, which requires the use of Intel managed attestation
-+  service.
-+* ECDSA based scheme, which allows a 3rd party to act as an attestation service.
-+
-+Intel provides an open source *quoting enclave (QE)* and *provisioning
-+certification enclave (PCE)* for the ECDSA based scheme. PCE acts as the
-+CA for the local QE's.
-+
-+Intel also provides a proprietary binary version of the PCE. This is a
-+necessity when the software needs to prove to be running inside a legit enclave
-+on real hardware.
-+
-+The use of remote attestation must be strictly controlled because it allows to
-+get access to the provisioning keys to attest to a remote party that the
-+software is running inside a legitimate enclave on real hardware. This could be
-+potentially used by malware, and thus must be protected.
-+
-+Enclaves can attest their identity when **ATTRIBUTES.PROVISIONKEY** is set in
-+SECS. This attribute authorizes **ENCLS[EGETKEY]** to access provisioning keys.
-+
-+Kernel defines ``/dev/sgx/provision`` and a special ioctl
-+``SGX_IOC_ENCLAVE_SET_ATTRIBUTE`` to accomplish this. A file descriptor pointing
-+to ``/dev/sgx/provision`` is passed to ioctl from which kernel authorizes the
-+use of remote attestation keys. This must be called before
-+``SGX_IOC_ENCL_CREATE`` if remote attestation is required.
-+
-+References
-+----------
-+
-+"Intel® Software Guard Extensions: EPID Provisioning and Attestation Services"
-+   https://software.intel.com/sites/default/files/managed/57/0e/ww10-2016-sgx-provisioning-and-attestation-final.pdf
-+
-+"Supporting Third Party Attestation for Intel® SGX with Intel® Data Center
-+Attestation Primitives"
-+   https://software.intel.com/sites/default/files/managed/f1/b8/intel-sgx-support-for-third-party-attestation.pdf
-+
-+Usage Models
-+============
-+
-+Shared Library
-+--------------
-+
-+Sensitive data and the code that acts on it is partitioned from the application
-+into a separate library. The library is then linked as a DSO which can be loaded
-+into an enclave. The application can then make individual function calls into
-+the enclave through special SGX instructions. A run-time within the enclave is
-+configured to marshal function parameters into and out of the enclave and to
-+call the correct library function.
-+
-+Application Container
-+---------------------
-+
-+An application may be loaded into a container enclave which is specially
-+configured with a library OS and run-time which permits the application to run.
-+The enclave run-time and library OS work together to execute the application
-+when a thread enters the enclave.
 -- 
 2.24.1
 
