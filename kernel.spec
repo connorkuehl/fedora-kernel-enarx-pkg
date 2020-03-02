@@ -56,7 +56,7 @@ Summary: The Linux kernel
 %global zipsed -e 's/\.ko$/\.ko.xz/'
 %endif
 
-%define buildid .sgx.26
+%define buildid .sgx.27
 
 %if 0%{?fedora}
 %define primary_target fedora
@@ -861,7 +861,7 @@ Patch105: 0001-virt-vbox-Log-unknown-ioctl-requests-as-error.patch
 
 # Standalone patches
 # 100 - Generic long running patches
-Patch100: 1000-sgx-26.patch
+Patch100: 1000-sgx-27.patch
 
 
 # Thinkpad dual fan control
