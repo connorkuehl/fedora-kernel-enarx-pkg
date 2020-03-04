@@ -413,7 +413,7 @@ index fa4ea09593ab..dee9504cde79 100644
 2.24.1
 
 
-From aa7328a95a75e9001572383aed6933f6d2369fed Mon Sep 17 00:00:00 2001
+From 333db7017adc77aee7715b67f285968e470b57df Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Thu, 1 Nov 2018 18:21:50 -0700
 Subject: [PATCH 05/22] x86/sgx: Add SGX microarchitectural data structures
@@ -431,16 +431,16 @@ The data structures are described in:
 
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/kernel/cpu/sgx/arch.h | 395 +++++++++++++++++++++++++++++++++
- 1 file changed, 395 insertions(+)
+ arch/x86/kernel/cpu/sgx/arch.h | 343 +++++++++++++++++++++++++++++++++
+ 1 file changed, 343 insertions(+)
  create mode 100644 arch/x86/kernel/cpu/sgx/arch.h
 
 diff --git a/arch/x86/kernel/cpu/sgx/arch.h b/arch/x86/kernel/cpu/sgx/arch.h
 new file mode 100644
-index 000000000000..dbd652be9b53
+index 000000000000..ddae55e9d4d8
 --- /dev/null
 +++ b/arch/x86/kernel/cpu/sgx/arch.h
-@@ -0,0 +1,395 @@
+@@ -0,0 +1,343 @@
 +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
 +/**
 + * Copyright(c) 2016-18 Intel Corporation.
@@ -499,7 +499,7 @@ index 000000000000..dbd652be9b53
 +
 +#define SGX_MISC_RESERVED_MASK	GENMASK_ULL(63, 1)
 +
-+#define SGX_SSA_GPRS_SIZE		182
++#define SGX_SSA_GPRS_SIZE		184
 +#define SGX_SSA_MISC_EXINFO_SIZE	16
 +
 +/**
@@ -781,66 +781,14 @@ index 000000000000..dbd652be9b53
 +	u8  q2[SGX_MODULUS_SIZE];
 +} __packed;
 +
-+#define SGX_EINITTOKEN_RESERVED1_SIZE 11
-+#define SGX_EINITTOKEN_RESERVED2_SIZE 32
-+#define SGX_EINITTOKEN_RESERVED3_SIZE 32
-+#define SGX_EINITTOKEN_RESERVED4_SIZE 24
-+
-+/**
-+ * struct sgx_einittoken - a token permitting to launch an enclave
-+ * @valid:			one if valid and zero if invalid
-+ * @attributes:			attributes for enclave
-+ * @xfrm:			XSave-Feature Request Mask (subset of XCR0)
-+ * @mrenclave:			SHA256-hash of the enclave contents
-+ * @mrsigner:			SHA256-hash of the public key used to sign the
-+ *				SIGSTRUCT
-+ * @le_cpusvn:			a value that reflects the SGX implementation
-+ *				running in in the CPU
-+ * @le_isvprodid:		a user-defined value that is used in key
-+ *				derivation
-+ * @le_isvsvn:			a user-defined value that is used in key
-+ *				derivation
-+ * @le_keyed_miscselect:	LE's miscselect masked with the token keys
-+ *				miscselect
-+ * @le_keyed_attributes:	LE's attributes masked with the token keys
-+ *				attributes
-+ * @le_keyed_xfrm:		LE's XFRM masked with the token keys xfrm
-+ * @salt:			random salt for wear-out protection
-+ * @mac:			CMAC over the preceding fields
-+ *
-+ * An enclave with EINITTOKENKEY attribute can access a key with the same name
-+ * by using ENCLS(EGETKEY) and use this to sign cryptographic tokens that can
-+ * be passed to ENCLS(EINIT) to permit the launch of other enclaves. This is
-+ * the only viable way to launch enclaves if IA32_SGXLEPUBKEYHASHn MSRs are
-+ * locked assuming that there is a Launch Enclave (LE) available that can be
-+ * used for generating these tokens.
-+ */
-+struct sgx_einittoken {
-+	u32 valid;
-+	u32 reserved1[SGX_EINITTOKEN_RESERVED1_SIZE];
-+	u64 attributes;
-+	u64 xfrm;
-+	u8  mrenclave[32];
-+	u8  reserved2[SGX_EINITTOKEN_RESERVED2_SIZE];
-+	u8  mrsigner[32];
-+	u8  reserved3[SGX_EINITTOKEN_RESERVED3_SIZE];
-+	u8  le_cpusvn[16];
-+	u16 le_isvprodid;
-+	u16 le_isvsvn;
-+	u8  reserved4[SGX_EINITTOKEN_RESERVED4_SIZE];
-+	u32 le_keyed_miscselect;
-+	u64 le_keyed_attributes;
-+	u64 le_keyed_xfrm;
-+	u8  salt[32];
-+	u8  mac[16];
-+} __packed __aligned(512);
++#define SGX_LAUNCH_TOKEN_SIZE 304
 +
 +#endif /* _ASM_X86_SGX_ARCH_H */
 -- 
 2.24.1
 
 
-From 8e87a705ed32203d92e9e241fdaa07ac3197a92c Mon Sep 17 00:00:00 2001
+From 43e0f2f133284904b10dd3c2c0ec45fff44bf28e Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Thu, 1 Nov 2018 18:21:55 -0700
 Subject: [PATCH 06/22] x86/sgx: Add wrappers for ENCLS leaf functions
@@ -874,7 +822,7 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
 diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
 new file mode 100644
-index 000000000000..30132edddcd6
+index 000000000000..f91da6a1bddc
 --- /dev/null
 +++ b/arch/x86/kernel/cpu/sgx/encls.h
 @@ -0,0 +1,239 @@
@@ -945,17 +893,17 @@ index 000000000000..30132edddcd6
 + */
 +static inline bool encls_failed(int ret)
 +{
-+        int epcm_trapnr;
++	int epcm_trapnr;
 +
-+        if (boot_cpu_has(X86_FEATURE_SGX2))
-+                epcm_trapnr = X86_TRAP_PF;
-+        else
-+                epcm_trapnr = X86_TRAP_GP;
++	if (boot_cpu_has(X86_FEATURE_SGX2))
++		epcm_trapnr = X86_TRAP_PF;
++	else
++		epcm_trapnr = X86_TRAP_GP;
 +
-+        if (ret & ENCLS_FAULT_FLAG)
-+                return ENCLS_TRAPNR(ret) != epcm_trapnr;
++	if (ret & ENCLS_FAULT_FLAG)
++		return ENCLS_TRAPNR(ret) != epcm_trapnr;
 +
-+        return !!ret;
++	return !!ret;
 +}
 +
 +/**
@@ -1121,7 +1069,7 @@ index 000000000000..30132edddcd6
 2.24.1
 
 
-From 0eb2b8aa159360903dcdcf14ee0107d3ae77144a Mon Sep 17 00:00:00 2001
+From cd1eff63bb841ce0ca720ab6a115b8f0576c110e Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 Date: Thu, 1 Nov 2018 18:21:45 -0700
 Subject: [PATCH 07/22] x86/cpu/intel: Detect SGX supprt
@@ -1224,7 +1172,7 @@ index 0268185bef94..b16b71a6da74 100644
 2.24.1
 
 
-From 5a79af2d18e95484554d56b3943f2e6e5d9bf6d0 Mon Sep 17 00:00:00 2001
+From cc76ff00929cc0121525fc025478ee18079b1432 Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 Date: Thu, 1 Nov 2018 18:21:56 -0700
 Subject: [PATCH 08/22] x86/sgx: Enumerate and track EPC sections
@@ -1630,7 +1578,7 @@ index 000000000000..aad30980be32
 2.24.1
 
 
-From 0dc9fc13e0b31e3ec202e9cb5582c78ee6b72206 Mon Sep 17 00:00:00 2001
+From 247ff46518f3d8cb9d359504eb3dda43c3b1e1c5 Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Thu, 1 Nov 2018 18:21:57 -0700
 Subject: [PATCH 09/22] x86/sgx: Add functions to allocate and free EPC pages
@@ -1744,7 +1692,7 @@ index aad30980be32..aa85f85412d8 100644
 2.24.1
 
 
-From 47be294d8689f62e0568073cc53966b6fc257602 Mon Sep 17 00:00:00 2001
+From f7f6dec2398b4e3cdfb9b86c4f0a8b8a4371b134 Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 Date: Wed, 10 Jul 2019 14:33:50 -0700
 Subject: [PATCH 10/22] mm: Introduce vm_ops->may_mprotect()
@@ -1805,7 +1753,7 @@ index 7a8e84f86831..c0cb40e23b43 100644
 2.24.1
 
 
-From 98695c30c7e161be426e99c1450d99252c738016 Mon Sep 17 00:00:00 2001
+From 0183ba785cb4f4e893195958cdcf90abf35565bd Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Thu, 1 Nov 2018 18:21:58 -0700
 Subject: [PATCH 11/22] x86/sgx: Linux Enclave Driver
@@ -1863,10 +1811,11 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  arch/x86/kernel/cpu/sgx/driver.h              |  30 +
  arch/x86/kernel/cpu/sgx/encl.c                | 336 +++++++++
  arch/x86/kernel/cpu/sgx/encl.h                |  87 +++
- arch/x86/kernel/cpu/sgx/ioctl.c               | 697 ++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/encls.h               |   5 +-
+ arch/x86/kernel/cpu/sgx/ioctl.c               | 692 ++++++++++++++++++
  arch/x86/kernel/cpu/sgx/main.c                |  12 +-
  arch/x86/kernel/cpu/sgx/reclaim.c             |   1 +
- 10 files changed, 1426 insertions(+), 1 deletion(-)
+ 11 files changed, 1423 insertions(+), 4 deletions(-)
  create mode 100644 arch/x86/include/uapi/asm/sgx.h
  create mode 100644 arch/x86/kernel/cpu/sgx/driver.c
  create mode 100644 arch/x86/kernel/cpu/sgx/driver.h
@@ -2640,12 +2589,29 @@ index 000000000000..1d1bc5d590ee
 +		     unsigned long end, unsigned long vm_prot_bits);
 +
 +#endif /* _X86_ENCL_H */
+diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+index f91da6a1bddc..072d42973c68 100644
+--- a/arch/x86/kernel/cpu/sgx/encls.h
++++ b/arch/x86/kernel/cpu/sgx/encls.h
+@@ -186,10 +186,9 @@ static inline int __eadd(struct sgx_pageinfo *pginfo, void *addr)
+ 	return __encls_2(EADD, pginfo, addr);
+ }
+ 
+-static inline int __einit(void *sigstruct, struct sgx_einittoken *einittoken,
+-			  void *secs)
++static inline int __einit(void *sigstruct, void *token, void *secs)
+ {
+-	return __encls_ret_3(EINIT, sigstruct, secs, einittoken);
++	return __encls_ret_3(EINIT, sigstruct, secs, token);
+ }
+ 
+ static inline int __eremove(void *addr)
 diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
 new file mode 100644
-index 000000000000..83513cdfd1c0
+index 000000000000..27de304efe39
 --- /dev/null
 +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -0,0 +1,697 @@
+@@ -0,0 +1,692 @@
 +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
 +// Copyright(c) 2016-19 Intel Corporation.
 +
@@ -3177,14 +3143,10 @@ index 000000000000..83513cdfd1c0
 +	}
 +}
 +
-+static int sgx_einit(struct sgx_sigstruct *sigstruct,
-+		     struct sgx_einittoken *token,
++static int sgx_einit(struct sgx_sigstruct *sigstruct, void *token,
 +		     struct sgx_epc_page *secs, u64 *lepubkeyhash)
 +{
 +	int ret;
-+
-+	if (!boot_cpu_has(X86_FEATURE_SGX_LC))
-+		return __einit(sigstruct, token, sgx_epc_addr(secs));
 +
 +	preempt_disable();
 +	sgx_update_lepubkeyhash_msrs(lepubkeyhash, false);
@@ -3198,7 +3160,7 @@ index 000000000000..83513cdfd1c0
 +}
 +
 +static int sgx_encl_init(struct sgx_encl *encl, struct sgx_sigstruct *sigstruct,
-+			 struct sgx_einittoken *token)
++			 void *token)
 +{
 +	u64 mrsigner[4];
 +	int ret;
@@ -3276,10 +3238,10 @@ index 000000000000..83513cdfd1c0
 + */
 +static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
 +{
-+	struct sgx_einittoken *einittoken;
 +	struct sgx_sigstruct *sigstruct;
 +	struct sgx_enclave_init einit;
 +	struct page *initp_page;
++	void *token;
 +	int ret;
 +
 +	if (!(atomic_read(&encl->flags) & SGX_ENCL_CREATED))
@@ -3293,9 +3255,8 @@ index 000000000000..83513cdfd1c0
 +		return -ENOMEM;
 +
 +	sigstruct = kmap(initp_page);
-+	einittoken = (struct sgx_einittoken *)
-+		((unsigned long)sigstruct + PAGE_SIZE / 2);
-+	memset(einittoken, 0, sizeof(*einittoken));
++	token = (void *)((unsigned long)sigstruct + PAGE_SIZE / 2);
++	memset(token, 0, SGX_LAUNCH_TOKEN_SIZE);
 +
 +	if (copy_from_user(sigstruct, (void __user *)einit.sigstruct,
 +			   sizeof(*sigstruct))) {
@@ -3303,7 +3264,7 @@ index 000000000000..83513cdfd1c0
 +		goto out;
 +	}
 +
-+	ret = sgx_encl_init(encl, sigstruct, einittoken);
++	ret = sgx_encl_init(encl, sigstruct, token);
 +
 +out:
 +	kunmap(initp_page);
@@ -3399,7 +3360,7 @@ index 215371588a25..9e6d3e147aa2 100644
 2.24.1
 
 
-From 9c020e2faef4af858b858488f9f6f46a7ce937d1 Mon Sep 17 00:00:00 2001
+From 6eb74786a6a42134c596ecc1f80897728acff7f2 Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Fri, 5 Apr 2019 15:36:38 -0700
 Subject: [PATCH 12/22] docs: x86/sgx: Document SGX micro architecture and
@@ -3417,8 +3378,8 @@ Acked-by: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
  Documentation/x86/index.rst |   1 +
- Documentation/x86/sgx.rst   | 187 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 188 insertions(+)
+ Documentation/x86/sgx.rst   | 192 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 193 insertions(+)
  create mode 100644 Documentation/x86/sgx.rst
 
 diff --git a/Documentation/x86/index.rst b/Documentation/x86/index.rst
@@ -3432,17 +3393,14 @@ index a8de2fbc1caa..971f30a7d166 100644
 +   sgx
 diff --git a/Documentation/x86/sgx.rst b/Documentation/x86/sgx.rst
 new file mode 100644
-index 000000000000..cd4abe65b494
+index 000000000000..740b09323f18
 --- /dev/null
 +++ b/Documentation/x86/sgx.rst
-@@ -0,0 +1,187 @@
+@@ -0,0 +1,192 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
 +============
 +Architecture
-+============
-+
-+Introduction
 +============
 +
 +*Software Guard eXtensions (SGX)* is a set of instructions that enable ring-3
@@ -3450,7 +3408,7 @@ index 000000000000..cd4abe65b494
 +called enclaves. An enclave can be entered to a fixed set of entry points. Only
 +a CPU running inside the enclave can access its code and data.
 +
-+SGX support can be determined by
++The support can be determined by
 +
 +	``grep sgx /proc/cpuinfo``
 +
@@ -3612,22 +3570,30 @@ index 000000000000..cd4abe65b494
 +The enclave run-time and library OS work together to execute the application
 +when a thread enters the enclave.
 +
-+======================
-+Enclave access control
-+======================
++================
++Kernel internals
++================
 +
-+Each enclave holds an shmem file as a backing storage for the reclaimed
-+pages. ``/dev/sgx/enclave`` is essentially a privileged resource since the
-+backing storage is not accounted to any of the processes associated with an
-+enclave.
++An enclave is created by opening ``/dev/sgx/enclave`` and calling a set of ioctl
++calls, which reserve a fixed range of memory addresses for the enclave and
++initialize its memory contents.
 +
-+Enclave files can be forked or sent through UDS sockets so that creation
-+(more privileged) and usage (less privileged) can be sanely divided.
++An enclave can be made visible with ``mmap()`` calls. Permissions are capped by
++enclave page permissions given during the building phase because CPU disallows a
++PTE have higher permissions than the enclave page that it contains.
++
++Enclaves can be forked or sent through UDS sockets, which allows an enclave
++consumer and a builder to be separate processes with a different set of
++privileges.
++
++The backing memory is implemented with a private shemm file, which is not
++accounted. This makes it advicable to not allow all processes in a system
++to build enclaves.
 -- 
 2.24.1
 
 
-From 1c21a2d2eb8c35384a28ba055e87c5a049955346 Mon Sep 17 00:00:00 2001
+From 380dba29566e98a21e9eb260b941a3a4fe0d77b2 Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Tue, 3 Sep 2019 17:26:52 +0300
 Subject: [PATCH 13/22] selftests/x86: Recurse into subdirectories
@@ -3714,7 +3680,7 @@ index 5d49bfec1e9a..dee6dadeba61 100644
 2.24.1
 
 
-From 597d94307e6954571cac6efb963456515f27fa44 Mon Sep 17 00:00:00 2001
+From b66d8cb2a938632082feb2d792bbf8ccdb2a2add Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Tue, 3 Sep 2019 17:26:51 +0300
 Subject: [PATCH 14/22] selftests/x86: Add a selftest for SGX
@@ -4850,7 +4816,7 @@ index 000000000000..d76f21f19187
 2.24.1
 
 
-From f11550f85d876ab4237b3d43a5dd23ff7eacc187 Mon Sep 17 00:00:00 2001
+From 89e78a64e5da17b50d459689124f97b301d84f96 Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Mon, 17 Dec 2018 18:32:19 +0200
 Subject: [PATCH 15/22] x86/sgx: Add provisioning
@@ -4963,10 +4929,10 @@ index e4063923115b..72747d01c046 100644
  
  int sgx_drv_init(void);
 diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 83513cdfd1c0..262001df3ae4 100644
+index 27de304efe39..251b7a989606 100644
 --- a/arch/x86/kernel/cpu/sgx/ioctl.c
 +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -663,6 +663,50 @@ out:
+@@ -658,6 +658,50 @@ out:
  	return ret;
  }
  
@@ -5017,7 +4983,7 @@ index 83513cdfd1c0..262001df3ae4 100644
  
  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
  {
-@@ -686,6 +730,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+@@ -681,6 +725,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
  	case SGX_IOC_ENCLAVE_INIT:
  		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
  		break;
@@ -5031,7 +4997,7 @@ index 83513cdfd1c0..262001df3ae4 100644
 2.24.1
 
 
-From 697e32661df39c6045ad25a5f2bbf2ebbdd780df Mon Sep 17 00:00:00 2001
+From 99f7c7ce23cc39f0e3251494f272430c82ce43d6 Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Thu, 1 Nov 2018 18:22:00 -0700
 Subject: [PATCH 16/22] x86/sgx: Add a page reclaimer
@@ -5563,7 +5529,7 @@ index 1d1bc5d590ee..44b353aa8866 100644
 +
  #endif /* _X86_ENCL_H */
 diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 262001df3ae4..2880ed4745b6 100644
+index 251b7a989606..12e1496f8a8b 100644
 --- a/arch/x86/kernel/cpu/sgx/ioctl.c
 +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
 @@ -19,6 +19,43 @@
@@ -6300,7 +6266,7 @@ index aa85f85412d8..0c481e6f2c95 100644
 2.24.1
 
 
-From 3b194f244a8702c67fe2ce2a4ae9a3207019f2ba Mon Sep 17 00:00:00 2001
+From 3d7ef9f4f3e604ea408196656367e4ab21766181 Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Thu, 1 Nov 2018 18:22:02 -0700
 Subject: [PATCH 17/22] x86/sgx: ptrace() support for the SGX driver
@@ -6428,7 +6394,7 @@ index dc597fdfd0dd..d6a19bdd1921 100644
 2.24.1
 
 
-From 3a98d25fb886c2840f0f56a718feb9ca1f3733ae Mon Sep 17 00:00:00 2001
+From 05c68016534895093bbee34cbb7c7a149daeabdb Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 Date: Fri, 15 Mar 2019 10:42:27 -0700
 Subject: [PATCH 18/22] x86/vdso: Add support for exception fixup in vDSO
@@ -6789,7 +6755,7 @@ index bbcdc7b8f963..b5d23470f56b 100644
 2.24.1
 
 
-From 220c44828221385a72ec924ea9210c92870cb7b1 Mon Sep 17 00:00:00 2001
+From 13be184af4d067de4b6a3a9cdf06e0fec7b53657 Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 Date: Fri, 15 Mar 2019 10:42:28 -0700
 Subject: [PATCH 19/22] x86/fault: Add helper function to sanitize error code
@@ -6864,7 +6830,7 @@ index dee9504cde79..6b662d272af6 100644
 2.24.1
 
 
-From dddd75eccb59ce10e3f027c2c0b25b59077fcec0 Mon Sep 17 00:00:00 2001
+From 2d0a93d3f8de3b5c3ae954a35c40fd1f6536b35a Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 Date: Fri, 15 Mar 2019 10:42:29 -0700
 Subject: [PATCH 20/22] x86/traps: Attempt to fixup exceptions in vDSO before
@@ -6989,7 +6955,7 @@ index 6b662d272af6..42965b47b52f 100644
 2.24.1
 
 
-From 28b54b84848825b0c9566e14bbd6d0885cc87496 Mon Sep 17 00:00:00 2001
+From 7a20eb25cfa964250870faccfb5d81d01139ab0b Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 Date: Fri, 5 Apr 2019 15:36:37 -0700
 Subject: [PATCH 21/22] x86/vdso: Implement a vDSO for Intel SGX enclave call
@@ -7293,7 +7259,7 @@ index 57d0d30c79b3..e196cfd44b70 100644
 2.24.1
 
 
-From 673f3c31060491e40ccb0d6fad11a87c80300735 Mon Sep 17 00:00:00 2001
+From 6e6f770ebd7c5f6d44bbd2d82974b66d90ca096d Mon Sep 17 00:00:00 2001
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Date: Tue, 15 Oct 2019 16:36:00 +0300
 Subject: [PATCH 22/22] selftests/x86: Add vDSO selftest for SGX

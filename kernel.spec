@@ -56,7 +56,7 @@ Summary: The Linux kernel
 %global zipsed -e 's/\.ko$/\.ko.xz/'
 %endif
 
-%define buildid .sgx.27
+%define buildid .sgx.28
 
 %if 0%{?fedora}
 %define primary_target fedora
@@ -795,7 +795,7 @@ Source5000: patch-5.%{base_sublevel}-git%{gitrev}.xz
 
 # Standalone patches
 # 100 - Generic long running patches
-Patch100: 1000-sgx-27.patch
+Patch100: 1000-sgx-28.patch
 
 # 200 - x86 / secureboot
 
