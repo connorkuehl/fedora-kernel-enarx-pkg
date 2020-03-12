@@ -56,7 +56,7 @@ Summary: The Linux kernel
 %global zipsed -e 's/\.ko$/\.ko.xz/'
 %endif
 
-%define buildid .sgx.28
+%define buildid .enarx.sgx.28.sev.patched
 
 %if 0%{?fedora}
 %define primary_target fedora
@@ -861,7 +861,6 @@ Patch105: 0001-virt-vbox-Log-unknown-ioctl-requests-as-error.patch
 
 # Standalone patches
 # 100 - Generic long running patches
-Patch100: 1000-sgx-28.patch
 
 
 # Thinkpad dual fan control
@@ -892,8 +891,10 @@ Patch124: 0001-PCI-Add-MCFG-quirks-for-Tegra194-host-controllers.patch
 # Work around a bug in gcc https://gcc.gnu.org/bugzilla/show_bug.cgi?id=96377
 Patch126: 0001-Work-around-for-gcc-bug-https-gcc.gnu.org-bugzilla-s.patch
 
-# END OF PATCH DEFINITIONS
+Patch1000: 1000-sgx-28.patch
+Patch1001: 1000-crypto-ccp-use-file-mode-for-sev-ioctl-permissions.patch
 
+# END OF PATCH DEFINITIONS
 %endif
 
 
