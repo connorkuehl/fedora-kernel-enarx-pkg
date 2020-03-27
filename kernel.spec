@@ -227,7 +227,7 @@ Summary: The Linux kernel
 # pkg_release is what we'll fill in for the rpm Release: field
 %if 0%{?released_kernel}
 
-%define pkg_release %{fedora_build}%{?buildid}%{?dist}
+%define pkg_release %{fedora_build}%{?dist}%{?buildid}
 
 %else
 
@@ -242,7 +242,7 @@ Summary: The Linux kernel
 %else
 %define gittag .git0
 %endif
-%define pkg_release 0%{?rctag}%{?gittag}.%{fedora_build}%{?buildid}%{?dist}
+%define pkg_release 0%{?rctag}%{?gittag}.%{fedora_build}%{?dist}%{?buildid}
 
 %endif
 
