@@ -56,7 +56,7 @@ Summary: The Linux kernel
 %global zipsed -e 's/\.ko$/\.ko.xz/'
 %endif
 
-%define buildid .enarx.sgx.32.sev.patched
+%define buildid .enarx.sgx.32
 
 %if 0%{?fedora}
 %define primary_target fedora
@@ -892,7 +892,6 @@ Patch124: 0001-PCI-Add-MCFG-quirks-for-Tegra194-host-controllers.patch
 Patch126: 0001-Work-around-for-gcc-bug-https-gcc.gnu.org-bugzilla-s.patch
 
 Patch1000: 1000-sgx-32.patch
-Patch1001: 1000-crypto-ccp-use-file-mode-for-sev-ioctl-permissions.patch
 
 # END OF PATCH DEFINITIONS
 %endif
