@@ -59,7 +59,7 @@ Summary: The Linux kernel
 %global zipsed -e 's/\.ko$/\.ko.xz/'
 %endif
 
-# define buildid .local
+%define buildid .enarx.sgx.33
 
 
 %if 0%{?fedora}
@@ -818,6 +818,8 @@ Patch100: 0001-Work-around-for-gcc-bug-https-gcc.gnu.org-bugzilla-s.patch
 
 %endif
 
+Patch1000: 1000-sgx-33.patch
+
 # empty final patch to facilitate testing of kernel patches
 Patch999999: linux-kernel-test.patch
 
@@ -1420,6 +1422,7 @@ ApplyOptionalPatch 0001-Work-around-for-gcc-bug-https-gcc.gnu.org-bugzilla-s.pat
 
 %endif
 
+ApplyOptionalPatch 1000-sgx-33.patch
 ApplyOptionalPatch linux-kernel-test.patch
 
 # END OF PATCH APPLICATIONS
