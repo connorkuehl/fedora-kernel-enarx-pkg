@@ -1,10 +1,73 @@
-From 60037956519bde6e14c57fcd191334b773707b40 Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Mon, 1 Jun 2020 10:51:58 +0300
-Subject: [PATCH 01/21] x86/cpufeatures: x86/msr: Add Intel SGX hardware bits
+From patchwork Mon Jun  1 07:51:58 2020
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581635
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id D3D2A139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:52:36 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id BB26020772
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:52:36 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1726056AbgFAHwg (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:52:36 -0400
+Received: from mga03.intel.com ([134.134.136.65]:18153 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725935AbgFAHwg (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:52:36 -0400
+IronPort-SDR: 
+ +N/Bb2p3OorGP5DdOmo2cHCiw9qV6bxOS+8aAetYB4Kc3Xj3NPCSR7TpywENi00tJbfpmkuNP5
+ 5fFs5PS/uo5Q==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:52:35 -0700
+IronPort-SDR: 
+ rM00L9aGgWqAq7/TnZdaP5zYOnk+SGkAOBwbiWRxt3BCkej7vW+YFP/2cIunPZF1AS+S8v06xl
+ YAk4e7/baNVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879453"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:52:29 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 01/21] x86/cpufeatures: x86/msr: Add Intel SGX hardware
+ bits
+Date: Mon,  1 Jun 2020 10:51:58 +0300
+Message-Id: <20200601075218.65618-2-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
+
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
 Add X86_FEATURE_SGX from CPUID.(EAX=7, ECX=1), which informs whether the
 CPU has SGX.
@@ -64,7 +127,7 @@ index 59bf91c57aa8..efbdba5170a3 100644
  #define cpu_has(c, bit)							\
  	(__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 :	\
 diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index f3327cb56edf..42ae9fb06987 100644
+index db189945e9b0..fc4422f747d5 100644
 --- a/arch/x86/include/asm/cpufeatures.h
 +++ b/arch/x86/include/asm/cpufeatures.h
 @@ -13,7 +13,7 @@
@@ -84,8 +147,8 @@ index f3327cb56edf..42ae9fb06987 100644
  #define X86_FEATURE_BMI1		( 9*32+ 3) /* 1st group bit manipulation extensions */
  #define X86_FEATURE_HLE			( 9*32+ 4) /* Hardware Lock Elision */
  #define X86_FEATURE_AVX2		( 9*32+ 5) /* AVX2 instructions */
-@@ -369,6 +370,10 @@
- #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
+@@ -372,6 +373,10 @@
+ #define X86_FEATURE_CORE_CAPABILITIES	(18*32+30) /* "" IA32_CORE_CAPABILITIES MSR */
  #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
  
 +/* Intel-defined SGX features, CPUID level 0x00000012:0 (EAX), word 19 */
@@ -151,10 +214,10 @@ index 4ea8584682f9..dbe534d5153f 100644
  
  #endif /* _ASM_X86_DISABLED_FEATURES_H */
 diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index d5e517d1c3dd..e190293c8923 100644
+index 12c9684d59ba..a277d33006c0 100644
 --- a/arch/x86/include/asm/msr-index.h
 +++ b/arch/x86/include/asm/msr-index.h
-@@ -566,6 +566,7 @@
+@@ -575,6 +575,7 @@
  #define FEAT_CTL_LOCKED				BIT(0)
  #define FEAT_CTL_VMX_ENABLED_INSIDE_SMX		BIT(1)
  #define FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX	BIT(2)
@@ -175,7 +238,7 @@ index 6847d85400a8..039e58be2fe6 100644
  
  #endif /* _ASM_X86_REQUIRED_FEATURES_H */
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 4cdb123ff66a..9012b877f147 100644
+index bed0cb83fe24..f71fb926edb1 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
 @@ -915,6 +915,10 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
@@ -190,7 +253,7 @@ index 4cdb123ff66a..9012b877f147 100644
  	eax = cpuid_eax(0x80000000);
  	c->extended_cpuid_level = eax;
 diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
-index f3327cb56edf..42ae9fb06987 100644
+index db189945e9b0..fc4422f747d5 100644
 --- a/tools/arch/x86/include/asm/cpufeatures.h
 +++ b/tools/arch/x86/include/asm/cpufeatures.h
 @@ -13,7 +13,7 @@
@@ -210,8 +273,8 @@ index f3327cb56edf..42ae9fb06987 100644
  #define X86_FEATURE_BMI1		( 9*32+ 3) /* 1st group bit manipulation extensions */
  #define X86_FEATURE_HLE			( 9*32+ 4) /* Hardware Lock Elision */
  #define X86_FEATURE_AVX2		( 9*32+ 5) /* AVX2 instructions */
-@@ -369,6 +370,10 @@
- #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
+@@ -372,6 +373,10 @@
+ #define X86_FEATURE_CORE_CAPABILITIES	(18*32+30) /* "" IA32_CORE_CAPABILITIES MSR */
  #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
  
 +/* Intel-defined SGX features, CPUID level 0x00000012:0 (EAX), word 19 */
@@ -221,15 +284,76 @@ index f3327cb56edf..42ae9fb06987 100644
  /*
   * BUG word(s)
   */
--- 
-2.25.4
 
+From patchwork Mon Jun  1 07:51:59 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581639
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 24C9460D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:52:47 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 15CED2076B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:52:47 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1726056AbgFAHwq (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:52:46 -0400
+Received: from mga12.intel.com ([192.55.52.136]:20495 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728076AbgFAHwq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:52:46 -0400
+IronPort-SDR: 
+ VTirbKc63T9VELkt7fOKyPmxnk/aDZKEzgSrbFLU5GGsq4JJLvEamwOAtoaefJiy9pcCD6RV0l
+ ZY7TYy12IAvQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:52:46 -0700
+IronPort-SDR: 
+ 1T3G+XiyMB0knrLKdWu1Vc061eb1t3yR1M7UM0wdQ45ACsWNLn8A6r2mXZSpNT6uq7QKfHpb5U
+ bbr8HJN5WbTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879473"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:52:35 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 02/21] x86/cpufeatures: x86/msr: Add Intel SGX Launch
+ Control hardware bits
+Date: Mon,  1 Jun 2020 10:51:59 +0300
+Message-Id: <20200601075218.65618-3-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
-From af457170988ecfaf8ca0d3ed45ce309c5ef19a1e Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Mon, 1 Jun 2020 10:51:59 +0300
-Subject: [PATCH 02/21] x86/cpufeatures: x86/msr: Add Intel SGX Launch Control
- hardware bits
 
 Add X86_FEATURE_SGX_LC, which informs whether or not the CPU supports SGX
 Launch Control.
@@ -263,10 +387,10 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  2 files changed, 8 insertions(+)
 
 diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 42ae9fb06987..bc5ad93cbeb6 100644
+index fc4422f747d5..c2f8962e8468 100644
 --- a/arch/x86/include/asm/cpufeatures.h
 +++ b/arch/x86/include/asm/cpufeatures.h
-@@ -350,6 +350,7 @@
+@@ -352,6 +352,7 @@
  #define X86_FEATURE_CLDEMOTE		(16*32+25) /* CLDEMOTE instruction */
  #define X86_FEATURE_MOVDIRI		(16*32+27) /* MOVDIRI instruction */
  #define X86_FEATURE_MOVDIR64B		(16*32+28) /* MOVDIR64B instruction */
@@ -275,10 +399,10 @@ index 42ae9fb06987..bc5ad93cbeb6 100644
  /* AMD-defined CPU features, CPUID level 0x80000007 (EBX), word 17 */
  #define X86_FEATURE_OVERFLOW_RECOV	(17*32+ 0) /* MCA overflow recovery support */
 diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index e190293c8923..bae17ea2c8fe 100644
+index a277d33006c0..4b2e9c25cde3 100644
 --- a/arch/x86/include/asm/msr-index.h
 +++ b/arch/x86/include/asm/msr-index.h
-@@ -566,6 +566,7 @@
+@@ -575,6 +575,7 @@
  #define FEAT_CTL_LOCKED				BIT(0)
  #define FEAT_CTL_VMX_ENABLED_INSIDE_SMX		BIT(1)
  #define FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX	BIT(2)
@@ -286,7 +410,7 @@ index e190293c8923..bae17ea2c8fe 100644
  #define FEAT_CTL_SGX_ENABLED			BIT(18)
  #define FEAT_CTL_LMCE_ENABLED			BIT(20)
  
-@@ -586,6 +587,12 @@
+@@ -595,6 +596,12 @@
  #define MSR_IA32_UCODE_WRITE		0x00000079
  #define MSR_IA32_UCODE_REV		0x0000008b
  
@@ -299,14 +423,75 @@ index e190293c8923..bae17ea2c8fe 100644
  #define MSR_IA32_SMM_MONITOR_CTL	0x0000009b
  #define MSR_IA32_SMBASE			0x0000009e
  
--- 
-2.25.4
 
+From patchwork Mon Jun  1 07:52:00 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581641
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 4DBAB139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:52:51 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 3A6862074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:52:51 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728207AbgFAHwu (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:52:50 -0400
+Received: from mga12.intel.com ([192.55.52.136]:20495 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAHwu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:52:50 -0400
+IronPort-SDR: 
+ +/L0KEGg4+JmYihYS9Hp4kQzfqXZdSCBF2DJBKhiEKbvD5v8elbV6cO8Pd2+NWpQ4+qWEOoPBs
+ ai4gFFf8ZlOQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:52:50 -0700
+IronPort-SDR: 
+ ZENFADukCaAAbiwEpdQOQCnE+MWwKzsbRYO4s48SXz4WquW1XJ+3jTtQvL4NxYpt133NGqC9Pl
+ BIlmedTwh7BQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879489"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:52:44 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 03/21] x86/mm: x86/sgx: Signal SIGSEGV with PF_SGX
+Date: Mon,  1 Jun 2020 10:52:00 +0300
+Message-Id: <20200601075218.65618-4-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
-From 70bbcaec66271110856de8d224786c56fadb78df Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Mon, 1 Jun 2020 10:52:00 +0300
-Subject: [PATCH 03/21] x86/mm: x86/sgx: Signal SIGSEGV with PF_SGX
 
 Include SGX bit to the PF error codes and throw SIGSEGV with PF_SGX when
 a #PF with SGX set happens.
@@ -336,10 +521,10 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  2 files changed, 14 insertions(+)
 
 diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
-index ffa0dc8a535e..bb8d5ae74dbc 100644
+index c26a7e1d8a2c..07dd9f74d65a 100644
 --- a/arch/x86/include/asm/traps.h
 +++ b/arch/x86/include/asm/traps.h
-@@ -174,5 +174,6 @@ enum x86_pf_error_code {
+@@ -171,5 +171,6 @@ enum x86_pf_error_code {
  	X86_PF_RSVD	=		1 << 3,
  	X86_PF_INSTR	=		1 << 4,
  	X86_PF_PK	=		1 << 5,
@@ -347,7 +532,7 @@ index ffa0dc8a535e..bb8d5ae74dbc 100644
  };
  #endif /* _ASM_X86_TRAPS_H */
 diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 629fdf13f846..03c86f982d98 100644
+index a51df516b87b..16c53c874bb9 100644
 --- a/arch/x86/mm/fault.c
 +++ b/arch/x86/mm/fault.c
 @@ -1201,6 +1201,19 @@ access_error(unsigned long error_code, struct vm_area_struct *vma)
@@ -370,17 +555,73 @@ index 629fdf13f846..03c86f982d98 100644
  	/*
  	 * Make sure to check the VMA so that we do not perform
  	 * faults just to hit a X86_PF_PK as soon as we fill in a
--- 
-2.25.4
 
-
-From c3a5662a918395b49ddb84ed21bf294b4ff3543a Mon Sep 17 00:00:00 2001
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 1 Jun 2020 10:52:01 +0300
-Subject: [PATCH 04/21] x86/sgx: Add SGX microarchitectural data structures
+From patchwork Mon Jun  1 07:52:01 2020
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581643
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id C412A139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:52:58 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id A123F2074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:52:58 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728166AbgFAHw6 (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:52:58 -0400
+Received: from mga03.intel.com ([134.134.136.65]:18164 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAHw5 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:52:57 -0400
+IronPort-SDR: 
+ 8TEoa029wiGpnuxX/DTr44oKdmZI7b3OnZsQm8UyfOHHMIZYHpZ6qP7bLJZxtIsZApEUS+NEwY
+ YoMDTsuP6rtQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:52:56 -0700
+IronPort-SDR: 
+ hFJX0y9w7oDgLJtqArR6y+7ZOylZFnJqPMyQTWyGKccO73sYNKb/3sb9mDGOjpd6idtenk05kx
+ fkiTUcGRse2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879507"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:52:51 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, sean.j.christopherson@intel.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 04/21] x86/sgx: Add SGX microarchitectural data structures
+Date: Mon,  1 Jun 2020 10:52:01 +0300
+Message-Id: <20200601075218.65618-5-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 Define the SGX microarchitectural data structures used by various SGX
 opcodes. This is not an exhaustive representation of all SGX data
@@ -746,17 +987,73 @@ index 000000000000..ddae55e9d4d8
 +#define SGX_LAUNCH_TOKEN_SIZE 304
 +
 +#endif /* _ASM_X86_SGX_ARCH_H */
--- 
-2.25.4
 
-
-From cd4ac2fc1c5ea65633d4368880337fd7c5eacab2 Mon Sep 17 00:00:00 2001
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 1 Jun 2020 10:52:02 +0300
-Subject: [PATCH 05/21] x86/sgx: Add wrappers for ENCLS leaf functions
+From patchwork Mon Jun  1 07:52:02 2020
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581645
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 1A9F460D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:05 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 017AF2074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:05 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1726901AbgFAHxE (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:53:04 -0400
+Received: from mga09.intel.com ([134.134.136.24]:24397 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAHxE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:53:04 -0400
+IronPort-SDR: 
+ 1n2oipMBx4+pioN44Es8Lqo/Vgwbx+D4ySJ6mXmuTuPPnreOidWGrOzLZON++gCHJSa9W7WflT
+ 3++dqXv7vo7Q==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:03 -0700
+IronPort-SDR: 
+ A5KNQZEzlL1ZJTVvktEpgPrDKPZDtlqEYH4nDSMJKiCdkKZPHpzxVOHNqfqS42sv/m3lS1ngR7
+ 3yxtuOokszGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879535"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:52:57 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 05/21] x86/sgx: Add wrappers for ENCLS leaf functions
+Date: Mon,  1 Jun 2020 10:52:02 +0300
+Message-Id: <20200601075218.65618-6-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 ENCLS is a ring 0 instruction, which contains a set of leaf functions for
 managing an enclave. Enclaves are measured and signed software entities,
@@ -1027,14 +1324,75 @@ index 000000000000..f716b4328614
 +}
 +
 +#endif /* _X86_ENCLS_H */
--- 
-2.25.4
 
+From patchwork Mon Jun  1 07:52:03 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581647
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 6414060D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:11 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 54F202074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:11 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728258AbgFAHxL (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:53:11 -0400
+Received: from mga03.intel.com ([134.134.136.65]:18181 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAHxK (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:53:10 -0400
+IronPort-SDR: 
+ HIUsAgAh2vUEeCfthRwF1g7vBnq25A00X7CrB8zrDcngFI9fixov1ilRTWjhQHWJhyBx4b9wOk
+ 7uZUFrH/SuNQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:10 -0700
+IronPort-SDR: 
+ FpY+mIoI98KgMB1r0P7MNmsyVxuQnpX+LR53Wsu3vK1fOp57D3ywFyAxTjSVJUYeGaZx0/Q4Se
+ 2RTZ8CcQH7YQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879558"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:53:04 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 06/21] x86/cpu/intel: Detect SGX support
+Date: Mon,  1 Jun 2020 10:52:03 +0300
+Message-Id: <20200601075218.65618-7-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
-From b577aa46c6a01e5a6f9e355c7d7c259a0778376a Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Mon, 1 Jun 2020 10:52:03 +0300
-Subject: [PATCH 06/21] x86/cpu/intel: Detect SGX support
 
 Configure SGX as part of feature control MSR initialization and update
 the associated X86_FEATURE flags accordingly.  Because the kernel will
@@ -1067,10 +1425,10 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  1 file changed, 31 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
-index 0268185bef94..ef4ddd6c8630 100644
+index 29a3bedabd06..c3afcd2e4342 100644
 --- a/arch/x86/kernel/cpu/feat_ctl.c
 +++ b/arch/x86/kernel/cpu/feat_ctl.c
-@@ -92,16 +92,35 @@ static void init_vmx_capabilities(struct cpuinfo_x86 *c)
+@@ -93,16 +93,35 @@ static void init_vmx_capabilities(struct cpuinfo_x86 *c)
  }
  #endif /* CONFIG_X86_VMX_FEATURE_NAMES */
  
@@ -1106,7 +1464,7 @@ index 0268185bef94..ef4ddd6c8630 100644
  	if (msr & FEAT_CTL_LOCKED)
  		goto update_caps;
  
-@@ -123,13 +142,16 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+@@ -124,13 +143,16 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
  			msr |= FEAT_CTL_VMX_ENABLED_INSIDE_SMX;
  	}
  
@@ -1124,7 +1482,7 @@ index 0268185bef94..ef4ddd6c8630 100644
  
  	if ( (tboot && !(msr & FEAT_CTL_VMX_ENABLED_INSIDE_SMX)) ||
  	    (!tboot && !(msr & FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX))) {
-@@ -142,4 +164,12 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+@@ -143,4 +165,12 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
  		init_vmx_capabilities(c);
  #endif
  	}
@@ -1137,14 +1495,72 @@ index 0268185bef94..ef4ddd6c8630 100644
 +		clear_sgx_caps();
 +	}
  }
--- 
-2.25.4
 
-
-From 75b378cc05b027336a1d36da882ff6aebe133c09 Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:04 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581649
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 0124460D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:17 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id E4DC9207BC
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:16 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728275AbgFAHxQ (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:53:16 -0400
+Received: from mga03.intel.com ([134.134.136.65]:18186 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAHxQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:53:16 -0400
+IronPort-SDR: 
+ NBXu+W4QNESf8Y8Bj3tApc8+wK3ntUwFc/YQG9LZADB9q1ZN/UZcyXc1kga2liaa+yMEXmrvE6
+ QkBSqMVS6mPw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:16 -0700
+IronPort-SDR: 
+ PtTTqghyPNi5ol6U3rUdS7wgwi+UMXQYkXM5ECw3C8MpknElsdi3+kZa0zK+BCqLi+OpwZA/rg
+ 9rasj/zodpvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879578"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:53:10 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 1 Jun 2020 10:52:04 +0300
-Subject: [PATCH 07/21] x86/cpu/intel: Add nosgx kernel parameter
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 07/21] x86/cpu/intel: Add nosgx kernel parameter
+Date: Mon,  1 Jun 2020 10:52:04 +0300
+Message-Id: <20200601075218.65618-8-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 Add kernel parameter to disable Intel SGX kernel support.
 
@@ -1157,10 +1573,10 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  2 files changed, 11 insertions(+)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 20aac805e197..b97c021982c9 100644
+index 7bc83f3d9bdf..9f7202a54db6 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3225,6 +3225,8 @@
+@@ -3268,6 +3268,8 @@
  
  	nosep		[BUGS=X86-32] Disables x86 SYSENTER/SYSEXIT support.
  
@@ -1170,10 +1586,10 @@ index 20aac805e197..b97c021982c9 100644
  			and disable the IO APIC.  legacy for "maxcpus=0".
  
 diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
-index ef4ddd6c8630..aea1b647b55e 100644
+index c3afcd2e4342..1837df39527f 100644
 --- a/arch/x86/kernel/cpu/feat_ctl.c
 +++ b/arch/x86/kernel/cpu/feat_ctl.c
-@@ -100,6 +100,15 @@ static void clear_sgx_caps(void)
+@@ -101,6 +101,15 @@ static void clear_sgx_caps(void)
  	setup_clear_cpu_cap(X86_FEATURE_SGX2);
  }
  
@@ -1189,15 +1605,77 @@ index ef4ddd6c8630..aea1b647b55e 100644
  void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
  {
  	bool tboot = tboot_enabled();
--- 
-2.25.4
 
-
-From 50179779e22cb006abef9ea53422a7750b5dd07f Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Mon, 1 Jun 2020 10:52:05 +0300
-Subject: [PATCH 08/21] x86/sgx: Initialize metadata for Enclave Page Cache
+From patchwork Mon Jun  1 07:52:05 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581651
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id B57D8139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:25 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 9D0F72074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:25 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1727828AbgFAHxZ (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:53:25 -0400
+Received: from mga07.intel.com ([134.134.136.100]:48729 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAHxZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:53:25 -0400
+IronPort-SDR: 
+ fHtDziWKzE4BW7/1+P09qrZ+EgX+GWw/tdYV1c0saioddGo4/HI9o52HCAlJyyGaPVRpe7zd5A
+ 1Z28U7ndRieA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:22 -0700
+IronPort-SDR: 
+ jsF+8bdGirKgpSi7SpnhXFVKyobiMQEg8dKfwiVYoXp+IiIxM0HVlgFH694VGiiMdt8FchLCSr
+ dF2CDxdEV8DA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879601"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:53:16 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Serge Ayoun <serge.ayoun@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 08/21] x86/sgx: Initialize metadata for Enclave Page Cache
  (EPC) sections
+Date: Mon,  1 Jun 2020 10:52:05 +0300
+Message-Id: <20200601075218.65618-9-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
+
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
 Enumerate Enclave Page Cache (EPC) sections via CPUID and add the data
 structures necessary to track EPC pages so that they can be easily borrowed
@@ -1226,10 +1704,10 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  create mode 100644 arch/x86/kernel/cpu/sgx/sgx.h
 
 diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 0bc9a74468be..7e54adf2bc50 100644
+index 2d3f963fd6f1..d246c6071e8d 100644
 --- a/arch/x86/Kconfig
 +++ b/arch/x86/Kconfig
-@@ -1951,6 +1951,22 @@ config X86_INTEL_TSX_MODE_AUTO
+@@ -1948,6 +1948,22 @@ config X86_INTEL_TSX_MODE_AUTO
  	  side channel attacks- equals the tsx=auto command line parameter.
  endchoice
  
@@ -1553,15 +2031,74 @@ index 000000000000..6508bfefd6d9
 +}
 +
 +#endif /* _X86_SGX_H */
--- 
-2.25.4
 
-
-From 4bb0164cfcce4e36c4a156f25ea68c6f5c4c26a8 Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:06 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581653
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 4037060D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:30 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 32B89207BC
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:30 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728321AbgFAHx3 (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:53:29 -0400
+Received: from mga17.intel.com ([192.55.52.151]:59177 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAHx3 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:53:29 -0400
+IronPort-SDR: 
+ eoEuwJtN74dKKLg7Sx/4b41jO/zcVanicD2OZLhVrDsbk6PGPiFPL1/J6TIhypSpsPiAlD81Be
+ KJkZWxhuy+8A==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:29 -0700
+IronPort-SDR: 
+ qpoeWV5pyWWzeIe+ENsy2yXvSSEWv5qu5yR5OgR7V0+GYvn43Gw2nt77vC59x4MwlWqmmPZGXC
+ UOkFj5njH+jA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879613"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:53:23 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 1 Jun 2020 10:52:06 +0300
-Subject: [PATCH 09/21] x86/sgx: Add __sgx_alloc_epc_page() and
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 09/21] x86/sgx: Add __sgx_alloc_epc_page() and
  sgx_free_epc_page()
+Date: Mon,  1 Jun 2020 10:52:06 +0300
+Message-Id: <20200601075218.65618-10-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 Add __sgx_alloc_epc_page(), which iterates through EPC sections and borrows
 a page structure that is not used by anyone else. When a page is no longer
@@ -1662,14 +2199,75 @@ index 6508bfefd6d9..aae6bfb3bc8a 100644
 +void sgx_free_epc_page(struct sgx_epc_page *page);
 +
  #endif /* _X86_SGX_H */
--- 
-2.25.4
 
+From patchwork Mon Jun  1 07:52:07 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581655
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 7A278139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:36 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 68A4020734
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:36 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728347AbgFAHxg (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:53:36 -0400
+Received: from mga14.intel.com ([192.55.52.115]:9603 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAHxf (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:53:35 -0400
+IronPort-SDR: 
+ WYtNcGQYfdWYDTPcO603FMW/m9PCgHbRl5CR98yyLm/HlM2FDgyTlzEtgppTD/mK0mgGiCytvA
+ UF/9TNWLZ4Ng==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:35 -0700
+IronPort-SDR: 
+ x0jXZVzqfdvciMnvbY21tvRjdrvhTWXVaipPEJQwG/Bs1IO+jgtLSDezUX7PIqD7Hw8csS3voi
+ iMJVDN7vKztQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879635"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:53:29 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 10/21] mm: Introduce vm_ops->may_mprotect()
+Date: Mon,  1 Jun 2020 10:52:07 +0300
+Message-Id: <20200601075218.65618-11-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
-From 07f1f7c3dd5832e385bc2a9fc993ed4e6eee038e Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Mon, 1 Jun 2020 10:52:07 +0300
-Subject: [PATCH 10/21] mm: Introduce vm_ops->may_mprotect()
 
 Add vm_ops()->may_mprotect() to check additional constraints.
 
@@ -1691,10 +2289,10 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  2 files changed, 13 insertions(+), 3 deletions(-)
 
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 96deeecd9179..d3078cea8f67 100644
+index f3fe7371855c..fd1ea8fd4ab1 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -464,6 +464,8 @@ struct vm_operations_struct {
+@@ -546,6 +546,8 @@ struct vm_operations_struct {
  	void (*close)(struct vm_area_struct * area);
  	int (*split)(struct vm_area_struct * area, unsigned long addr);
  	int (*mremap)(struct vm_area_struct * area);
@@ -1704,10 +2302,10 @@ index 96deeecd9179..d3078cea8f67 100644
  	vm_fault_t (*huge_fault)(struct vm_fault *vmf,
  			enum page_entry_size pe_size);
 diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 311c0dadf71c..0bbdc803bccc 100644
+index 494192ca954b..079ba92df377 100644
 --- a/mm/mprotect.c
 +++ b/mm/mprotect.c
-@@ -577,13 +577,21 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
+@@ -603,13 +603,21 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
  			goto out;
  		}
  
@@ -1732,14 +2330,80 @@ index 311c0dadf71c..0bbdc803bccc 100644
  		error = mprotect_fixup(vma, &prev, nstart, tmp, newflags);
  		if (error)
  			goto out;
--- 
-2.25.4
 
-
-From f2d49f1cd9197aeadcd01467f0416768148302ec Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:08 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581715
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id A9DB1139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 08:18:46 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 7216B20734
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 08:18:46 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1727098AbgFAISq (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 04:18:46 -0400
+Received: from mga01.intel.com ([192.55.52.88]:18787 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAISp (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 04:18:45 -0400
+IronPort-SDR: 
+ S/yw+edf713XDOPKLX3TKI334dVhAvssbqD+SfywJVPg5a+/tFJoZeKd/7GWvXCVqchJZYOKr7
+ Ubk159eJKJ3g==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:43 -0700
+IronPort-SDR: 
+ KGUPcL6WTtTUHTm9oRCT1bhfobRT+iMdj6WwKoHjO30VS2rzEm9DM0J2n2p+R+eJm/ygNiqdtx
+ Bd7jFw78uEIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879658"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:53:36 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 1 Jun 2020 10:52:08 +0300
-Subject: [PATCH 11/21] x86/sgx: Linux Enclave Driver
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 11/21] x86/sgx: Linux Enclave Driver
+Date: Mon,  1 Jun 2020 10:52:08 +0300
+Message-Id: <20200601075218.65618-12-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
 can be used by applications to set aside private regions of code and
@@ -1809,10 +2473,10 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  create mode 100644 arch/x86/kernel/cpu/sgx/ioctl.c
 
 diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-index 2e91370dc159..1c54dd2704db 100644
+index f759edafd938..a9a418a9918c 100644
 --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
 +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-@@ -321,6 +321,7 @@ Code  Seq#    Include File                                           Comments
+@@ -320,6 +320,7 @@ Code  Seq#    Include File                                           Comments
                                                                       <mailto:tlewis@mindspring.com>
  0xA3  90-9F  linux/dtlk.h
  0xA4  00-1F  uapi/linux/tee.h                                        Generic TEE subsystem
@@ -3322,14 +3986,75 @@ index b776d249289f..506cb0756147 100644
  err_page_cache:
  	sgx_page_cache_teardown();
  }
--- 
-2.25.4
 
-
-From cb8e7843d3b2b794ebeac357408248e9a7f6126b Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:09 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581659
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 67F51139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:56 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 54AE620734
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:56 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728361AbgFAHxx (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:53:53 -0400
+Received: from mga18.intel.com ([134.134.136.126]:18060 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726072AbgFAHxw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:53:52 -0400
+IronPort-SDR: 
+ cnSeKL7G3xBrr+Wbiv08ZEtywbeJl4FaWhV+15SEwqhIuOZtv7h7hjfOO9SrKTlubySyV2oEIu
+ b/tEdjjoj++Q==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:51 -0700
+IronPort-SDR: 
+ 0PE5cPqWV8oME7RVn+QlVzPtVpHh7s15DtKCWdCz1v0s6sUBdohktHt2vIhCKlyWjN3D2FzH+h
+ YN0tjOXiLZfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879675"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:53:44 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 1 Jun 2020 10:52:09 +0300
-Subject: [PATCH 12/21] x86/sgx: Add provisioning
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com
+Subject: [PATCH v32 12/21] x86/sgx: Add provisioning
+Date: Mon,  1 Jun 2020 10:52:09 +0300
+Message-Id: <20200601075218.65618-13-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 In order to provide a mechanism for devilering provisoning rights:
 
@@ -3504,14 +4229,77 @@ index 757cb9a4ae70..713bce437659 100644
  	default:
  		ret = -ENOIOCTLCMD;
  		break;
--- 
-2.25.4
 
-
-From 071dd88319b93ea223e9fdc3ed5d00fda14fb55e Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:10 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581665
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 85B4D60D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:12 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 61DB42076B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:12 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728388AbgFAHyM (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:54:12 -0400
+Received: from mga09.intel.com ([134.134.136.24]:24509 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726072AbgFAHyL (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:54:11 -0400
+IronPort-SDR: 
+ u8JRMOfPwR/dNZZ4N0LXTm9wFfHD6bYcgHox9mnfBooUK2HWChOIAWeI4LAmkuojlK2LP6ajPC
+ vq6OIGKk6iOA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:59 -0700
+IronPort-SDR: 
+ bWcTG6/CVtcXTJt54v4LPb+8wnJ25F5Wp8z3yPVdUADx1Dz8jRIUl0tzhMezssH/7Feq6Pubyk
+ bPV2iKUPa//A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879712"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:53:52 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 1 Jun 2020 10:52:10 +0300
-Subject: [PATCH 13/21] x86/sgx: Add a page reclaimer
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-mm@kvack.org, Jethro Beekman <jethro@fortanix.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Seth Moore <sethmo@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 13/21] x86/sgx: Add a page reclaimer
+Date: Mon,  1 Jun 2020 10:52:10 +0300
+Message-Id: <20200601075218.65618-14-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 There is a limited amount of EPC available. Therefore, some of it must be
 copied to the regular memory, and only subset kept in the SGX reserved
@@ -4777,14 +5565,73 @@ index aae6bfb3bc8a..f2fb7e362226 100644
  void sgx_free_epc_page(struct sgx_epc_page *page);
  
  #endif /* _X86_SGX_H */
--- 
-2.25.4
 
-
-From b227d639a36e4ce0807c1495729fcc08988caaf6 Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:11 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581663
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 9859C139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:06 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 8AC252074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:06 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1727957AbgFAHyG (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:54:06 -0400
+Received: from mga05.intel.com ([192.55.52.43]:4911 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726142AbgFAHyG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:54:06 -0400
+IronPort-SDR: 
+ F0EDIriTVuce6rTwiaI+M8TafdfIjTMNe+u1Uzj5YyqSlR2tBefflDrqQoCv/ZOvH/TTkvIchU
+ d1dcnVwcjUgw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:54:06 -0700
+IronPort-SDR: 
+ ojBqhSWHV8y6l8GtvCi2xqZFyRjZHX3TYA4ZiuPNHUtv1I4fiKQ5H6D1SJemJwiGyTd4JWvbQ7
+ lD24DcirJI2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879729"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:54:00 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 1 Jun 2020 10:52:11 +0300
-Subject: [PATCH 14/21] x86/sgx: ptrace() support for the SGX driver
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, sean.j.christopherson@intel.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 14/21] x86/sgx: ptrace() support for the SGX driver
+Date: Mon,  1 Jun 2020 10:52:11 +0300
+Message-Id: <20200601075218.65618-15-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 Add VMA callbacks for ptrace() that can be used with debug enclaves.
 With debug enclaves data can be read and write the memory word at a time
@@ -4898,15 +5745,77 @@ index 325b918ab8d2..459240d0512f 100644
  };
  
  /**
--- 
-2.25.4
 
-
-From 8c8567b137ccbe27229d4b7c0e2a1ed3c14381ce Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Mon, 1 Jun 2020 10:52:12 +0300
-Subject: [PATCH 15/21] x86/vdso: Add support for exception fixup in vDSO
+From patchwork Mon Jun  1 07:52:12 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581691
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id F0FBE139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:56:28 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id CF2C920734
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:56:28 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1726056AbgFAH42 (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:56:28 -0400
+Received: from mga04.intel.com ([192.55.52.120]:7196 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726072AbgFAH42 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:56:28 -0400
+IronPort-SDR: 
+ sGyXPydxnVTpLv/6jxBN40l/9+sJ3pbzOjo7rLLLIsEzSXBZcDMrHbV2M7UDae7wVy0hPFHqqE
+ OWqJFCAxaiVQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:54:13 -0700
+IronPort-SDR: 
+ 4mXdWG5EHlcUw0yIE/q85MJCa9bQZDxBQ2DDoYVaio3u2T/rcH7CQcCNmdRItG9kpklUCwd+kh
+ FCSzrAj3R6Wg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879748"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:54:07 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 15/21] x86/vdso: Add support for exception fixup in vDSO
  functions
+Date: Mon,  1 Jun 2020 10:52:12 +0300
+Message-Id: <20200601075218.65618-16-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
+
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
 The basic concept and implementation is very similar to the kernel's
 exception fixup mechanism.  The key differences are that the kernel
@@ -5115,10 +6024,10 @@ index 000000000000..aafdac396948
 +#endif /* __VDSO_EXTABLE_H */
 +
 diff --git a/arch/x86/entry/vdso/vdso-layout.lds.S b/arch/x86/entry/vdso/vdso-layout.lds.S
-index ea7e0155c604..e9994ee62fdd 100644
+index 4d152933547d..dc8da7695859 100644
 --- a/arch/x86/entry/vdso/vdso-layout.lds.S
 +++ b/arch/x86/entry/vdso/vdso-layout.lds.S
-@@ -68,11 +68,18 @@ SECTIONS
+@@ -75,11 +75,18 @@ SECTIONS
  	 * stuff that isn't used at runtime in between.
  	 */
  
@@ -5260,14 +6169,76 @@ index bbcdc7b8f963..b5d23470f56b 100644
  #endif /* __ASSEMBLER__ */
  
  #endif /* _ASM_X86_VDSO_H */
--- 
-2.25.4
 
+From patchwork Mon Jun  1 07:52:13 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581667
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id A7BBF139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:20 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 978BE20734
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:20 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728105AbgFAHyU (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:54:20 -0400
+Received: from mga07.intel.com ([134.134.136.100]:48831 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726072AbgFAHyT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:54:19 -0400
+IronPort-SDR: 
+ tBKf9v4VTpIj8RxT59aZg6WJ4VPIEfHuhjc1dPz93SKr6OImwsgEivQVrKit9Gq39ftG/PXWM/
+ UzIc68g3uA4Q==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:54:19 -0700
+IronPort-SDR: 
+ cZFBBgcX9XxkzpqURSrIaPiLAU1wWIOoVyqLwSEsBPI+k8IZRfXZGYj4may5kZY7t6ZPvehPqi
+ uFruAtTWccvw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879764"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:54:13 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 16/21] x86/fault: Add helper function to sanitize error
+ code
+Date: Mon,  1 Jun 2020 10:52:13 +0300
+Message-Id: <20200601075218.65618-17-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
-From 67bddf675c83039d8327bf0e1c2be385ea5fce7d Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Mon, 1 Jun 2020 10:52:13 +0300
-Subject: [PATCH 16/21] x86/fault: Add helper function to sanitize error code
 
 Add helper function to sanitize error code to prepare for vDSO exception
 fixup, which will expose the error code to userspace and runs before
@@ -5281,7 +6252,7 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  1 file changed, 17 insertions(+), 7 deletions(-)
 
 diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 03c86f982d98..bf0232ce5dd7 100644
+index 16c53c874bb9..23666e34abbc 100644
 --- a/arch/x86/mm/fault.c
 +++ b/arch/x86/mm/fault.c
 @@ -704,6 +704,18 @@ pgtable_bad(struct pt_regs *regs, unsigned long error_code,
@@ -5336,15 +6307,77 @@ index 03c86f982d98..bf0232ce5dd7 100644
  	set_signal_archinfo(address, error_code);
  
  #ifdef CONFIG_MEMORY_FAILURE
--- 
-2.25.4
 
+From patchwork Mon Jun  1 07:52:14 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581669
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 4564960D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:28 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 37F572074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:28 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728123AbgFAHy1 (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:54:27 -0400
+Received: from mga18.intel.com ([134.134.136.126]:18154 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727828AbgFAHy0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:54:26 -0400
+IronPort-SDR: 
+ 5vSDb7MnqOCJdPXmsMX/7MBQGBff2hpMmDL4a9w0LmfxxVTwqI8sbXESReHLZFmpL7IeRGRcV+
+ IrGmHi1jwcCQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:54:26 -0700
+IronPort-SDR: 
+ 1ts4H7NbqFNQbcSptf7aHjsDnKZJLpipkvvo0ARX+Hklwnn2EgJ1U6fqkn5COgvrvND5sLHVV0
+ EdgfcueKbWXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879843"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:54:20 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 17/21] x86/traps: Attempt to fixup exceptions in vDSO
+ before signaling
+Date: Mon,  1 Jun 2020 10:52:14 +0300
+Message-Id: <20200601075218.65618-18-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
-From f71cdb7e6ce5e7036228e92929589e26081ff7ad Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Mon, 1 Jun 2020 10:52:14 +0300
-Subject: [PATCH 17/21] x86/traps: Attempt to fixup exceptions in vDSO before
- signaling
 
 vDSO functions can now leverage an exception fixup mechanism similar to
 kernel exception fixup.  For vDSO exception fixup, the initial user is
@@ -5377,10 +6410,10 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  2 files changed, 22 insertions(+)
 
 diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 6ef00eb6fbb9..a814b1aea94d 100644
+index d54cffdc7cac..cce8fb2c560d 100644
 --- a/arch/x86/kernel/traps.c
 +++ b/arch/x86/kernel/traps.c
-@@ -56,6 +56,7 @@
+@@ -57,6 +57,7 @@
  #include <asm/umip.h>
  #include <asm/insn.h>
  #include <asm/insn-eval.h>
@@ -5388,7 +6421,7 @@ index 6ef00eb6fbb9..a814b1aea94d 100644
  
  #ifdef CONFIG_X86_64
  #include <asm/x86_init.h>
-@@ -205,6 +206,9 @@ do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
+@@ -206,6 +207,9 @@ do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
  		tsk->thread.error_code = error_code;
  		tsk->thread.trap_nr = trapnr;
  		die(str, regs, error_code);
@@ -5398,7 +6431,7 @@ index 6ef00eb6fbb9..a814b1aea94d 100644
  	}
  
  	/*
-@@ -518,6 +522,9 @@ dotraplinkage void do_general_protection(struct pt_regs *regs, long error_code)
+@@ -538,6 +542,9 @@ dotraplinkage void do_general_protection(struct pt_regs *regs, long error_code)
  		tsk->thread.error_code = error_code;
  		tsk->thread.trap_nr = X86_TRAP_GP;
  
@@ -5408,7 +6441,7 @@ index 6ef00eb6fbb9..a814b1aea94d 100644
  		show_signal(tsk, SIGSEGV, "", desc, regs, error_code);
  		force_sig(SIGSEGV);
  
-@@ -762,6 +769,10 @@ dotraplinkage void do_debug(struct pt_regs *regs, long error_code)
+@@ -791,6 +798,10 @@ dotraplinkage void do_debug(struct pt_regs *regs, long error_code)
  							SIGTRAP) == NOTIFY_STOP)
  		goto exit;
  
@@ -5419,7 +6452,7 @@ index 6ef00eb6fbb9..a814b1aea94d 100644
  	/*
  	 * Let others (NMI) know that the debug stack is in use
  	 * as we may switch to the interrupt stack.
-@@ -842,6 +853,9 @@ static void math_error(struct pt_regs *regs, int error_code, int trapnr)
+@@ -871,6 +882,9 @@ static void math_error(struct pt_regs *regs, int error_code, int trapnr)
  	if (!si_code)
  		return;
  
@@ -5430,7 +6463,7 @@ index 6ef00eb6fbb9..a814b1aea94d 100644
  			(void __user *)uprobe_get_trap_addr(regs));
  }
 diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index bf0232ce5dd7..e2a497692b80 100644
+index 23666e34abbc..e9ed3c7299ac 100644
 --- a/arch/x86/mm/fault.c
 +++ b/arch/x86/mm/fault.c
 @@ -30,6 +30,7 @@
@@ -5462,14 +6495,78 @@ index bf0232ce5dd7..e2a497692b80 100644
  	set_signal_archinfo(address, error_code);
  
  #ifdef CONFIG_MEMORY_FAILURE
--- 
-2.25.4
 
+From patchwork Mon Jun  1 07:52:15 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581685
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 713C2139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:55:10 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 5960B2074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:55:10 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728089AbgFAHzG (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:55:06 -0400
+Received: from mga17.intel.com ([192.55.52.151]:59282 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728423AbgFAHzF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:55:05 -0400
+IronPort-SDR: 
+ 0ptRb6RaXgqKFPUtMAvCVrWNoa4d6l8b5gNkGc06DXYXT5xXU+uaCTQ6fFvhtIgtMGnO0Q5olg
+ YCjfrB8rIf6Q==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:54:34 -0700
+IronPort-SDR: 
+ DWEPvYCnd7O+mGGp4fS6gaw+wkzejVYUFT0gI0Efq//fTIGT9qmttc3lsmM/FWKHTcu8UNqYkq
+ 2GXswSGBZUkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879940"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:54:26 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 18/21] x86/vdso: Implement a vDSO for Intel SGX enclave
+ call
+Date: Mon,  1 Jun 2020 10:52:15 +0300
+Message-Id: <20200601075218.65618-19-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
-From 5b7d8c3ec7ef3d7e500acd70af4de5b17a81a1d3 Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Mon, 1 Jun 2020 10:52:15 +0300
-Subject: [PATCH 18/21] x86/vdso: Implement a vDSO for Intel SGX enclave call
 
 An SGX runtime must be aware of the exceptions, which happen inside an
 enclave. Introduce a vDSO call that wraps EENTER/ERESUME cycle and returns
@@ -5788,14 +6885,73 @@ index 57d0d30c79b3..3760e5d5dc0c 100644
 +					sgx_enclave_exit_handler_t handler);
 +
  #endif /* _UAPI_ASM_X86_SGX_H */
--- 
-2.25.4
 
-
-From 8168ad899fc510067b030eefed71d213c09e52cd Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:16 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581675
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 5CA8A60D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:43 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 4924A20734
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:43 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728445AbgFAHym (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:54:42 -0400
+Received: from mga14.intel.com ([192.55.52.115]:9711 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728089AbgFAHyl (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:54:41 -0400
+IronPort-SDR: 
+ eeqfPSzxQxX7m2+NnxQotPQNFofdKzeAKW2CckkpvyANDk4oXUHn98rxCvocbd/sbUf/NKFHWj
+ 3N9OHacT1dvg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:54:41 -0700
+IronPort-SDR: 
+ U999mXn+Sfq8KBi8KtRm8o6yj2jIFRoM4fV1+UjjXYIB50OjOoXJA7gNJ9DdLKZsz8NNtiO/9i
+ fG0WbdF5uzyw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879952"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:54:35 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 1 Jun 2020 10:52:16 +0300
-Subject: [PATCH 19/21] selftests/x86: Add a selftest for SGX
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kselftest@vger.kernel.org, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, sean.j.christopherson@intel.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 19/21] selftests/x86: Add a selftest for SGX
+Date: Mon,  1 Jun 2020 10:52:16 +0300
+Message-Id: <20200601075218.65618-20-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 Add a selftest for SGX. It is a trivial test where a simple enclave
 copies one 64-bit word of memory between two memory locations.
@@ -5829,7 +6985,7 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  create mode 100644 tools/testing/selftests/sgx/test_encl_bootstrap.S
 
 diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index b93fa645ee54..3fa142abdfee 100644
+index 2ff68702fd41..008497495ae4 100644
 --- a/tools/testing/selftests/Makefile
 +++ b/tools/testing/selftests/Makefile
 @@ -64,6 +64,7 @@ TARGETS += user
@@ -7099,15 +8255,74 @@ index 000000000000..6836ea86126e
 +	.balign 4096
 +	.space 8192
 +encl_stack:
--- 
-2.25.4
 
-
-From dd7ca1046d3ddfa27ffcf72c358e88cb6c10a7f4 Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:17 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581681
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 3D376139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:52 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 25A1620734
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:52 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728147AbgFAHys (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:54:48 -0400
+Received: from mga11.intel.com ([192.55.52.93]:20054 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728089AbgFAHys (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:54:48 -0400
+IronPort-SDR: 
+ SS+KVN6bOJKGTxha5kVbA3bbpUjWS7nRXipXR6Cf5D6TZwsuumdWBVmisC6a7kgQ9p0cwQCrgk
+ V3OcBMNc1g4A==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:54:47 -0700
+IronPort-SDR: 
+ S/UchgGB9/klTrIbdaTxWvBRyIZxBH4PuyOCBIcEKrByOKa86wAbz0DGYX6zS14k64JHaQumA9
+ IOXDzt3wgI2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879965"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:54:42 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 1 Jun 2020 10:52:17 +0300
-Subject: [PATCH 20/21] docs: x86/sgx: Document SGX micro architecture and
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-doc@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 20/21] docs: x86/sgx: Document SGX micro architecture and
  kernel internals
+Date: Mon,  1 Jun 2020 10:52:17 +0300
+Message-Id: <20200601075218.65618-21-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 Document the Intel SGX kernel architecture. The fine-grained micro
 architecture details can be looked up from Intel SDM Volume 3D.
@@ -7344,14 +8559,74 @@ index 000000000000..9609a3409ad1
 +"Supporting Third Party Attestation for Intel® SGX with Intel® Data Center
 +Attestation Primitives"
 +   https://software.intel.com/sites/default/files/managed/f1/b8/intel-sgx-support-for-third-party-attestation.pdf
--- 
-2.25.4
 
-
-From d78471f114f06c62a165593771d5159e6b83dbd1 Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:18 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581683
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id AF27460D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:55 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 977142074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:55 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728156AbgFAHyz (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:54:55 -0400
+Received: from mga07.intel.com ([134.134.136.100]:48860 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728089AbgFAHyy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:54:54 -0400
+IronPort-SDR: 
+ j3CRKgpM3WvcoNWMjL0uNX9fi7T4tNiLgKj/nwhQSRYJVYekXyKEt3zVY2lZM0Iou5Ax5NKYqI
+ YRFNoFCEEDyA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:54:54 -0700
+IronPort-SDR: 
+ 4Z+NoaAQhS2Ooz6g4003qw9yMkeXa/o15X0b3JQ4F8TRFsdMk3L3S7Tnr+CBDdFj73N4gDTfpd
+ sisgwMOSgo/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879995"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:54:48 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Mon, 1 Jun 2020 10:52:18 +0300
-Subject: [PATCH 21/21] x86/sgx: Update MAINTAINERS
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, sean.j.christopherson@intel.com,
+        yaozhangx@google.com
+Subject: [PATCH v32 21/21] x86/sgx: Update MAINTAINERS
+Date: Mon,  1 Jun 2020 10:52:18 +0300
+Message-Id: <20200601075218.65618-22-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 Add the maintainer information for the SGX subsystem.
 
@@ -7363,12 +8638,12 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  1 file changed, 11 insertions(+)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 5a5332b3591d..cc156fa350c2 100644
+index 50659d76976b..2aa6d50afc44 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -8726,6 +8726,17 @@ F:	Documentation/x86/intel_txt.rst
- F:	include/linux/tboot.h
+@@ -8840,6 +8840,17 @@ F:	Documentation/x86/intel_txt.rst
  F:	arch/x86/kernel/tboot.c
+ F:	include/linux/tboot.h
  
 +INTEL SGX
 +M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
@@ -7384,6 +8659,3 @@ index 5a5332b3591d..cc156fa350c2 100644
  INTERCONNECT API
  M:	Georgi Djakov <georgi.djakov@linaro.org>
  L:	linux-pm@vger.kernel.org
--- 
-2.25.4
-
