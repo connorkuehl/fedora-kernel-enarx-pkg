@@ -1,10 +1,73 @@
-From 163df4e8081f9b28c8ed1e74037ea10c4f5499c8 Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Tue, 7 Jul 2020 06:37:24 +0300
-Subject: [PATCH 01/24] x86/cpufeatures: x86/msr: Add Intel SGX hardware bits
+From patchwork Mon Jun  1 07:51:58 2020
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581635
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id D3D2A139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:52:36 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id BB26020772
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:52:36 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1726056AbgFAHwg (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:52:36 -0400
+Received: from mga03.intel.com ([134.134.136.65]:18153 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725935AbgFAHwg (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:52:36 -0400
+IronPort-SDR: 
+ +N/Bb2p3OorGP5DdOmo2cHCiw9qV6bxOS+8aAetYB4Kc3Xj3NPCSR7TpywENi00tJbfpmkuNP5
+ 5fFs5PS/uo5Q==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:52:35 -0700
+IronPort-SDR: 
+ rM00L9aGgWqAq7/TnZdaP5zYOnk+SGkAOBwbiWRxt3BCkej7vW+YFP/2cIunPZF1AS+S8v06xl
+ YAk4e7/baNVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879453"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:52:29 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 01/21] x86/cpufeatures: x86/msr: Add Intel SGX hardware
+ bits
+Date: Mon,  1 Jun 2020 10:51:58 +0300
+Message-Id: <20200601075218.65618-2-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
+
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
 Add X86_FEATURE_SGX from CPUID.(EAX=7, ECX=1), which informs whether the
 CPU has SGX.
@@ -12,13 +75,13 @@ CPU has SGX.
 Add X86_FEATURE_SGX1 and X86_FEATURE_SGX2 from CPUID.(EAX=12H, ECX=0),
 which describe the level of SGX support available [1].
 
-Add IA32_FEATURE_CONTROL.SGX_ENABLE. BIOS can use this bit to opt-in SGX
+Add IA32_FEATURE_CONTROL_SGX_ENABLE. BIOS can use this bit to opt-in SGX
 before locking the feature control MSR [2].
 
 [1] Intel SDM: 36.7.2 Intel® SGX Resource Enumeration Leaves
 [2] Intel SDM: 36.7.1 Intel® SGX Opt-In Configuration
 
-Reviewed-by: Borislav Petkov <bp@alien8.de>
+Cc: Borislav Petkov <bp@alien8.de>
 Acked-by: Jethro Beekman <jethro@fortanix.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
@@ -30,10 +93,11 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  arch/x86/include/asm/msr-index.h         |  1 +
  arch/x86/include/asm/required-features.h |  2 +-
  arch/x86/kernel/cpu/common.c             |  4 ++++
- 6 files changed, 30 insertions(+), 7 deletions(-)
+ tools/arch/x86/include/asm/cpufeatures.h |  7 ++++++-
+ 7 files changed, 36 insertions(+), 8 deletions(-)
 
 diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
-index 59bf91c..efbdba5 100644
+index 59bf91c57aa8..efbdba5170a3 100644
 --- a/arch/x86/include/asm/cpufeature.h
 +++ b/arch/x86/include/asm/cpufeature.h
 @@ -30,6 +30,7 @@ enum cpuid_leafs
@@ -63,7 +127,7 @@ index 59bf91c..efbdba5 100644
  #define cpu_has(c, bit)							\
  	(__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 :	\
 diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 02dabc9..545ac3e 100644
+index db189945e9b0..fc4422f747d5 100644
 --- a/arch/x86/include/asm/cpufeatures.h
 +++ b/arch/x86/include/asm/cpufeatures.h
 @@ -13,7 +13,7 @@
@@ -83,7 +147,7 @@ index 02dabc9..545ac3e 100644
  #define X86_FEATURE_BMI1		( 9*32+ 3) /* 1st group bit manipulation extensions */
  #define X86_FEATURE_HLE			( 9*32+ 4) /* Hardware Lock Elision */
  #define X86_FEATURE_AVX2		( 9*32+ 5) /* AVX2 instructions */
-@@ -373,6 +374,10 @@
+@@ -372,6 +373,10 @@
  #define X86_FEATURE_CORE_CAPABILITIES	(18*32+30) /* "" IA32_CORE_CAPABILITIES MSR */
  #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
  
@@ -95,7 +159,7 @@ index 02dabc9..545ac3e 100644
   * BUG word(s)
   */
 diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-index 4ea8584..dbe534d 100644
+index 4ea8584682f9..dbe534d5153f 100644
 --- a/arch/x86/include/asm/disabled-features.h
 +++ b/arch/x86/include/asm/disabled-features.h
 @@ -28,13 +28,18 @@
@@ -150,10 +214,10 @@ index 4ea8584..dbe534d 100644
  
  #endif /* _ASM_X86_DISABLED_FEATURES_H */
 diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 3efde60..d9d7053 100644
+index 12c9684d59ba..a277d33006c0 100644
 --- a/arch/x86/include/asm/msr-index.h
 +++ b/arch/x86/include/asm/msr-index.h
-@@ -579,6 +579,7 @@
+@@ -575,6 +575,7 @@
  #define FEAT_CTL_LOCKED				BIT(0)
  #define FEAT_CTL_VMX_ENABLED_INSIDE_SMX		BIT(1)
  #define FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX	BIT(2)
@@ -162,7 +226,7 @@ index 3efde60..d9d7053 100644
  
  #define MSR_IA32_TSC_ADJUST             0x0000003b
 diff --git a/arch/x86/include/asm/required-features.h b/arch/x86/include/asm/required-features.h
-index 6847d85..039e58b 100644
+index 6847d85400a8..039e58be2fe6 100644
 --- a/arch/x86/include/asm/required-features.h
 +++ b/arch/x86/include/asm/required-features.h
 @@ -101,6 +101,6 @@
@@ -174,10 +238,10 @@ index 6847d85..039e58b 100644
  
  #endif /* _ASM_X86_REQUIRED_FEATURES_H */
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index c669a57..d04e066 100644
+index bed0cb83fe24..f71fb926edb1 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -892,6 +892,10 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+@@ -915,6 +915,10 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
  		c->x86_capability[CPUID_D_1_EAX] = eax;
  	}
  
@@ -188,15 +252,108 @@ index c669a57..d04e066 100644
  	/* AMD-defined flags: level 0x80000001 */
  	eax = cpuid_eax(0x80000000);
  	c->extended_cpuid_level = eax;
--- 
-2.25.4
+diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
+index db189945e9b0..fc4422f747d5 100644
+--- a/tools/arch/x86/include/asm/cpufeatures.h
++++ b/tools/arch/x86/include/asm/cpufeatures.h
+@@ -13,7 +13,7 @@
+ /*
+  * Defines x86 CPU feature bits
+  */
+-#define NCAPINTS			19	   /* N 32-bit words worth of info */
++#define NCAPINTS			20	   /* N 32-bit words worth of info */
+ #define NBUGINTS			1	   /* N 32-bit bug flags */
+ 
+ /*
+@@ -238,6 +238,7 @@
+ /* Intel-defined CPU features, CPUID level 0x00000007:0 (EBX), word 9 */
+ #define X86_FEATURE_FSGSBASE		( 9*32+ 0) /* RDFSBASE, WRFSBASE, RDGSBASE, WRGSBASE instructions*/
+ #define X86_FEATURE_TSC_ADJUST		( 9*32+ 1) /* TSC adjustment MSR 0x3B */
++#define X86_FEATURE_SGX			( 9*32+ 2) /* Software Guard Extensions */
+ #define X86_FEATURE_BMI1		( 9*32+ 3) /* 1st group bit manipulation extensions */
+ #define X86_FEATURE_HLE			( 9*32+ 4) /* Hardware Lock Elision */
+ #define X86_FEATURE_AVX2		( 9*32+ 5) /* AVX2 instructions */
+@@ -372,6 +373,10 @@
+ #define X86_FEATURE_CORE_CAPABILITIES	(18*32+30) /* "" IA32_CORE_CAPABILITIES MSR */
+ #define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
+ 
++/* Intel-defined SGX features, CPUID level 0x00000012:0 (EAX), word 19 */
++#define X86_FEATURE_SGX1		(19*32+ 0) /* SGX1 leaf functions */
++#define X86_FEATURE_SGX2		(19*32+ 1) /* SGX2 leaf functions */
++
+ /*
+  * BUG word(s)
+  */
 
+From patchwork Mon Jun  1 07:51:59 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581639
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 24C9460D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:52:47 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 15CED2076B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:52:47 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1726056AbgFAHwq (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:52:46 -0400
+Received: from mga12.intel.com ([192.55.52.136]:20495 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728076AbgFAHwq (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:52:46 -0400
+IronPort-SDR: 
+ VTirbKc63T9VELkt7fOKyPmxnk/aDZKEzgSrbFLU5GGsq4JJLvEamwOAtoaefJiy9pcCD6RV0l
+ ZY7TYy12IAvQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:52:46 -0700
+IronPort-SDR: 
+ 1T3G+XiyMB0knrLKdWu1Vc061eb1t3yR1M7UM0wdQ45ACsWNLn8A6r2mXZSpNT6uq7QKfHpb5U
+ bbr8HJN5WbTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879473"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:52:35 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 02/21] x86/cpufeatures: x86/msr: Add Intel SGX Launch
+ Control hardware bits
+Date: Mon,  1 Jun 2020 10:51:59 +0300
+Message-Id: <20200601075218.65618-3-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
-From 6fff7af3be311c3d0ca22faba2ec3bcdfb253eca Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Tue, 7 Jul 2020 06:37:25 +0300
-Subject: [PATCH 02/24] x86/cpufeatures: x86/msr: Add Intel SGX Launch Control
- hardware bits
 
 Add X86_FEATURE_SGX_LC, which informs whether or not the CPU supports SGX
 Launch Control.
@@ -206,9 +363,9 @@ SHA256 hash of a 3072-bit RSA public key. SGX backed software packages, so
 called enclaves, are always signed. All enclaves signed with the public key
 are unconditionally allowed to initialize. [1]
 
-Add FEAT_CTL_SGX_LC_ENABLED, which informs whether the aformentioned MSRs
-are writable or not. If the bit is off, the public key MSRs are read-only
-for the OS.
+Add FEATURE_CONTROL_SGX_LE_WR bit of the feature control MSR, which informs
+whether the aformentioned MSRs are writable or not. If the bit is off, the
+public key MSRs are read-only for the OS.
 
 If the MSRs are read-only, the platform must provide a launch enclave (LE).
 LE can create cryptographic tokens for other enclaves that they can pass
@@ -220,7 +377,6 @@ the control of the launch decisions from the kernel.
 
 [1] Intel SDM: 38.1.4 Intel SGX Launch Control Configuration
 
-Reviewed-by: Borislav Petkov <bp@alien8.de>
 Acked-by: Jethro Beekman <jethro@fortanix.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
@@ -231,7 +387,7 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  2 files changed, 8 insertions(+)
 
 diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 545ac3e..0a4541e 100644
+index fc4422f747d5..c2f8962e8468 100644
 --- a/arch/x86/include/asm/cpufeatures.h
 +++ b/arch/x86/include/asm/cpufeatures.h
 @@ -352,6 +352,7 @@
@@ -243,10 +399,10 @@ index 545ac3e..0a4541e 100644
  /* AMD-defined CPU features, CPUID level 0x80000007 (EBX), word 17 */
  #define X86_FEATURE_OVERFLOW_RECOV	(17*32+ 0) /* MCA overflow recovery support */
 diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index d9d7053..d185052 100644
+index a277d33006c0..4b2e9c25cde3 100644
 --- a/arch/x86/include/asm/msr-index.h
 +++ b/arch/x86/include/asm/msr-index.h
-@@ -579,6 +579,7 @@
+@@ -575,6 +575,7 @@
  #define FEAT_CTL_LOCKED				BIT(0)
  #define FEAT_CTL_VMX_ENABLED_INSIDE_SMX		BIT(1)
  #define FEAT_CTL_VMX_ENABLED_OUTSIDE_SMX	BIT(2)
@@ -254,7 +410,7 @@ index d9d7053..d185052 100644
  #define FEAT_CTL_SGX_ENABLED			BIT(18)
  #define FEAT_CTL_LMCE_ENABLED			BIT(20)
  
-@@ -599,6 +600,12 @@
+@@ -595,6 +596,12 @@
  #define MSR_IA32_UCODE_WRITE		0x00000079
  #define MSR_IA32_UCODE_REV		0x0000008b
  
@@ -267,19 +423,80 @@ index d9d7053..d185052 100644
  #define MSR_IA32_SMM_MONITOR_CTL	0x0000009b
  #define MSR_IA32_SMBASE			0x0000009e
  
--- 
-2.25.4
 
+From patchwork Mon Jun  1 07:52:00 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581641
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 4DBAB139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:52:51 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 3A6862074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:52:51 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728207AbgFAHwu (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:52:50 -0400
+Received: from mga12.intel.com ([192.55.52.136]:20495 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAHwu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:52:50 -0400
+IronPort-SDR: 
+ +/L0KEGg4+JmYihYS9Hp4kQzfqXZdSCBF2DJBKhiEKbvD5v8elbV6cO8Pd2+NWpQ4+qWEOoPBs
+ ai4gFFf8ZlOQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:52:50 -0700
+IronPort-SDR: 
+ ZENFADukCaAAbiwEpdQOQCnE+MWwKzsbRYO4s48SXz4WquW1XJ+3jTtQvL4NxYpt133NGqC9Pl
+ BIlmedTwh7BQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879489"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:52:44 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 03/21] x86/mm: x86/sgx: Signal SIGSEGV with PF_SGX
+Date: Mon,  1 Jun 2020 10:52:00 +0300
+Message-Id: <20200601075218.65618-4-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
-From 4af9d89db71b762ebe179fa1e1712b604323e99f Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Tue, 7 Jul 2020 06:37:26 +0300
-Subject: [PATCH 03/24] x86/mm: x86/sgx: Signal SIGSEGV with PF_SGX
 
 Include SGX bit to the PF error codes and throw SIGSEGV with PF_SGX when
 a #PF with SGX set happens.
 
-CPU throws a #PF with the SGX set in the event of Enclave Page Cache Map
+CPU throws a #PF with the SGX bit in the event of Enclave Page Cache Map
 (EPCM) conflict. The EPCM is a CPU-internal table, which describes the
 properties for a enclave page. Enclaves are measured and signed software
 entities, which SGX hosts. [1]
@@ -288,10 +505,10 @@ Although the primary purpose of the EPCM conflict checks  is to prevent
 malicious accesses to an enclave, an illegit access can happen also for
 legit reasons.
 
-All SGX reserved memory, including EPCM is encrypted with a transient key
-that does not survive from the power transition. Throwing a SIGSEGV allows
-user space software to react when this happens (e.g. recreate the enclave,
-which was invalidated).
+All SGX reserved memory, including EPCM is encrypted with a transient
+key that does not survive from the power transition. Throwing a SIGSEGV
+allows user space software react when this happens (e.g. rec-create the
+enclave, which was invalidated).
 
 [1] Intel SDM: 36.5.1 Enclave Page Cache Map (EPCM)
 
@@ -299,35 +516,15 @@ Acked-by: Jethro Beekman <jethro@fortanix.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/include/asm/traps.h | 14 ++++++++------
+ arch/x86/include/asm/traps.h |  1 +
  arch/x86/mm/fault.c          | 13 +++++++++++++
- 2 files changed, 21 insertions(+), 6 deletions(-)
+ 2 files changed, 14 insertions(+)
 
 diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
-index c26a7e1..0ac9caf 100644
+index c26a7e1d8a2c..07dd9f74d65a 100644
 --- a/arch/x86/include/asm/traps.h
 +++ b/arch/x86/include/asm/traps.h
-@@ -157,12 +157,13 @@ enum {
- /*
-  * Page fault error code bits:
-  *
-- *   bit 0 ==	 0: no page found	1: protection fault
-- *   bit 1 ==	 0: read access		1: write access
-- *   bit 2 ==	 0: kernel-mode access	1: user-mode access
-- *   bit 3 ==				1: use of reserved bit detected
-- *   bit 4 ==				1: fault was an instruction fetch
-- *   bit 5 ==				1: protection keys block access
-+ *   bit 0  ==	 0: no page found	1: protection fault
-+ *   bit 1  ==	 0: read access		1: write access
-+ *   bit 2  ==	 0: kernel-mode access	1: user-mode access
-+ *   bit 3  ==				1: use of reserved bit detected
-+ *   bit 4  ==				1: fault was an instruction fetch
-+ *   bit 5  ==				1: protection keys block access
-+ *   bit 15 ==				1: inside SGX enclave
-  */
- enum x86_pf_error_code {
- 	X86_PF_PROT	=		1 << 0,
-@@ -171,5 +172,6 @@ enum x86_pf_error_code {
+@@ -171,5 +171,6 @@ enum x86_pf_error_code {
  	X86_PF_RSVD	=		1 << 3,
  	X86_PF_INSTR	=		1 << 4,
  	X86_PF_PK	=		1 << 5,
@@ -335,7 +532,7 @@ index c26a7e1..0ac9caf 100644
  };
  #endif /* _ASM_X86_TRAPS_H */
 diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index e3c681b..41e6498 100644
+index a51df516b87b..16c53c874bb9 100644
 --- a/arch/x86/mm/fault.c
 +++ b/arch/x86/mm/fault.c
 @@ -1201,6 +1201,19 @@ access_error(unsigned long error_code, struct vm_area_struct *vma)
@@ -358,17 +555,73 @@ index e3c681b..41e6498 100644
  	/*
  	 * Make sure to check the VMA so that we do not perform
  	 * faults just to hit a X86_PF_PK as soon as we fill in a
--- 
-2.25.4
 
-
-From b60934ae18f7203c0aed786fc69061a6b40fed0b Mon Sep 17 00:00:00 2001
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 7 Jul 2020 06:37:27 +0300
-Subject: [PATCH 04/24] x86/sgx: Add SGX microarchitectural data structures
+From patchwork Mon Jun  1 07:52:01 2020
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581643
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id C412A139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:52:58 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id A123F2074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:52:58 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728166AbgFAHw6 (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:52:58 -0400
+Received: from mga03.intel.com ([134.134.136.65]:18164 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAHw5 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:52:57 -0400
+IronPort-SDR: 
+ 8TEoa029wiGpnuxX/DTr44oKdmZI7b3OnZsQm8UyfOHHMIZYHpZ6qP7bLJZxtIsZApEUS+NEwY
+ YoMDTsuP6rtQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:52:56 -0700
+IronPort-SDR: 
+ hFJX0y9w7oDgLJtqArR6y+7ZOylZFnJqPMyQTWyGKccO73sYNKb/3sb9mDGOjpd6idtenk05kx
+ fkiTUcGRse2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879507"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:52:51 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, sean.j.christopherson@intel.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 04/21] x86/sgx: Add SGX microarchitectural data structures
+Date: Mon,  1 Jun 2020 10:52:01 +0300
+Message-Id: <20200601075218.65618-5-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 Define the SGX microarchitectural data structures used by various SGX
 opcodes. This is not an exhaustive representation of all SGX data
@@ -387,7 +640,7 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
 diff --git a/arch/x86/kernel/cpu/sgx/arch.h b/arch/x86/kernel/cpu/sgx/arch.h
 new file mode 100644
-index 0000000..ddae55e
+index 000000000000..ddae55e9d4d8
 --- /dev/null
 +++ b/arch/x86/kernel/cpu/sgx/arch.h
 @@ -0,0 +1,343 @@
@@ -734,17 +987,73 @@ index 0000000..ddae55e
 +#define SGX_LAUNCH_TOKEN_SIZE 304
 +
 +#endif /* _ASM_X86_SGX_ARCH_H */
--- 
-2.25.4
 
-
-From 54a907444170fe4fc58630050662ede5fe425eaa Mon Sep 17 00:00:00 2001
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 7 Jul 2020 06:37:28 +0300
-Subject: [PATCH 05/24] x86/sgx: Add wrappers for ENCLS leaf functions
+From patchwork Mon Jun  1 07:52:02 2020
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581645
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 1A9F460D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:05 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 017AF2074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:05 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1726901AbgFAHxE (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:53:04 -0400
+Received: from mga09.intel.com ([134.134.136.24]:24397 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAHxE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:53:04 -0400
+IronPort-SDR: 
+ 1n2oipMBx4+pioN44Es8Lqo/Vgwbx+D4ySJ6mXmuTuPPnreOidWGrOzLZON++gCHJSa9W7WflT
+ 3++dqXv7vo7Q==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:03 -0700
+IronPort-SDR: 
+ A5KNQZEzlL1ZJTVvktEpgPrDKPZDtlqEYH4nDSMJKiCdkKZPHpzxVOHNqfqS42sv/m3lS1ngR7
+ 3yxtuOokszGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879535"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:52:57 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 05/21] x86/sgx: Add wrappers for ENCLS leaf functions
+Date: Mon,  1 Jun 2020 10:52:02 +0300
+Message-Id: <20200601075218.65618-6-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 ENCLS is a ring 0 instruction, which contains a set of leaf functions for
 managing an enclave. Enclaves are measured and signed software entities,
@@ -773,7 +1082,7 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
 diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
 new file mode 100644
-index 0000000..f716b43
+index 000000000000..f716b4328614
 --- /dev/null
 +++ b/arch/x86/kernel/cpu/sgx/encls.h
 @@ -0,0 +1,238 @@
@@ -1015,14 +1324,75 @@ index 0000000..f716b43
 +}
 +
 +#endif /* _X86_ENCLS_H */
--- 
-2.25.4
 
+From patchwork Mon Jun  1 07:52:03 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581647
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 6414060D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:11 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 54F202074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:11 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728258AbgFAHxL (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:53:11 -0400
+Received: from mga03.intel.com ([134.134.136.65]:18181 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAHxK (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:53:10 -0400
+IronPort-SDR: 
+ HIUsAgAh2vUEeCfthRwF1g7vBnq25A00X7CrB8zrDcngFI9fixov1ilRTWjhQHWJhyBx4b9wOk
+ 7uZUFrH/SuNQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:10 -0700
+IronPort-SDR: 
+ FpY+mIoI98KgMB1r0P7MNmsyVxuQnpX+LR53Wsu3vK1fOp57D3ywFyAxTjSVJUYeGaZx0/Q4Se
+ 2RTZ8CcQH7YQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879558"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:53:04 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 06/21] x86/cpu/intel: Detect SGX support
+Date: Mon,  1 Jun 2020 10:52:03 +0300
+Message-Id: <20200601075218.65618-7-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
-From 33cc9ccb7ddf48d525e1f960a20a0ad135d9f1ba Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Tue, 7 Jul 2020 06:37:29 +0300
-Subject: [PATCH 06/24] x86/cpu/intel: Detect SGX support
 
 Configure SGX as part of feature control MSR initialization and update
 the associated X86_FEATURE flags accordingly.  Because the kernel will
@@ -1055,7 +1425,7 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  1 file changed, 31 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
-index 29a3bed..c3afcd2 100644
+index 29a3bedabd06..c3afcd2e4342 100644
 --- a/arch/x86/kernel/cpu/feat_ctl.c
 +++ b/arch/x86/kernel/cpu/feat_ctl.c
 @@ -93,16 +93,35 @@ static void init_vmx_capabilities(struct cpuinfo_x86 *c)
@@ -1125,14 +1495,72 @@ index 29a3bed..c3afcd2 100644
 +		clear_sgx_caps();
 +	}
  }
--- 
-2.25.4
 
-
-From ec4c586c9bd33035d3823e803171153a5bee825f Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:04 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581649
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 0124460D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:17 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id E4DC9207BC
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:16 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728275AbgFAHxQ (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:53:16 -0400
+Received: from mga03.intel.com ([134.134.136.65]:18186 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAHxQ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:53:16 -0400
+IronPort-SDR: 
+ NBXu+W4QNESf8Y8Bj3tApc8+wK3ntUwFc/YQG9LZADB9q1ZN/UZcyXc1kga2liaa+yMEXmrvE6
+ QkBSqMVS6mPw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:16 -0700
+IronPort-SDR: 
+ PtTTqghyPNi5ol6U3rUdS7wgwi+UMXQYkXM5ECw3C8MpknElsdi3+kZa0zK+BCqLi+OpwZA/rg
+ 9rasj/zodpvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879578"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:53:10 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 7 Jul 2020 06:37:30 +0300
-Subject: [PATCH 07/24] x86/cpu/intel: Add nosgx kernel parameter
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 07/21] x86/cpu/intel: Add nosgx kernel parameter
+Date: Mon,  1 Jun 2020 10:52:04 +0300
+Message-Id: <20200601075218.65618-8-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 Add kernel parameter to disable Intel SGX kernel support.
 
@@ -1145,7 +1573,7 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  2 files changed, 11 insertions(+)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 5e2ce88..bbf2155 100644
+index 7bc83f3d9bdf..9f7202a54db6 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
 @@ -3268,6 +3268,8 @@
@@ -1158,7 +1586,7 @@ index 5e2ce88..bbf2155 100644
  			and disable the IO APIC.  legacy for "maxcpus=0".
  
 diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
-index c3afcd2..1837df3 100644
+index c3afcd2e4342..1837df39527f 100644
 --- a/arch/x86/kernel/cpu/feat_ctl.c
 +++ b/arch/x86/kernel/cpu/feat_ctl.c
 @@ -101,6 +101,15 @@ static void clear_sgx_caps(void)
@@ -1177,15 +1605,77 @@ index c3afcd2..1837df3 100644
  void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
  {
  	bool tboot = tboot_enabled();
--- 
-2.25.4
 
-
-From 7a7b98df275138b4ac87850447f21a2d74ffd086 Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Tue, 7 Jul 2020 06:37:31 +0300
-Subject: [PATCH 08/24] x86/sgx: Initialize metadata for Enclave Page Cache
+From patchwork Mon Jun  1 07:52:05 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581651
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id B57D8139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:25 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 9D0F72074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:25 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1727828AbgFAHxZ (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:53:25 -0400
+Received: from mga07.intel.com ([134.134.136.100]:48729 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAHxZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:53:25 -0400
+IronPort-SDR: 
+ fHtDziWKzE4BW7/1+P09qrZ+EgX+GWw/tdYV1c0saioddGo4/HI9o52HCAlJyyGaPVRpe7zd5A
+ 1Z28U7ndRieA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:22 -0700
+IronPort-SDR: 
+ jsF+8bdGirKgpSi7SpnhXFVKyobiMQEg8dKfwiVYoXp+IiIxM0HVlgFH694VGiiMdt8FchLCSr
+ dF2CDxdEV8DA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879601"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:53:16 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Serge Ayoun <serge.ayoun@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 08/21] x86/sgx: Initialize metadata for Enclave Page Cache
  (EPC) sections
+Date: Mon,  1 Jun 2020 10:52:05 +0300
+Message-Id: <20200601075218.65618-9-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
+
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
 Enumerate Enclave Page Cache (EPC) sections via CPUID and add the data
 structures necessary to track EPC pages so that they can be easily borrowed
@@ -1203,21 +1693,21 @@ Signed-off-by: Serge Ayoun <serge.ayoun@intel.com>
 Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/Kconfig                 |  17 +++
+ arch/x86/Kconfig                 |  16 +++
  arch/x86/kernel/cpu/Makefile     |   1 +
  arch/x86/kernel/cpu/sgx/Makefile |   2 +
  arch/x86/kernel/cpu/sgx/main.c   | 216 +++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/sgx.h    |  52 ++++++++
+ arch/x86/kernel/cpu/sgx/sgx.h    |  53 ++++++++
  5 files changed, 288 insertions(+)
  create mode 100644 arch/x86/kernel/cpu/sgx/Makefile
  create mode 100644 arch/x86/kernel/cpu/sgx/main.c
  create mode 100644 arch/x86/kernel/cpu/sgx/sgx.h
 
 diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 2d3f963..82242a0 100644
+index 2d3f963fd6f1..d246c6071e8d 100644
 --- a/arch/x86/Kconfig
 +++ b/arch/x86/Kconfig
-@@ -1948,6 +1948,23 @@ config X86_INTEL_TSX_MODE_AUTO
+@@ -1948,6 +1948,22 @@ config X86_INTEL_TSX_MODE_AUTO
  	  side channel attacks- equals the tsx=auto command line parameter.
  endchoice
  
@@ -1229,12 +1719,11 @@ index 2d3f963..82242a0 100644
 +	select SRCU
 +	select MMU_NOTIFIER
 +	help
-+	  Intel(R) Software Guard eXtensions (SGX) is a set of CPU instructions
-+	  that can be used by applications to set aside private regions of code
-+	  and data, referred to as enclaves. An enclave's private memory can
-+	  only be accessed by code running within the enclave. Accesses from
-+	  outside the enclave, including other enclaves, are disallowed by
-+	  hardware.
++	  Intel(R) SGX is a set of CPU instructions that can be used by
++	  applications to set aside private regions of code and data, referred
++	  to as enclaves. An enclave's private memory can only be accessed by
++	  code running within the enclave. Accesses from outside the enclave,
++	  including other enclaves, are disallowed by hardware.
 +
 +	  If unsure, say N.
 +
@@ -1242,7 +1731,7 @@ index 2d3f963..82242a0 100644
  	bool "EFI runtime service support"
  	depends on ACPI
 diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
-index 7dc4ad6..45534fb 100644
+index 7dc4ad68eb41..45534fb81007 100644
 --- a/arch/x86/kernel/cpu/Makefile
 +++ b/arch/x86/kernel/cpu/Makefile
 @@ -46,6 +46,7 @@ obj-$(CONFIG_X86_MCE)			+= mce/
@@ -1255,7 +1744,7 @@ index 7dc4ad6..45534fb 100644
  
 diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
 new file mode 100644
-index 0000000..79510ce
+index 000000000000..79510ce01b3b
 --- /dev/null
 +++ b/arch/x86/kernel/cpu/sgx/Makefile
 @@ -0,0 +1,2 @@
@@ -1263,7 +1752,7 @@ index 0000000..79510ce
 +	main.o
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
 new file mode 100644
-index 0000000..c5831e3
+index 000000000000..c5831e3db14a
 --- /dev/null
 +++ b/arch/x86/kernel/cpu/sgx/main.c
 @@ -0,0 +1,216 @@
@@ -1485,10 +1974,10 @@ index 0000000..c5831e3
 +device_initcall(sgx_init);
 diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
 new file mode 100644
-index 0000000..dff4f5f
+index 000000000000..6508bfefd6d9
 --- /dev/null
 +++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -0,0 +1,52 @@
+@@ -0,0 +1,53 @@
 +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
 +#ifndef _X86_SGX_H
 +#define _X86_SGX_H
@@ -1528,7 +2017,8 @@ index 0000000..dff4f5f
 +
 +extern struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
 +
-+static inline struct sgx_epc_section *sgx_get_epc_section(struct sgx_epc_page *page)
++static inline struct sgx_epc_section *sgx_get_epc_section(
++		struct sgx_epc_page *page)
 +{
 +	return &sgx_epc_sections[page->desc & SGX_EPC_SECTION_MASK];
 +}
@@ -1541,15 +2031,74 @@ index 0000000..dff4f5f
 +}
 +
 +#endif /* _X86_SGX_H */
--- 
-2.25.4
 
-
-From 48df642d13c94c3ff87703feafa55d1ea38450cc Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:06 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581653
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 4037060D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:30 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 32B89207BC
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:30 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728321AbgFAHx3 (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:53:29 -0400
+Received: from mga17.intel.com ([192.55.52.151]:59177 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAHx3 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:53:29 -0400
+IronPort-SDR: 
+ eoEuwJtN74dKKLg7Sx/4b41jO/zcVanicD2OZLhVrDsbk6PGPiFPL1/J6TIhypSpsPiAlD81Be
+ KJkZWxhuy+8A==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:29 -0700
+IronPort-SDR: 
+ qpoeWV5pyWWzeIe+ENsy2yXvSSEWv5qu5yR5OgR7V0+GYvn43Gw2nt77vC59x4MwlWqmmPZGXC
+ UOkFj5njH+jA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879613"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:53:23 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 7 Jul 2020 06:37:32 +0300
-Subject: [PATCH 09/24] x86/sgx: Add __sgx_alloc_epc_page() and
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 09/21] x86/sgx: Add __sgx_alloc_epc_page() and
  sgx_free_epc_page()
+Date: Mon,  1 Jun 2020 10:52:06 +0300
+Message-Id: <20200601075218.65618-10-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 Add __sgx_alloc_epc_page(), which iterates through EPC sections and borrows
 a page structure that is not used by anyone else. When a page is no longer
@@ -1562,15 +2111,15 @@ Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/kernel/cpu/sgx/main.c | 62 ++++++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/main.c | 61 ++++++++++++++++++++++++++++++++++
  arch/x86/kernel/cpu/sgx/sgx.h  |  3 ++
- 2 files changed, 65 insertions(+)
+ 2 files changed, 64 insertions(+)
 
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index c5831e3..97c6895 100644
+index c5831e3db14a..b776d249289f 100644
 --- a/arch/x86/kernel/cpu/sgx/main.c
 +++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -83,6 +83,68 @@ static bool __init sgx_page_reclaimer_init(void)
+@@ -83,6 +83,67 @@ static bool __init sgx_page_reclaimer_init(void)
  	return true;
  }
  
@@ -1583,7 +2132,6 @@ index c5831e3..97c6895 100644
 +
 +	page = list_first_entry(&section->page_list, struct sgx_epc_page, list);
 +	list_del_init(&page->list);
-+
 +	return page;
 +}
 +
@@ -1640,10 +2188,10 @@ index c5831e3..97c6895 100644
  {
  	struct sgx_epc_page *page;
 diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index dff4f5f..fce756c 100644
+index 6508bfefd6d9..aae6bfb3bc8a 100644
 --- a/arch/x86/kernel/cpu/sgx/sgx.h
 +++ b/arch/x86/kernel/cpu/sgx/sgx.h
-@@ -49,4 +49,7 @@ static inline void *sgx_get_epc_addr(struct sgx_epc_page *page)
+@@ -50,4 +50,7 @@ static inline void *sgx_get_epc_addr(struct sgx_epc_page *page)
  	return section->va + (page->desc & PAGE_MASK) - section->pa;
  }
  
@@ -1651,62 +2199,126 @@ index dff4f5f..fce756c 100644
 +void sgx_free_epc_page(struct sgx_epc_page *page);
 +
  #endif /* _X86_SGX_H */
--- 
-2.25.4
 
+From patchwork Mon Jun  1 07:52:07 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581655
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 7A278139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:36 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 68A4020734
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:36 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728347AbgFAHxg (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:53:36 -0400
+Received: from mga14.intel.com ([192.55.52.115]:9603 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAHxf (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:53:35 -0400
+IronPort-SDR: 
+ WYtNcGQYfdWYDTPcO603FMW/m9PCgHbRl5CR98yyLm/HlM2FDgyTlzEtgppTD/mK0mgGiCytvA
+ UF/9TNWLZ4Ng==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:35 -0700
+IronPort-SDR: 
+ x0jXZVzqfdvciMnvbY21tvRjdrvhTWXVaipPEJQwG/Bs1IO+jgtLSDezUX7PIqD7Hw8csS3voi
+ iMJVDN7vKztQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879635"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:53:29 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 10/21] mm: Introduce vm_ops->may_mprotect()
+Date: Mon,  1 Jun 2020 10:52:07 +0300
+Message-Id: <20200601075218.65618-11-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
-From c5ca62598a14dea2f088b68e6fc51ca3d75e5bfe Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Tue, 7 Jul 2020 06:37:33 +0300
-Subject: [PATCH 10/24] mm: Add vm_ops->mprotect()
 
-Add vm_ops()->mprotect() for additional constraints for a VMA.
+Add vm_ops()->may_mprotect() to check additional constraints.
 
-Intel Software Guard eXtensions (SGX) will use this callback to add two
-constraints:
+SGX uses this callback to add two constraints:
 
-1. Verify that the address range does not have holes: each page address
-   must be filled with an enclave page.
-2. Verify that VMA permissions won't surpass the permissions of any enclave
-   page within the address range. Enclave cryptographically sealed
-   permissions for each page address that set the upper limit for possible
-   VMA permissions. Not respecting this can cause #GP's to be emitted.
+1. Verify that the address range does not have holes: for each page
+   address, there is an actual enclave page created.
+2. Mapped permissions do not surpass the lowest enclave page permissions
+   in the address range.
 
-Cc: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>
+linux-mm@kvack.org
+Andrew Morton <akpm@linux-foundation.org>
 Acked-by: Jethro Beekman <jethro@fortanix.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
  include/linux/mm.h |  2 ++
- mm/mprotect.c      | 13 ++++++++++---
- 2 files changed, 12 insertions(+), 3 deletions(-)
+ mm/mprotect.c      | 14 +++++++++++---
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index abf4fe1..065495a 100644
+index f3fe7371855c..fd1ea8fd4ab1 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -547,6 +547,8 @@ struct vm_operations_struct {
+@@ -546,6 +546,8 @@ struct vm_operations_struct {
  	void (*close)(struct vm_area_struct * area);
  	int (*split)(struct vm_area_struct * area, unsigned long addr);
  	int (*mremap)(struct vm_area_struct * area);
-+	int (*mprotect)(struct vm_area_struct *vma, unsigned long start,
-+			unsigned long end, unsigned long prot);
++	int (*may_mprotect)(struct vm_area_struct *vma, unsigned long start,
++			    unsigned long end, unsigned long prot);
  	vm_fault_t (*fault)(struct vm_fault *vmf);
  	vm_fault_t (*huge_fault)(struct vm_fault *vmf,
  			enum page_entry_size pe_size);
 diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 5a4cd93..63a7f6d 100644
+index 494192ca954b..079ba92df377 100644
 --- a/mm/mprotect.c
 +++ b/mm/mprotect.c
-@@ -603,13 +603,20 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
+@@ -603,13 +603,21 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
  			goto out;
  		}
  
 +		tmp = vma->vm_end;
 +		if (tmp > end)
 +			tmp = end;
++
++		if (vma->vm_ops && vma->vm_ops->may_mprotect) {
++			error = vma->vm_ops->may_mprotect(vma, nstart, tmp,
++							  prot);
++			if (error)
++				goto out;
++		}
 +
  		error = security_file_mprotect(vma, reqprot, prot);
  		if (error)
@@ -1715,44 +2327,104 @@ index 5a4cd93..63a7f6d 100644
 -		tmp = vma->vm_end;
 -		if (tmp > end)
 -			tmp = end;
-+		if (vma->vm_ops && vma->vm_ops->mprotect) {
-+			error = vma->vm_ops->mprotect(vma, nstart, tmp, prot);
-+			if (error)
-+				goto out;
-+		}
-+
  		error = mprotect_fixup(vma, &prev, nstart, tmp, newflags);
  		if (error)
  			goto out;
--- 
-2.25.4
 
-
-From c427e78679e072959a61b468ddd4a7902f4c90a6 Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:08 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581715
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id A9DB1139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 08:18:46 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 7216B20734
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 08:18:46 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1727098AbgFAISq (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 04:18:46 -0400
+Received: from mga01.intel.com ([192.55.52.88]:18787 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbgFAISp (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 04:18:45 -0400
+IronPort-SDR: 
+ S/yw+edf713XDOPKLX3TKI334dVhAvssbqD+SfywJVPg5a+/tFJoZeKd/7GWvXCVqchJZYOKr7
+ Ubk159eJKJ3g==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:43 -0700
+IronPort-SDR: 
+ KGUPcL6WTtTUHTm9oRCT1bhfobRT+iMdj6WwKoHjO30VS2rzEm9DM0J2n2p+R+eJm/ygNiqdtx
+ Bd7jFw78uEIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879658"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:53:36 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 7 Jul 2020 06:37:34 +0300
-Subject: [PATCH 11/24] x86/sgx: Add SGX enclave driver
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 11/21] x86/sgx: Linux Enclave Driver
+Date: Mon,  1 Jun 2020 10:52:08 +0300
+Message-Id: <20200601075218.65618-12-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
 can be used by applications to set aside private regions of code and
 data. The code outside the SGX hosted software entity is disallowed to
 access the memory inside the enclave enforced by the CPU. We call these
-entities enclaves.
+entities as enclaves.
 
-Add a driver that provides an ioctl API to construct and run enclaves.
-Enclaves are constructed from pages residing in reserved physical memory
-areas. The contents of these pages can only be accessed when they are
-mapped as part of an enclave, by a hardware thread running inside the
-enclave.
+This commit implements a driver that provides an ioctl API to construct
+and run enclaves. Enclaves are constructed from pages residing in
+reserved physical memory areas. The contents of these pages can only be
+accessed when they are mapped as part of an enclave, by a hardware
+thread running inside the enclave.
 
 The starting state of an enclave consists of a fixed measured set of
 pages that are copied to the EPC during the construction process by
 using ENCLS leaf functions and Software Enclave Control Structure (SECS)
 that defines the enclave properties.
 
-Enclaves are constructed by using ENCLS leaf functions ECREATE, EADD and
+Enclave are constructed by using ENCLS leaf functions ECREATE, EADD and
 EINIT. ECREATE initializes SECS, EADD copies pages from system memory to
-the EPC and EINIT checks a given signed measurement and moves the enclave
+the EPC and EINIT check a given signed measurement and moves the enclave
 into a state ready for execution.
 
 An initialized enclave can only be accessed through special Thread Control
@@ -1762,14 +2434,14 @@ the offset defined by the TCS provided to EENTER. An enclave is exited
 through syscall, exception, interrupts or by explicitly calling another
 ENCLU leaf EEXIT.
 
-The mmap() permissions are capped by the contained enclave page
-permissions. The mapped areas must also be opaque, i.e. each page address
-must contain a page. This logic is implemented in sgx_encl_may_map().
+The permissions, which enclave page is added will set the limit for maximum
+permissions that can be set for mmap() and mprotect(). This will
+effectively allow to build different security schemes between producers and
+consumers of enclaves. Later on we can increase granularity with LSM hooks
+for page addition (i.e. for producers) and mapping of the enclave (i.e. for
+consumers)
 
 Cc: linux-security-module@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>
 Acked-by: Jethro Beekman <jethro@fortanix.com>
 Tested-by: Jethro Beekman <jethro@fortanix.com>
 Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
@@ -1783,33 +2455,123 @@ Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
 Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/kernel/cpu/sgx/Makefile |   2 +
- arch/x86/kernel/cpu/sgx/driver.c | 178 ++++++++++++++++
- arch/x86/kernel/cpu/sgx/driver.h |  29 +++
- arch/x86/kernel/cpu/sgx/encl.c   | 335 +++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/encl.h   |  87 ++++++++
- arch/x86/kernel/cpu/sgx/main.c   |  11 +
- 6 files changed, 642 insertions(+)
+ .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+ arch/x86/include/uapi/asm/sgx.h               |  66 ++
+ arch/x86/kernel/cpu/sgx/Makefile              |   3 +
+ arch/x86/kernel/cpu/sgx/driver.c              | 194 +++++
+ arch/x86/kernel/cpu/sgx/driver.h              |  30 +
+ arch/x86/kernel/cpu/sgx/encl.c                | 335 +++++++++
+ arch/x86/kernel/cpu/sgx/encl.h                |  87 +++
+ arch/x86/kernel/cpu/sgx/ioctl.c               | 706 ++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/main.c                |  11 +
+ 9 files changed, 1433 insertions(+)
+ create mode 100644 arch/x86/include/uapi/asm/sgx.h
  create mode 100644 arch/x86/kernel/cpu/sgx/driver.c
  create mode 100644 arch/x86/kernel/cpu/sgx/driver.h
  create mode 100644 arch/x86/kernel/cpu/sgx/encl.c
  create mode 100644 arch/x86/kernel/cpu/sgx/encl.h
+ create mode 100644 arch/x86/kernel/cpu/sgx/ioctl.c
 
+diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+index f759edafd938..a9a418a9918c 100644
+--- a/Documentation/userspace-api/ioctl/ioctl-number.rst
++++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+@@ -320,6 +320,7 @@ Code  Seq#    Include File                                           Comments
+                                                                      <mailto:tlewis@mindspring.com>
+ 0xA3  90-9F  linux/dtlk.h
+ 0xA4  00-1F  uapi/linux/tee.h                                        Generic TEE subsystem
++0xA4  00-1F  uapi/asm/sgx.h                                          Intel SGX subsystem (a legit conflict as TEE and SGX do not co-exist)
+ 0xAA  00-3F  linux/uapi/linux/userfaultfd.h
+ 0xAB  00-1F  linux/nbd.h
+ 0xAC  00-1F  linux/raw.h
+diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+new file mode 100644
+index 000000000000..5edb08ab8fd0
+--- /dev/null
++++ b/arch/x86/include/uapi/asm/sgx.h
+@@ -0,0 +1,66 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH Linux-syscall-note */
++/*
++ * Copyright(c) 2016-19 Intel Corporation.
++ */
++#ifndef _UAPI_ASM_X86_SGX_H
++#define _UAPI_ASM_X86_SGX_H
++
++#include <linux/types.h>
++#include <linux/ioctl.h>
++
++/**
++ * enum sgx_epage_flags - page control flags
++ * %SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
++ *			ENCLS[EEXTEND] operations.
++ */
++enum sgx_page_flags {
++	SGX_PAGE_MEASURE	= 0x01,
++};
++
++#define SGX_MAGIC 0xA4
++
++#define SGX_IOC_ENCLAVE_CREATE \
++	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
++#define SGX_IOC_ENCLAVE_ADD_PAGES \
++	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
++#define SGX_IOC_ENCLAVE_INIT \
++	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
++
++/**
++ * struct sgx_enclave_create - parameter structure for the
++ *                             %SGX_IOC_ENCLAVE_CREATE ioctl
++ * @src:	address for the SECS page data
++ */
++struct sgx_enclave_create  {
++	__u64	src;
++};
++
++/**
++ * struct sgx_enclave_add_pages - parameter structure for the
++ *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
++ * @src:	start address for the page data
++ * @offset:	starting page offset
++ * @length:	length of the data (multiple of the page size)
++ * @secinfo:	address for the SECINFO data
++ * @flags:	page control flags
++ * @count:	number of bytes added (multiple of the page size)
++ */
++struct sgx_enclave_add_pages {
++	__u64	src;
++	__u64	offset;
++	__u64	length;
++	__u64	secinfo;
++	__u64	flags;
++	__u64	count;
++};
++
++/**
++ * struct sgx_enclave_init - parameter structure for the
++ *                           %SGX_IOC_ENCLAVE_INIT ioctl
++ * @sigstruct:	address for the SIGSTRUCT data
++ */
++struct sgx_enclave_init {
++	__u64 sigstruct;
++};
++
++#endif /* _UAPI_ASM_X86_SGX_H */
 diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
-index 79510ce..3fc4511 100644
+index 79510ce01b3b..91d3dc784a29 100644
 --- a/arch/x86/kernel/cpu/sgx/Makefile
 +++ b/arch/x86/kernel/cpu/sgx/Makefile
-@@ -1,2 +1,4 @@
+@@ -1,2 +1,5 @@
  obj-y += \
 +	driver.o \
 +	encl.o \
++	ioctl.o \
  	main.o
 diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
 new file mode 100644
-index 0000000..682ec78
+index 000000000000..b4aa7b9f8376
 --- /dev/null
 +++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -0,0 +1,178 @@
+@@ -0,0 +1,194 @@
 +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
 +// Copyright(c) 2016-18 Intel Corporation.
 +
@@ -1895,6 +2657,14 @@ index 0000000..682ec78
 +	return 0;
 +}
 +
++#ifdef CONFIG_COMPAT
++static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,
++			      unsigned long arg)
++{
++	return sgx_ioctl(filep, cmd, arg);
++}
++#endif
++
 +static int sgx_mmap(struct file *file, struct vm_area_struct *vma)
 +{
 +	struct sgx_encl *encl = file->private_data;
@@ -1935,8 +2705,16 @@ index 0000000..682ec78
 +	.owner			= THIS_MODULE,
 +	.open			= sgx_open,
 +	.release		= sgx_release,
++	.unlocked_ioctl		= sgx_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl		= sgx_compat_ioctl,
++#endif
 +	.mmap			= sgx_mmap,
 +	.get_unmapped_area	= sgx_get_unmapped_area,
++};
++
++const struct file_operations sgx_provision_fops = {
++	.owner			= THIS_MODULE,
 +};
 +
 +static struct miscdevice sgx_dev_enclave = {
@@ -1990,10 +2768,10 @@ index 0000000..682ec78
 +}
 diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
 new file mode 100644
-index 0000000..f7ce40d
+index 000000000000..e4063923115b
 --- /dev/null
 +++ b/arch/x86/kernel/cpu/sgx/driver.h
-@@ -0,0 +1,29 @@
+@@ -0,0 +1,30 @@
 +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
 +#ifndef __ARCH_SGX_DRIVER_H__
 +#define __ARCH_SGX_DRIVER_H__
@@ -2005,6 +2783,7 @@ index 0000000..f7ce40d
 +#include <linux/rwsem.h>
 +#include <linux/sched.h>
 +#include <linux/workqueue.h>
++#include <uapi/asm/sgx.h>
 +#include "sgx.h"
 +
 +#define SGX_EINIT_SPIN_COUNT	20
@@ -2025,7 +2804,7 @@ index 0000000..f7ce40d
 +#endif /* __ARCH_X86_SGX_DRIVER_H__ */
 diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
 new file mode 100644
-index 0000000..c3755f8
+index 000000000000..5085724595eb
 --- /dev/null
 +++ b/arch/x86/kernel/cpu/sgx/encl.c
 @@ -0,0 +1,335 @@
@@ -2137,7 +2916,7 @@ index 0000000..c3755f8
 +	int ret;
 +
 +	/* mm_list can be accessed only by a single thread at a time. */
-+	mmap_assert_write_locked(mm);
++	lockdep_assert_held_write(&mm->mmap_sem);
 +
 +	if (atomic_read(&encl->flags) & SGX_ENCL_DEAD)
 +		return -EINVAL;
@@ -2271,7 +3050,7 @@ index 0000000..c3755f8
 +const struct vm_operations_struct sgx_vm_ops = {
 +	.open = sgx_vma_open,
 +	.fault = sgx_vma_fault,
-+	.mprotect = sgx_vma_mprotect,
++	.may_mprotect = sgx_vma_mprotect,
 +};
 +
 +/**
@@ -2366,7 +3145,7 @@ index 0000000..c3755f8
 +}
 diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
 new file mode 100644
-index 0000000..1d1bc5d
+index 000000000000..1d1bc5d590ee
 --- /dev/null
 +++ b/arch/x86/kernel/cpu/sgx/encl.h
 @@ -0,0 +1,87 @@
@@ -2457,184 +3236,12 @@ index 0000000..1d1bc5d
 +		     unsigned long end, unsigned long vm_prot_bits);
 +
 +#endif /* _X86_ENCL_H */
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 97c6895..4137254 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -9,6 +9,8 @@
- #include <linux/sched/mm.h>
- #include <linux/sched/signal.h>
- #include <linux/slab.h>
-+#include "driver.h"
-+#include "encl.h"
- #include "encls.h"
- 
- struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
-@@ -260,6 +262,8 @@ static bool __init sgx_page_cache_init(void)
- 
- static void __init sgx_init(void)
- {
-+	int ret;
-+
- 	if (!boot_cpu_has(X86_FEATURE_SGX))
- 		return;
- 
-@@ -269,8 +273,15 @@ static void __init sgx_init(void)
- 	if (!sgx_page_reclaimer_init())
- 		goto err_page_cache;
- 
-+	ret = sgx_drv_init();
-+	if (ret)
-+		goto err_kthread;
-+
- 	return;
- 
-+err_kthread:
-+	kthread_stop(ksgxswapd_tsk);
-+
- err_page_cache:
- 	sgx_page_cache_teardown();
- }
--- 
-2.25.4
-
-
-From 6b853ac8b38552f992ae91aadc5d8e8fb5448122 Mon Sep 17 00:00:00 2001
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 7 Jul 2020 06:37:35 +0300
-Subject: [PATCH 12/24] x86/sgx: Add SGX_IOC_ENCLAVE_CREATE
-
-Add an ioctl that performs ENCLS[ECREATE], which creates SGX Enclave
-Control Structure for the enclave. SECS contains attributes about the
-enclave that are used by the hardware and cannot be directly accessed by
-software, as SECS resides in the EPC.
-
-One essential field in SECS is a field that stores the SHA256 of the
-measured enclave pages. This field, MRENCLAVE, is initialized by the
-ECREATE instruction and updated by every EADD and EEXTEND operation.
-Finally, EINIT locks down the value.
-
-Acked-by: Jethro Beekman <jethro@fortanix.com>
-Tested-by: Jethro Beekman <jethro@fortanix.com>
-Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
-Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
-Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
-Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
-Tested-by: Seth Moore <sethmo@google.com>
-Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
-Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- .../userspace-api/ioctl/ioctl-number.rst      |   1 +
- arch/x86/include/uapi/asm/sgx.h               |  25 ++
- arch/x86/kernel/cpu/sgx/Makefile              |   1 +
- arch/x86/kernel/cpu/sgx/driver.c              |  12 +
- arch/x86/kernel/cpu/sgx/driver.h              |   1 +
- arch/x86/kernel/cpu/sgx/ioctl.c               | 226 ++++++++++++++++++
- 6 files changed, 266 insertions(+)
- create mode 100644 arch/x86/include/uapi/asm/sgx.h
- create mode 100644 arch/x86/kernel/cpu/sgx/ioctl.c
-
-diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-index f759eda..a9a418a 100644
---- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-+++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-@@ -320,6 +320,7 @@ Code  Seq#    Include File                                           Comments
-                                                                      <mailto:tlewis@mindspring.com>
- 0xA3  90-9F  linux/dtlk.h
- 0xA4  00-1F  uapi/linux/tee.h                                        Generic TEE subsystem
-+0xA4  00-1F  uapi/asm/sgx.h                                          Intel SGX subsystem (a legit conflict as TEE and SGX do not co-exist)
- 0xAA  00-3F  linux/uapi/linux/userfaultfd.h
- 0xAB  00-1F  linux/nbd.h
- 0xAC  00-1F  linux/raw.h
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-new file mode 100644
-index 0000000..3787d27
---- /dev/null
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) WITH Linux-syscall-note */
-+/*
-+ * Copyright(c) 2016-19 Intel Corporation.
-+ */
-+#ifndef _UAPI_ASM_X86_SGX_H
-+#define _UAPI_ASM_X86_SGX_H
-+
-+#include <linux/types.h>
-+#include <linux/ioctl.h>
-+
-+#define SGX_MAGIC 0xA4
-+
-+#define SGX_IOC_ENCLAVE_CREATE \
-+	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
-+
-+/**
-+ * struct sgx_enclave_create - parameter structure for the
-+ *                             %SGX_IOC_ENCLAVE_CREATE ioctl
-+ * @src:	address for the SECS page data
-+ */
-+struct sgx_enclave_create  {
-+	__u64	src;
-+};
-+
-+#endif /* _UAPI_ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
-index 3fc4511..91d3dc7 100644
---- a/arch/x86/kernel/cpu/sgx/Makefile
-+++ b/arch/x86/kernel/cpu/sgx/Makefile
-@@ -1,4 +1,5 @@
- obj-y += \
- 	driver.o \
- 	encl.o \
-+	ioctl.o \
- 	main.o
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index 682ec78..20c3254 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -119,10 +119,22 @@ static unsigned long sgx_get_unmapped_area(struct file *file,
- 	return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
- }
- 
-+#ifdef CONFIG_COMPAT
-+static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,
-+			      unsigned long arg)
-+{
-+	return sgx_ioctl(filep, cmd, arg);
-+}
-+#endif
-+
- static const struct file_operations sgx_encl_fops = {
- 	.owner			= THIS_MODULE,
- 	.open			= sgx_open,
- 	.release		= sgx_release,
-+	.unlocked_ioctl		= sgx_ioctl,
-+#ifdef CONFIG_COMPAT
-+	.compat_ioctl		= sgx_compat_ioctl,
-+#endif
- 	.mmap			= sgx_mmap,
- 	.get_unmapped_area	= sgx_get_unmapped_area,
- };
-diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-index f7ce40d..e406392 100644
---- a/arch/x86/kernel/cpu/sgx/driver.h
-+++ b/arch/x86/kernel/cpu/sgx/driver.h
-@@ -9,6 +9,7 @@
- #include <linux/rwsem.h>
- #include <linux/sched.h>
- #include <linux/workqueue.h>
-+#include <uapi/asm/sgx.h>
- #include "sgx.h"
- 
- #define SGX_EINIT_SPIN_COUNT	20
 diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
 new file mode 100644
-index 0000000..7981c41
+index 000000000000..757cb9a4ae70
 --- /dev/null
 +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -0,0 +1,226 @@
+@@ -0,0 +1,706 @@
 +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
 +// Copyright(c) 2016-19 Intel Corporation.
 +
@@ -2653,7 +3260,10 @@ index 0000000..7981c41
 +#include "encl.h"
 +#include "encls.h"
 +
-+static u32 sgx_calc_ssa_frame_size(u32 miscselect, u64 xfrm)
++/* A per-cpu cache for the last known values of IA32_SGXLEPUBKEYHASHx MSRs. */
++static DEFINE_PER_CPU(u64 [4], sgx_lepubkeyhash_cache);
++
++static u32 sgx_calc_ssaframesize(u32 miscselect, u64 xfrm)
 +{
 +	u32 size_max = PAGE_SIZE;
 +	u32 size;
@@ -2664,7 +3274,6 @@ index 0000000..7981c41
 +			continue;
 +
 +		size = SGX_SSA_GPRS_SIZE + sgx_xsave_size_tbl[i];
-+
 +		if (miscselect & SGX_MISC_EXINFO)
 +			size += SGX_SSA_MISC_EXINFO_SIZE;
 +
@@ -2675,11 +3284,9 @@ index 0000000..7981c41
 +	return PFN_UP(size_max);
 +}
 +
-+static int sgx_validate_secs(const struct sgx_secs *secs)
++static int sgx_validate_secs(const struct sgx_secs *secs,
++			     unsigned long ssaframesize)
 +{
-+	u64 max_size = (secs->attributes & SGX_ATTR_MODE64BIT) ?
-+		       sgx_encl_size_max_64 : sgx_encl_size_max_32;
-+
 +	if (secs->size < (2 * PAGE_SIZE) || !is_power_of_2(secs->size))
 +		return -EINVAL;
 +
@@ -2691,7 +3298,10 @@ index 0000000..7981c41
 +	    secs->xfrm & sgx_xfrm_reserved_mask)
 +		return -EINVAL;
 +
-+	if (secs->size >= max_size)
++	if (secs->attributes & SGX_ATTR_MODE64BIT) {
++		if (secs->size > sgx_encl_size_max_64)
++			return -EINVAL;
++	} else if (secs->size > sgx_encl_size_max_32)
 +		return -EINVAL;
 +
 +	if (!(secs->xfrm & XFEATURE_MASK_FP) ||
@@ -2700,11 +3310,7 @@ index 0000000..7981c41
 +	     ((secs->xfrm >> XFEATURE_BNDCSR) & 1)))
 +		return -EINVAL;
 +
-+	if (!secs->ssa_frame_size)
-+		return -EINVAL;
-+
-+	if (sgx_calc_ssa_frame_size(secs->miscselect, secs->xfrm) >
-+	    secs->ssa_frame_size)
++	if (!secs->ssa_frame_size || ssaframesize > secs->ssa_frame_size)
 +		return -EINVAL;
 +
 +	if (memchr_inv(secs->reserved1, 0, sizeof(secs->reserved1)) ||
@@ -2716,16 +3322,53 @@ index 0000000..7981c41
 +	return 0;
 +}
 +
++static struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
++						 unsigned long offset,
++						 u64 secinfo_flags)
++{
++	struct sgx_encl_page *encl_page;
++	unsigned long prot;
++
++	encl_page = kzalloc(sizeof(*encl_page), GFP_KERNEL);
++	if (!encl_page)
++		return ERR_PTR(-ENOMEM);
++
++	encl_page->desc = encl->base + offset;
++	encl_page->encl = encl;
++
++	prot = _calc_vm_trans(secinfo_flags, SGX_SECINFO_R, PROT_READ)  |
++	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_W, PROT_WRITE) |
++	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_X, PROT_EXEC);
++
++	/*
++	 * TCS pages must always RW set for CPU access while the SECINFO
++	 * permissions are *always* zero - the CPU ignores the user provided
++	 * values and silently overwrites them with zero permissions.
++	 */
++	if ((secinfo_flags & SGX_SECINFO_PAGE_TYPE_MASK) == SGX_SECINFO_TCS)
++		prot |= PROT_READ | PROT_WRITE;
++
++	/* Calculate maximum of the VM flags for the page. */
++	encl_page->vm_max_prot_bits = calc_vm_prot_bits(prot, 0);
++
++	return encl_page;
++}
++
 +static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
 +{
 +	unsigned long encl_size = secs->size + PAGE_SIZE;
 +	struct sgx_epc_page *secs_epc;
++	unsigned long ssaframesize;
 +	struct sgx_pageinfo pginfo;
 +	struct sgx_secinfo secinfo;
 +	struct file *backing;
 +	long ret;
 +
-+	if (sgx_validate_secs(secs)) {
++	if (atomic_read(&encl->flags) & SGX_ENCL_CREATED)
++		return -EINVAL;
++
++	ssaframesize = sgx_calc_ssaframesize(secs->miscselect, secs->xfrm);
++	if (sgx_validate_secs(secs, ssaframesize)) {
 +		pr_debug("invalid SECS\n");
 +		return -EINVAL;
 +	}
@@ -2810,9 +3453,6 @@ index 0000000..7981c41
 +	struct sgx_secs *secs;
 +	int ret;
 +
-+	if (atomic_read(&encl->flags) & SGX_ENCL_CREATED)
-+		return -EINVAL;
-+
 +	if (copy_from_user(&ecreate, arg, sizeof(ecreate)))
 +		return -EFAULT;
 +
@@ -2832,154 +3472,6 @@ index 0000000..7981c41
 +	kunmap(secs_page);
 +	__free_page(secs_page);
 +	return ret;
-+}
-+
-+long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
-+{
-+	struct sgx_encl *encl = filep->private_data;
-+	int ret, encl_flags;
-+
-+	encl_flags = atomic_fetch_or(SGX_ENCL_IOCTL, &encl->flags);
-+	if (encl_flags & SGX_ENCL_IOCTL)
-+		return -EBUSY;
-+
-+	if (encl_flags & SGX_ENCL_DEAD) {
-+		ret = -EFAULT;
-+		goto out;
-+	}
-+
-+	switch (cmd) {
-+	case SGX_IOC_ENCLAVE_CREATE:
-+		ret = sgx_ioc_enclave_create(encl, (void __user *)arg);
-+		break;
-+	default:
-+		ret = -ENOIOCTLCMD;
-+		break;
-+	}
-+
-+out:
-+	atomic_andnot(SGX_ENCL_IOCTL, &encl->flags);
-+	return ret;
-+}
--- 
-2.25.4
-
-
-From 601f27212b9099c892001a4e61cb3fbb4ca84e64 Mon Sep 17 00:00:00 2001
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 7 Jul 2020 06:37:36 +0300
-Subject: [PATCH 13/24] x86/sgx: Add SGX_IOC_ENCLAVE_ADD_PAGES
-
-Add an ioctl, which performs ENCLS[EADD] that adds new visible page to an
-enclave, and optionally ENCLS[EEXTEND] operations that hash the page to the
-enclave measurement. By visible we mean a page that can be mapped to the
-address range of an enclave.
-
-Acked-by: Jethro Beekman <jethro@fortanix.com>
-Tested-by: Jethro Beekman <jethro@fortanix.com>
-Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
-Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
-Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
-Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
-Tested-by: Seth Moore <sethmo@google.com>
-Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
-Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/include/uapi/asm/sgx.h |  30 ++++
- arch/x86/kernel/cpu/sgx/ioctl.c | 292 ++++++++++++++++++++++++++++++++
- 2 files changed, 322 insertions(+)
-
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 3787d27..c8f199b 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -8,10 +8,21 @@
- #include <linux/types.h>
- #include <linux/ioctl.h>
- 
-+/**
-+ * enum sgx_epage_flags - page control flags
-+ * %SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
-+ *			ENCLS[EEXTEND] operations.
-+ */
-+enum sgx_page_flags {
-+	SGX_PAGE_MEASURE	= 0x01,
-+};
-+
- #define SGX_MAGIC 0xA4
- 
- #define SGX_IOC_ENCLAVE_CREATE \
- 	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
-+#define SGX_IOC_ENCLAVE_ADD_PAGES \
-+	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
- 
- /**
-  * struct sgx_enclave_create - parameter structure for the
-@@ -22,4 +33,23 @@ struct sgx_enclave_create  {
- 	__u64	src;
- };
- 
-+/**
-+ * struct sgx_enclave_add_pages - parameter structure for the
-+ *                                %SGX_IOC_ENCLAVE_ADD_PAGE ioctl
-+ * @src:	start address for the page data
-+ * @offset:	starting page offset
-+ * @length:	length of the data (multiple of the page size)
-+ * @secinfo:	address for the SECINFO data
-+ * @flags:	page control flags
-+ * @count:	number of bytes added (multiple of the page size)
-+ */
-+struct sgx_enclave_add_pages {
-+	__u64	src;
-+	__u64	offset;
-+	__u64	length;
-+	__u64	secinfo;
-+	__u64	flags;
-+	__u64	count;
-+};
-+
- #endif /* _UAPI_ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 7981c41..595da21 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -197,6 +197,295 @@ static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
- 	return ret;
- }
- 
-+static struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
-+						 unsigned long offset,
-+						 u64 secinfo_flags)
-+{
-+	struct sgx_encl_page *encl_page;
-+	unsigned long prot;
-+
-+	encl_page = kzalloc(sizeof(*encl_page), GFP_KERNEL);
-+	if (!encl_page)
-+		return ERR_PTR(-ENOMEM);
-+
-+	encl_page->desc = encl->base + offset;
-+	encl_page->encl = encl;
-+
-+	prot = _calc_vm_trans(secinfo_flags, SGX_SECINFO_R, PROT_READ)  |
-+	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_W, PROT_WRITE) |
-+	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_X, PROT_EXEC);
-+
-+	/*
-+	 * TCS pages must always RW set for CPU access while the SECINFO
-+	 * permissions are *always* zero - the CPU ignores the user provided
-+	 * values and silently overwrites them with zero permissions.
-+	 */
-+	if ((secinfo_flags & SGX_SECINFO_PAGE_TYPE_MASK) == SGX_SECINFO_TCS)
-+		prot |= PROT_READ | PROT_WRITE;
-+
-+	/* Calculate maximum of the VM flags for the page. */
-+	encl_page->vm_max_prot_bits = calc_vm_prot_bits(prot, 0);
-+
-+	return encl_page;
 +}
 +
 +static int sgx_validate_secinfo(struct sgx_secinfo *secinfo)
@@ -3046,11 +3538,6 @@ index 7981c41..595da21 100644
 +	return ret ? -EIO : 0;
 +}
 +
-+/*
-+ * If the caller requires measurement of the page as a proof for the content,
-+ * use EEXTEND to add a measurement for 256 bytes of the page. Repeat this
-+ * operation until the entire page is measured."
-+ */
 +static int __sgx_encl_extend(struct sgx_encl *encl,
 +			     struct sgx_epc_page *epc_page)
 +{
@@ -3088,7 +3575,13 @@ index 7981c41..595da21 100644
 +		return PTR_ERR(epc_page);
 +	}
 +
-+	mmap_read_lock(current->mm);
++	if (atomic_read(&encl->flags) &
++	    (SGX_ENCL_INITIALIZED | SGX_ENCL_DEAD)) {
++		ret = -EFAULT;
++		goto err_out_free;
++	}
++
++	down_read(&current->mm->mmap_sem);
 +	mutex_lock(&encl->lock);
 +
 +	/*
@@ -3122,7 +3615,7 @@ index 7981c41..595da21 100644
 +	}
 +
 +	mutex_unlock(&encl->lock);
-+	mmap_read_unlock(current->mm);
++	up_read(&current->mm->mmap_sem);
 +	return ret;
 +
 +err_out:
@@ -3131,8 +3624,9 @@ index 7981c41..595da21 100644
 +
 +err_out_unlock:
 +	mutex_unlock(&encl->lock);
-+	mmap_read_unlock(current->mm);
++	up_read(&current->mm->mmap_sem);
 +
++err_out_free:
 +	sgx_free_epc_page(epc_page);
 +	kfree(encl_page);
 +
@@ -3155,8 +3649,8 @@ index 7981c41..595da21 100644
 + * @arg:	a user pointer to a struct sgx_enclave_add_pages instance
 + *
 + * Add one or more pages to an uninitialized enclave, and optionally extend the
-+ * measurement with the contents of the page. The SECINFO and measurement mask
-+ * are applied to all pages.
++ * measurement with the contents of the page. The address range of pages must
++ * be contiguous. The SECINFO and measurement mask are applied to all pages.
 + *
 + * A SECINFO for a TCS is required to always contain zero permissions because
 + * CPU silently zeros them. Allowing anything else would cause a mismatch in
@@ -3189,8 +3683,7 @@ index 7981c41..595da21 100644
 +	unsigned long c;
 +	int ret;
 +
-+	if ((atomic_read(&encl->flags) & SGX_ENCL_INITIALIZED) ||
-+	    !(atomic_read(&encl->flags) & SGX_ENCL_CREATED))
++	if (!(atomic_read(&encl->flags) & SGX_ENCL_CREATED))
 +		return -EINVAL;
 +
 +	if (copy_from_user(&addp, arg, sizeof(addp)))
@@ -3239,94 +3732,6 @@ index 7981c41..595da21 100644
 +	return ret;
 +}
 +
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- {
- 	struct sgx_encl *encl = filep->private_data;
-@@ -215,6 +504,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	case SGX_IOC_ENCLAVE_CREATE:
- 		ret = sgx_ioc_enclave_create(encl, (void __user *)arg);
- 		break;
-+	case SGX_IOC_ENCLAVE_ADD_PAGES:
-+		ret = sgx_ioc_enclave_add_pages(encl, (void __user *)arg);
-+		break;
- 	default:
- 		ret = -ENOIOCTLCMD;
- 		break;
--- 
-2.25.4
-
-
-From 7d868cad782ae0eb0eaf5601b6bd880ec2edfd07 Mon Sep 17 00:00:00 2001
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 7 Jul 2020 06:37:37 +0300
-Subject: [PATCH 14/24] x86/sgx: Add SGX_IOC_ENCLAVE_INIT
-
-Add an ioctl that performs ENCLS[EINIT], which locks down the measurement
-and initializes the enclave for entrance. After this, new pages can no
-longer be added.
-
-Acked-by: Jethro Beekman <jethro@fortanix.com>
-Tested-by: Jethro Beekman <jethro@fortanix.com>
-Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
-Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
-Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
-Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
-Tested-by: Seth Moore <sethmo@google.com>
-Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
-Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/include/uapi/asm/sgx.h |  11 ++
- arch/x86/kernel/cpu/sgx/ioctl.c | 188 ++++++++++++++++++++++++++++++++
- 2 files changed, 199 insertions(+)
-
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index c8f199b..5edb08a 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -23,6 +23,8 @@ enum sgx_page_flags {
- 	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
- #define SGX_IOC_ENCLAVE_ADD_PAGES \
- 	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
-+#define SGX_IOC_ENCLAVE_INIT \
-+	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
- 
- /**
-  * struct sgx_enclave_create - parameter structure for the
-@@ -52,4 +54,13 @@ struct sgx_enclave_add_pages {
- 	__u64	count;
- };
- 
-+/**
-+ * struct sgx_enclave_init - parameter structure for the
-+ *                           %SGX_IOC_ENCLAVE_INIT ioctl
-+ * @sigstruct:	address for the SIGSTRUCT data
-+ */
-+struct sgx_enclave_init {
-+	__u64 sigstruct;
-+};
-+
- #endif /* _UAPI_ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 595da21..599bd30 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -16,6 +16,9 @@
- #include "encl.h"
- #include "encls.h"
- 
-+/* A per-cpu cache for the last known values of IA32_SGXLEPUBKEYHASHx MSRs. */
-+static DEFINE_PER_CPU(u64 [4], sgx_lepubkeyhash_cache);
-+
- static u32 sgx_calc_ssa_frame_size(u32 miscselect, u64 xfrm)
- {
- 	u32 size_max = PAGE_SIZE;
-@@ -486,6 +489,188 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
- 	return ret;
- }
- 
 +static int __sgx_get_key_hash(struct crypto_shash *tfm, const void *modulus,
 +			      void *hash)
 +{
@@ -3400,10 +3805,11 @@ index 595da21..599bd30 100644
 +
 +	mutex_lock(&encl->lock);
 +
-+	/*
-+	 * Periodically, EINIT polls for certain asynchronous events. If such an
-+	 * event is detected, it completes with SGX_UNMSKED_EVENT.
-+	 */
++	if (atomic_read(&encl->flags) & SGX_ENCL_INITIALIZED) {
++		ret = -EFAULT;
++		goto err_out;
++	}
++
 +	for (i = 0; i < SGX_EINIT_SLEEP_COUNT; i++) {
 +		for (j = 0; j < SGX_EINIT_SPIN_COUNT; j++) {
 +			ret = sgx_einit(sigstruct, token, encl->secs.epc_page,
@@ -3466,8 +3872,7 @@ index 595da21..599bd30 100644
 +	void *token;
 +	int ret;
 +
-+	if ((atomic_read(&encl->flags) & SGX_ENCL_INITIALIZED) ||
-+	    !(atomic_read(&encl->flags) & SGX_ENCL_CREATED))
++	if (!(atomic_read(&encl->flags) & SGX_ENCL_CREATED))
 +		return -EINVAL;
 +
 +	if (copy_from_user(&einit, arg, sizeof(einit)))
@@ -3509,47 +3914,173 @@ index 595da21..599bd30 100644
 +}
 +
 +
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- {
- 	struct sgx_encl *encl = filep->private_data;
-@@ -507,6 +692,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	case SGX_IOC_ENCLAVE_ADD_PAGES:
- 		ret = sgx_ioc_enclave_add_pages(encl, (void __user *)arg);
- 		break;
++long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
++{
++	struct sgx_encl *encl = filep->private_data;
++	int ret, encl_flags;
++
++	encl_flags = atomic_fetch_or(SGX_ENCL_IOCTL, &encl->flags);
++	if (encl_flags & SGX_ENCL_IOCTL)
++		return -EBUSY;
++
++	if (encl_flags & SGX_ENCL_DEAD) {
++		ret = -EFAULT;
++		goto out;
++	}
++
++	switch (cmd) {
++	case SGX_IOC_ENCLAVE_CREATE:
++		ret = sgx_ioc_enclave_create(encl, (void __user *)arg);
++		break;
++	case SGX_IOC_ENCLAVE_ADD_PAGES:
++		ret = sgx_ioc_enclave_add_pages(encl, (void __user *)arg);
++		break;
 +	case SGX_IOC_ENCLAVE_INIT:
 +		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
 +		break;
- 	default:
- 		ret = -ENOIOCTLCMD;
- 		break;
--- 
-2.25.4
++	default:
++		ret = -ENOIOCTLCMD;
++		break;
++	}
++
++out:
++	atomic_andnot(SGX_ENCL_IOCTL, &encl->flags);
++
++	return ret;
++}
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index b776d249289f..506cb0756147 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -9,6 +9,8 @@
+ #include <linux/sched/mm.h>
+ #include <linux/sched/signal.h>
+ #include <linux/slab.h>
++#include "driver.h"
++#include "encl.h"
+ #include "encls.h"
+ 
+ struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+@@ -259,6 +261,8 @@ static bool __init sgx_page_cache_init(void)
+ 
+ static void __init sgx_init(void)
+ {
++	int ret;
++
+ 	if (!boot_cpu_has(X86_FEATURE_SGX))
+ 		return;
+ 
+@@ -268,8 +272,15 @@ static void __init sgx_init(void)
+ 	if (!sgx_page_reclaimer_init())
+ 		goto err_page_cache;
+ 
++	ret = sgx_drv_init();
++	if (ret)
++		goto err_kthread;
++
+ 	return;
+ 
++err_kthread:
++	kthread_stop(ksgxswapd_tsk);
++
+ err_page_cache:
+ 	sgx_page_cache_teardown();
+ }
 
-
-From a16e83f33224cd1c55fae408ceb3f3ebbf5a0c77 Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:09 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581659
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 67F51139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:56 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 54AE620734
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:53:56 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728361AbgFAHxx (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:53:53 -0400
+Received: from mga18.intel.com ([134.134.136.126]:18060 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726072AbgFAHxw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:53:52 -0400
+IronPort-SDR: 
+ cnSeKL7G3xBrr+Wbiv08ZEtywbeJl4FaWhV+15SEwqhIuOZtv7h7hjfOO9SrKTlubySyV2oEIu
+ b/tEdjjoj++Q==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:51 -0700
+IronPort-SDR: 
+ 0PE5cPqWV8oME7RVn+QlVzPtVpHh7s15DtKCWdCz1v0s6sUBdohktHt2vIhCKlyWjN3D2FzH+h
+ YN0tjOXiLZfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879675"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:53:44 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 7 Jul 2020 06:37:38 +0300
-Subject: [PATCH 15/24] x86/sgx: Allow a limited use of ATTRIBUTE.PROVISIONKEY
- for attestation
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com
+Subject: [PATCH v32 12/21] x86/sgx: Add provisioning
+Date: Mon,  1 Jun 2020 10:52:09 +0300
+Message-Id: <20200601075218.65618-13-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
-Provisioning Certification Enclave (PCE), the root of trust for other
-enclaves, generates a signing key from a fused key called Provisioning
-Certification Key. PCE can then use this key to certify an attestation key
-of a Quoting Enclave (QE), e.g. we get the chain of trust down to the
-hardware if the Intel signed PCE is used.
+In order to provide a mechanism for devilering provisoning rights:
 
-To use the needed keys, ATTRIBUTE.PROVISIONKEY is required but should be
-only allowed for those who actually need it so that only the trusted
-parties can certify QE's.
+1. Add a new device file /dev/sgx/provision that works as a token for
+   allowing an enclave to have the provisioning privileges.
+2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
+   following data structure:
 
-Obviously the attestation service should know the public key of the used
-PCE and that way detect illegit attestation, but whitelisting the legit
-users still adds an additional layer of defence.
+   struct sgx_enclave_set_attribute {
+           __u64 addr;
+           __u64 attribute_fd;
+   };
 
-Add new device file called /dev/sgx/provision. The sole purpose of this
-file is to provide file descriptors that act as privilege tokens to allow
-to build enclaves with ATTRIBUTE.PROVISIONKEY set. A new ioctl called
-SGX_IOC_ENCLAVE_SET_ATTRIBUTE is used to assign this token to an enclave.
+A daemon could sit on top of /dev/sgx/provision and send a file
+descriptor of this file to a process that needs to be able to provision
+enclaves.
+
+The way this API is used is straight-forward. Lets assume that dev_fd is
+a handle to /dev/sgx/enclave and prov_fd is a handle to
+/dev/sgx/provision.  You would allow SGX_IOC_ENCLAVE_CREATE to
+initialize an enclave with the PROVISIONKEY attribute by
+
+params.addr = <enclave address>;
+params.token_fd = prov_fd;
+
+ioctl(dev_fd, SGX_IOC_ENCLAVE_SET_ATTRIBUTE, &params);
 
 Cc: linux-security-module@vger.kernel.org
 Acked-by: Jethro Beekman <jethro@fortanix.com>
@@ -3557,13 +4088,13 @@ Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
  arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++
- arch/x86/kernel/cpu/sgx/driver.c | 18 ++++++++++++
+ arch/x86/kernel/cpu/sgx/driver.c | 14 ++++++++++
  arch/x86/kernel/cpu/sgx/driver.h |  2 ++
  arch/x86/kernel/cpu/sgx/ioctl.c  | 47 ++++++++++++++++++++++++++++++++
- 4 files changed, 78 insertions(+)
+ 4 files changed, 74 insertions(+)
 
 diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 5edb08a..57d0d30 100644
+index 5edb08ab8fd0..57d0d30c79b3 100644
 --- a/arch/x86/include/uapi/asm/sgx.h
 +++ b/arch/x86/include/uapi/asm/sgx.h
 @@ -25,6 +25,8 @@ enum sgx_page_flags {
@@ -3590,21 +4121,10 @@ index 5edb08a..57d0d30 100644
 +
  #endif /* _UAPI_ASM_X86_SGX_H */
 diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index 20c3254..1cebb6e 100644
+index b4aa7b9f8376..d90114cec1c3 100644
 --- a/arch/x86/kernel/cpu/sgx/driver.c
 +++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -139,6 +139,10 @@ static const struct file_operations sgx_encl_fops = {
- 	.get_unmapped_area	= sgx_get_unmapped_area,
- };
- 
-+const struct file_operations sgx_provision_fops = {
-+	.owner			= THIS_MODULE,
-+};
-+
- static struct miscdevice sgx_dev_enclave = {
- 	.minor = MISC_DYNAMIC_MINOR,
- 	.name = "enclave",
-@@ -146,6 +150,13 @@ static struct miscdevice sgx_dev_enclave = {
+@@ -150,6 +150,13 @@ static struct miscdevice sgx_dev_enclave = {
  	.fops = &sgx_encl_fops,
  };
  
@@ -3618,7 +4138,7 @@ index 20c3254..1cebb6e 100644
  int __init sgx_drv_init(void)
  {
  	unsigned int eax, ebx, ecx, edx;
-@@ -186,5 +197,12 @@ int __init sgx_drv_init(void)
+@@ -190,5 +197,12 @@ int __init sgx_drv_init(void)
  		return ret;
  	}
  
@@ -3632,7 +4152,7 @@ index 20c3254..1cebb6e 100644
  	return 0;
  }
 diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-index e406392..72747d0 100644
+index e4063923115b..72747d01c046 100644
 --- a/arch/x86/kernel/cpu/sgx/driver.h
 +++ b/arch/x86/kernel/cpu/sgx/driver.h
 @@ -23,6 +23,8 @@ extern u64 sgx_attributes_reserved_mask;
@@ -3645,10 +4165,10 @@ index e406392..72747d0 100644
  
  int sgx_drv_init(void);
 diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 599bd30..07aa45e 100644
+index 757cb9a4ae70..713bce437659 100644
 --- a/arch/x86/kernel/cpu/sgx/ioctl.c
 +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -670,6 +670,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
+@@ -669,6 +669,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
  	return ret;
  }
  
@@ -3660,7 +4180,7 @@ index 599bd30..07aa45e 100644
 + * Mark the enclave as being allowed to access a restricted attribute bit.
 + * The requested attribute is specified via the attribute_fd field in the
 + * provided struct sgx_enclave_set_attribute.  The attribute_fd must be a
-+ * handle to an SGX attribute file, e.g. "/dev/sgx/provision".
++ * handle to an SGX attribute file, e.g. “/dev/sgx/provision".
 + *
 + * Failure to explicitly request access to a restricted attribute will cause
 + * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
@@ -3699,7 +4219,7 @@ index 599bd30..07aa45e 100644
  
  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
  {
-@@ -695,6 +739,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+@@ -694,6 +738,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
  	case SGX_IOC_ENCLAVE_INIT:
  		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
  		break;
@@ -3709,14 +4229,77 @@ index 599bd30..07aa45e 100644
  	default:
  		ret = -ENOIOCTLCMD;
  		break;
--- 
-2.25.4
 
-
-From 24b74fc62fe24517db8ca135fd104e819e0b3993 Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:10 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581665
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 85B4D60D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:12 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 61DB42076B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:12 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728388AbgFAHyM (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:54:12 -0400
+Received: from mga09.intel.com ([134.134.136.24]:24509 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726072AbgFAHyL (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:54:11 -0400
+IronPort-SDR: 
+ u8JRMOfPwR/dNZZ4N0LXTm9wFfHD6bYcgHox9mnfBooUK2HWChOIAWeI4LAmkuojlK2LP6ajPC
+ vq6OIGKk6iOA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:53:59 -0700
+IronPort-SDR: 
+ bWcTG6/CVtcXTJt54v4LPb+8wnJ25F5Wp8z3yPVdUADx1Dz8jRIUl0tzhMezssH/7Feq6Pubyk
+ bPV2iKUPa//A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879712"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:53:52 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 7 Jul 2020 06:37:39 +0300
-Subject: [PATCH 16/24] x86/sgx: Add a page reclaimer
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-mm@kvack.org, Jethro Beekman <jethro@fortanix.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Seth Moore <sethmo@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 13/21] x86/sgx: Add a page reclaimer
+Date: Mon,  1 Jun 2020 10:52:10 +0300
+Message-Id: <20200601075218.65618-14-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 There is a limited amount of EPC available. Therefore, some of it must be
 copied to the regular memory, and only subset kept in the SGX reserved
@@ -3750,13 +4333,13 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  arch/x86/kernel/cpu/sgx/driver.c |   1 +
  arch/x86/kernel/cpu/sgx/encl.c   | 340 +++++++++++++++++++++-
  arch/x86/kernel/cpu/sgx/encl.h   |  41 +++
- arch/x86/kernel/cpu/sgx/ioctl.c  |  77 ++++-
- arch/x86/kernel/cpu/sgx/main.c   | 464 +++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/ioctl.c  |  76 ++++-
+ arch/x86/kernel/cpu/sgx/main.c   | 465 +++++++++++++++++++++++++++++++
  arch/x86/kernel/cpu/sgx/sgx.h    |   9 +
  6 files changed, 925 insertions(+), 7 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index 1cebb6e..83e1864 100644
+index d90114cec1c3..997a7f4117c5 100644
 --- a/arch/x86/kernel/cpu/sgx/driver.c
 +++ b/arch/x86/kernel/cpu/sgx/driver.c
 @@ -32,6 +32,7 @@ static int sgx_open(struct inode *inode, struct file *file)
@@ -3768,7 +4351,7 @@ index 1cebb6e..83e1864 100644
  	mutex_init(&encl->lock);
  	INIT_LIST_HEAD(&encl->mm_list);
 diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index c3755f8..b22e718 100644
+index 5085724595eb..325b918ab8d2 100644
 --- a/arch/x86/kernel/cpu/sgx/encl.c
 +++ b/arch/x86/kernel/cpu/sgx/encl.c
 @@ -12,9 +12,84 @@
@@ -4170,7 +4753,7 @@ index c3755f8..b22e718 100644
 +	return slot == SGX_VA_SLOT_COUNT;
 +}
 diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-index 1d1bc5d..f0f72e5 100644
+index 1d1bc5d590ee..f0f72e591244 100644
 --- a/arch/x86/kernel/cpu/sgx/encl.h
 +++ b/arch/x86/kernel/cpu/sgx/encl.h
 @@ -19,6 +19,10 @@
@@ -4262,7 +4845,7 @@ index 1d1bc5d..f0f72e5 100644
 +
  #endif /* _X86_ENCL_H */
 diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 07aa45e..3c8db3e 100644
+index 713bce437659..4f70cb8144ff 100644
 --- a/arch/x86/kernel/cpu/sgx/ioctl.c
 +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
 @@ -19,6 +19,43 @@
@@ -4306,18 +4889,20 @@ index 07aa45e..3c8db3e 100644
 +	}
 +}
 +
- static u32 sgx_calc_ssa_frame_size(u32 miscselect, u64 xfrm)
+ static u32 sgx_calc_ssaframesize(u32 miscselect, u64 xfrm)
  {
  	u32 size_max = PAGE_SIZE;
-@@ -86,24 +123,34 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+@@ -114,6 +151,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
  {
  	unsigned long encl_size = secs->size + PAGE_SIZE;
  	struct sgx_epc_page *secs_epc;
 +	struct sgx_va_page *va_page;
+ 	unsigned long ssaframesize;
  	struct sgx_pageinfo pginfo;
  	struct sgx_secinfo secinfo;
- 	struct file *backing;
- 	long ret;
+@@ -123,20 +161,29 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 	if (atomic_read(&encl->flags) & SGX_ENCL_CREATED)
+ 		return -EINVAL;
  
 +	va_page = sgx_encl_grow(encl);
 +	if (IS_ERR(va_page))
@@ -4325,7 +4910,8 @@ index 07aa45e..3c8db3e 100644
 +	else if (va_page)
 +		list_add(&va_page->list, &encl->va_pages);
 +
- 	if (sgx_validate_secs(secs)) {
+ 	ssaframesize = sgx_calc_ssaframesize(secs->miscselect, secs->xfrm);
+ 	if (sgx_validate_secs(secs, ssaframesize)) {
  		pr_debug("invalid SECS\n");
 -		return -EINVAL;
 +		ret = -EINVAL;
@@ -4348,7 +4934,7 @@ index 07aa45e..3c8db3e 100644
  	if (IS_ERR(secs_epc)) {
  		ret = PTR_ERR(secs_epc);
  		goto err_out_backing;
-@@ -150,6 +197,9 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+@@ -183,6 +230,9 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
  	fput(encl->backing);
  	encl->backing = NULL;
  
@@ -4358,7 +4944,7 @@ index 07aa45e..3c8db3e 100644
  	return ret;
  }
  
-@@ -326,21 +376,35 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+@@ -319,13 +369,14 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
  {
  	struct sgx_encl_page *encl_page;
  	struct sgx_epc_page *epc_page;
@@ -4374,6 +4960,8 @@ index 07aa45e..3c8db3e 100644
  	if (IS_ERR(epc_page)) {
  		kfree(encl_page);
  		return PTR_ERR(epc_page);
+@@ -337,9 +388,22 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+ 		goto err_out_free;
  	}
  
 +	va_page = sgx_encl_grow(encl);
@@ -4382,7 +4970,7 @@ index 07aa45e..3c8db3e 100644
 +		goto err_out_free;
 +	}
 +
- 	mmap_read_lock(current->mm);
+ 	down_read(&current->mm->mmap_sem);
  	mutex_lock(&encl->lock);
  
 +	/*
@@ -4395,28 +4983,24 @@ index 07aa45e..3c8db3e 100644
  	/*
  	 * Insert prior to EADD in case of OOM.  EADD modifies MRENCLAVE, i.e.
  	 * can't be gracefully unwound, while failure on EADD/EXTEND is limited
-@@ -371,6 +435,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+@@ -370,6 +434,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
  			goto err_out;
  	}
  
 +	sgx_mark_page_reclaimable(encl_page->epc_page);
  	mutex_unlock(&encl->lock);
- 	mmap_read_unlock(current->mm);
+ 	up_read(&current->mm->mmap_sem);
  	return ret;
-@@ -380,9 +445,11 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+@@ -379,6 +444,7 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
  			  PFN_DOWN(encl_page->desc));
  
  err_out_unlock:
 +	sgx_encl_shrink(encl, va_page);
  	mutex_unlock(&encl->lock);
- 	mmap_read_unlock(current->mm);
- 
-+err_out_free:
- 	sgx_free_epc_page(epc_page);
- 	kfree(encl_page);
+ 	up_read(&current->mm->mmap_sem);
  
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 4137254..3594d37 100644
+index 506cb0756147..4dfa1bbf15b7 100644
 --- a/arch/x86/kernel/cpu/sgx/main.c
 +++ b/arch/x86/kernel/cpu/sgx/main.c
 @@ -16,6 +16,378 @@
@@ -4488,9 +5072,9 @@ index 4137254..3594d37 100644
 +		if (!mmget_not_zero(encl_mm->mm))
 +			continue;
 +
-+		mmap_read_lock(encl_mm->mm);
++		down_read(&encl_mm->mm->mmap_sem);
 +		ret = !sgx_encl_test_and_clear_young(encl_mm->mm, page);
-+		mmap_read_unlock(encl_mm->mm);
++		up_read(&encl_mm->mm->mmap_sem);
 +
 +		mmput_async(encl_mm->mm);
 +
@@ -4528,13 +5112,13 @@ index 4137254..3594d37 100644
 +			if (!mmget_not_zero(encl_mm->mm))
 +				continue;
 +
-+			mmap_read_lock(encl_mm->mm);
++			down_read(&encl_mm->mm->mmap_sem);
 +
 +			ret = sgx_encl_find(encl_mm->mm, addr, &vma);
 +			if (!ret && encl == vma->vm_private_data)
 +				zap_vma_ptes(vma, addr, PAGE_SIZE);
 +
-+			mmap_read_unlock(encl_mm->mm);
++			up_read(&encl_mm->mm->mmap_sem);
 +
 +			mmput_async(encl_mm->mm);
 +		}
@@ -4843,15 +5427,16 @@ index 4137254..3594d37 100644
  	return 0;
  }
  
-@@ -94,6 +497,7 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_section(struct sgx_epc_sec
+@@ -94,6 +497,8 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_section(struct sgx_epc_sec
  
  	page = list_first_entry(&section->page_list, struct sgx_epc_page, list);
  	list_del_init(&page->list);
 +	section->free_cnt--;
- 
++
  	return page;
  }
-@@ -127,6 +531,57 @@ struct sgx_epc_page *__sgx_alloc_epc_page(void)
+ 
+@@ -126,6 +531,57 @@ struct sgx_epc_page *__sgx_alloc_epc_page(void)
  	return ERR_PTR(-ENOMEM);
  }
  
@@ -4909,7 +5494,7 @@ index 4137254..3594d37 100644
  /**
   * sgx_free_epc_page() - Free an EPC page
   * @page:	an EPC page
-@@ -138,12 +593,20 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
+@@ -137,12 +593,20 @@ void sgx_free_epc_page(struct sgx_epc_page *page)
  	struct sgx_epc_section *section = sgx_get_epc_section(page);
  	int ret;
  
@@ -4930,7 +5515,7 @@ index 4137254..3594d37 100644
  	spin_unlock(&section->lock);
  }
  
-@@ -194,6 +657,7 @@ static bool __init sgx_setup_epc_section(u64 addr, u64 size,
+@@ -193,6 +657,7 @@ static bool __init sgx_setup_epc_section(u64 addr, u64 size,
  		list_add_tail(&page->list, &section->unsanitized_page_list);
  	}
  
@@ -4939,7 +5524,7 @@ index 4137254..3594d37 100644
  
  err_out:
 diff --git a/arch/x86/kernel/cpu/sgx/sgx.h b/arch/x86/kernel/cpu/sgx/sgx.h
-index fce756c..1a6ca5f 100644
+index aae6bfb3bc8a..f2fb7e362226 100644
 --- a/arch/x86/kernel/cpu/sgx/sgx.h
 +++ b/arch/x86/kernel/cpu/sgx/sgx.h
 @@ -15,6 +15,7 @@
@@ -4969,7 +5554,7 @@ index fce756c..1a6ca5f 100644
  
  extern struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
  
-@@ -49,7 +55,10 @@ static inline void *sgx_get_epc_addr(struct sgx_epc_page *page)
+@@ -50,7 +56,10 @@ static inline void *sgx_get_epc_addr(struct sgx_epc_page *page)
  	return section->va + (page->desc & PAGE_MASK) - section->pa;
  }
  
@@ -4980,14 +5565,73 @@ index fce756c..1a6ca5f 100644
  void sgx_free_epc_page(struct sgx_epc_page *page);
  
  #endif /* _X86_SGX_H */
--- 
-2.25.4
 
-
-From b27c47210764829109b06801bd30d6c77e7e5318 Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:11 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581663
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 9859C139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:06 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 8AC252074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:06 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1727957AbgFAHyG (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:54:06 -0400
+Received: from mga05.intel.com ([192.55.52.43]:4911 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726142AbgFAHyG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:54:06 -0400
+IronPort-SDR: 
+ F0EDIriTVuce6rTwiaI+M8TafdfIjTMNe+u1Uzj5YyqSlR2tBefflDrqQoCv/ZOvH/TTkvIchU
+ d1dcnVwcjUgw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:54:06 -0700
+IronPort-SDR: 
+ ojBqhSWHV8y6l8GtvCi2xqZFyRjZHX3TYA4ZiuPNHUtv1I4fiKQ5H6D1SJemJwiGyTd4JWvbQ7
+ lD24DcirJI2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879729"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:54:00 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 7 Jul 2020 06:37:40 +0300
-Subject: [PATCH 17/24] x86/sgx: ptrace() support for the SGX driver
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, sean.j.christopherson@intel.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 14/21] x86/sgx: ptrace() support for the SGX driver
+Date: Mon,  1 Jun 2020 10:52:11 +0300
+Message-Id: <20200601075218.65618-15-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 Add VMA callbacks for ptrace() that can be used with debug enclaves.
 With debug enclaves data can be read and write the memory word at a time
@@ -5000,7 +5644,7 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  1 file changed, 87 insertions(+)
 
 diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index b22e718..a0c84a7 100644
+index 325b918ab8d2..459240d0512f 100644
 --- a/arch/x86/kernel/cpu/sgx/encl.c
 +++ b/arch/x86/kernel/cpu/sgx/encl.c
 @@ -334,10 +334,97 @@ static int sgx_vma_mprotect(struct vm_area_struct *vma, unsigned long start,
@@ -5096,20 +5740,82 @@ index b22e718..a0c84a7 100644
  const struct vm_operations_struct sgx_vm_ops = {
  	.open = sgx_vma_open,
  	.fault = sgx_vma_fault,
- 	.mprotect = sgx_vma_mprotect,
+ 	.may_mprotect = sgx_vma_mprotect,
 +	.access = sgx_vma_access,
  };
  
  /**
--- 
-2.25.4
 
-
-From 029a297f7a4d0e9a13185fe5889355cf051a87c3 Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Tue, 7 Jul 2020 06:37:41 +0300
-Subject: [PATCH 18/24] x86/vdso: Add support for exception fixup in vDSO
+From patchwork Mon Jun  1 07:52:12 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581691
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id F0FBE139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:56:28 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id CF2C920734
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:56:28 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1726056AbgFAH42 (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:56:28 -0400
+Received: from mga04.intel.com ([192.55.52.120]:7196 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726072AbgFAH42 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:56:28 -0400
+IronPort-SDR: 
+ sGyXPydxnVTpLv/6jxBN40l/9+sJ3pbzOjo7rLLLIsEzSXBZcDMrHbV2M7UDae7wVy0hPFHqqE
+ OWqJFCAxaiVQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:54:13 -0700
+IronPort-SDR: 
+ 4mXdWG5EHlcUw0yIE/q85MJCa9bQZDxBQ2DDoYVaio3u2T/rcH7CQcCNmdRItG9kpklUCwd+kh
+ FCSzrAj3R6Wg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879748"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:54:07 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 15/21] x86/vdso: Add support for exception fixup in vDSO
  functions
+Date: Mon,  1 Jun 2020 10:52:12 +0300
+Message-Id: <20200601075218.65618-16-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
+
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
 The basic concept and implementation is very similar to the kernel's
 exception fixup mechanism.  The key differences are that the kernel
@@ -5196,18 +5902,18 @@ Acked-by: Jethro Beekman <jethro@fortanix.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/entry/vdso/Makefile          |  6 ++--
- arch/x86/entry/vdso/extable.c         | 46 ++++++++++++++++++++++++
- arch/x86/entry/vdso/extable.h         | 29 ++++++++++++++++
+ arch/x86/entry/vdso/Makefile          |  6 +--
+ arch/x86/entry/vdso/extable.c         | 46 +++++++++++++++++++++
+ arch/x86/entry/vdso/extable.h         | 29 ++++++++++++++
  arch/x86/entry/vdso/vdso-layout.lds.S |  9 ++++-
- arch/x86/entry/vdso/vdso2c.h          | 50 ++++++++++++++++++++++++++-
+ arch/x86/entry/vdso/vdso2c.h          | 58 +++++++++++++++++++++++----
  arch/x86/include/asm/vdso.h           |  5 +++
- 6 files changed, 140 insertions(+), 5 deletions(-)
+ 6 files changed, 141 insertions(+), 12 deletions(-)
  create mode 100644 arch/x86/entry/vdso/extable.c
  create mode 100644 arch/x86/entry/vdso/extable.h
 
 diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 433a125..657e01d 100644
+index 433a1259f61d..657e01d34d02 100644
 --- a/arch/x86/entry/vdso/Makefile
 +++ b/arch/x86/entry/vdso/Makefile
 @@ -26,7 +26,7 @@ VDSO32-$(CONFIG_IA32_EMULATION)	:= y
@@ -5232,7 +5938,7 @@ index 433a125..657e01d 100644
  $(obj)/vdsox32.so.dbg: $(obj)/vdsox32.lds $(vobjx32s) FORCE
 diff --git a/arch/x86/entry/vdso/extable.c b/arch/x86/entry/vdso/extable.c
 new file mode 100644
-index 0000000..afcf5b6
+index 000000000000..afcf5b65beef
 --- /dev/null
 +++ b/arch/x86/entry/vdso/extable.c
 @@ -0,0 +1,46 @@
@@ -5284,7 +5990,7 @@ index 0000000..afcf5b6
 +}
 diff --git a/arch/x86/entry/vdso/extable.h b/arch/x86/entry/vdso/extable.h
 new file mode 100644
-index 0000000..aafdac3
+index 000000000000..aafdac396948
 --- /dev/null
 +++ b/arch/x86/entry/vdso/extable.h
 @@ -0,0 +1,29 @@
@@ -5318,7 +6024,7 @@ index 0000000..aafdac3
 +#endif /* __VDSO_EXTABLE_H */
 +
 diff --git a/arch/x86/entry/vdso/vdso-layout.lds.S b/arch/x86/entry/vdso/vdso-layout.lds.S
-index 4d15293..dc8da76 100644
+index 4d152933547d..dc8da7695859 100644
 --- a/arch/x86/entry/vdso/vdso-layout.lds.S
 +++ b/arch/x86/entry/vdso/vdso-layout.lds.S
 @@ -75,11 +75,18 @@ SECTIONS
@@ -5342,7 +6048,7 @@ index 4d15293..dc8da76 100644
  		*(.discard)
  		*(.discard.*)
 diff --git a/arch/x86/entry/vdso/vdso2c.h b/arch/x86/entry/vdso/vdso2c.h
-index a20b134..7c93bba 100644
+index a20b134de2a8..04d04e46c98c 100644
 --- a/arch/x86/entry/vdso/vdso2c.h
 +++ b/arch/x86/entry/vdso/vdso2c.h
 @@ -5,6 +5,41 @@
@@ -5387,16 +6093,18 @@ index a20b134..7c93bba 100644
  static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
  			 void *stripped_addr, size_t stripped_len,
  			 FILE *outfile, const char *image_name)
-@@ -16,7 +51,7 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+@@ -14,9 +49,8 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+ 	unsigned long mapping_size;
+ 	ELF(Ehdr) *hdr = (ELF(Ehdr) *)raw_addr;
  	int i;
- 	unsigned long j;
+-	unsigned long j;
  	ELF(Shdr) *symtab_hdr = NULL, *strtab_hdr, *secstrings_hdr,
 -		*alt_sec = NULL;
 +		*alt_sec = NULL, *extable_sec = NULL;
  	ELF(Dyn) *dyn = 0, *dyn_end = 0;
  	const char *secstrings;
  	INT_BITS syms[NSYMS] = {};
-@@ -78,6 +113,8 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+@@ -78,6 +112,8 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
  		if (!strcmp(secstrings + GET_LE(&sh->sh_name),
  			    ".altinstructions"))
  			alt_sec = sh;
@@ -5405,9 +6113,17 @@ index a20b134..7c93bba 100644
  	}
  
  	if (!symtab_hdr)
-@@ -157,6 +194,9 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
- 			(int)((unsigned char *)stripped_addr)[j]);
- 	}
+@@ -150,13 +186,11 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+ 	fprintf(outfile,
+ 		"static unsigned char raw_data[%lu] __ro_after_init __aligned(PAGE_SIZE) = {",
+ 		mapping_size);
+-	for (j = 0; j < stripped_len; j++) {
+-		if (j % 10 == 0)
+-			fprintf(outfile, "\n\t");
+-		fprintf(outfile, "0x%02X, ",
+-			(int)((unsigned char *)stripped_addr)[j]);
+-	}
++	BITSFUNC(copy)(outfile, stripped_addr, stripped_len);
  	fprintf(outfile, "\n};\n\n");
 +	if (extable_sec)
 +		BITSFUNC(extract)(raw_addr, raw_len, outfile,
@@ -5415,7 +6131,7 @@ index a20b134..7c93bba 100644
  
  	fprintf(outfile, "const struct vdso_image %s = {\n", image_name);
  	fprintf(outfile, "\t.data = raw_data,\n");
-@@ -167,6 +207,14 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+@@ -167,6 +201,14 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
  		fprintf(outfile, "\t.alt_len = %lu,\n",
  			(unsigned long)GET_LE(&alt_sec->sh_size));
  	}
@@ -5431,7 +6147,7 @@ index a20b134..7c93bba 100644
  		if (required_syms[i].export && syms[i])
  			fprintf(outfile, "\t.sym_%s = %" PRIi64 ",\n",
 diff --git a/arch/x86/include/asm/vdso.h b/arch/x86/include/asm/vdso.h
-index bbcdc7b..b5d2347 100644
+index bbcdc7b8f963..b5d23470f56b 100644
 --- a/arch/x86/include/asm/vdso.h
 +++ b/arch/x86/include/asm/vdso.h
 @@ -15,6 +15,8 @@ struct vdso_image {
@@ -5453,14 +6169,76 @@ index bbcdc7b..b5d2347 100644
  #endif /* __ASSEMBLER__ */
  
  #endif /* _ASM_X86_VDSO_H */
--- 
-2.25.4
 
+From patchwork Mon Jun  1 07:52:13 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581667
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id A7BBF139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:20 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 978BE20734
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:20 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728105AbgFAHyU (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:54:20 -0400
+Received: from mga07.intel.com ([134.134.136.100]:48831 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726072AbgFAHyT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:54:19 -0400
+IronPort-SDR: 
+ tBKf9v4VTpIj8RxT59aZg6WJ4VPIEfHuhjc1dPz93SKr6OImwsgEivQVrKit9Gq39ftG/PXWM/
+ UzIc68g3uA4Q==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:54:19 -0700
+IronPort-SDR: 
+ cZFBBgcX9XxkzpqURSrIaPiLAU1wWIOoVyqLwSEsBPI+k8IZRfXZGYj4may5kZY7t6ZPvehPqi
+ uFruAtTWccvw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879764"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:54:13 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 16/21] x86/fault: Add helper function to sanitize error
+ code
+Date: Mon,  1 Jun 2020 10:52:13 +0300
+Message-Id: <20200601075218.65618-17-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
-From d264b2d0d2cebf3178e99c5561c6de2e315bc910 Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Tue, 7 Jul 2020 06:37:42 +0300
-Subject: [PATCH 19/24] x86/fault: Add helper function to sanitize error code
 
 Add helper function to sanitize error code to prepare for vDSO exception
 fixup, which will expose the error code to userspace and runs before
@@ -5474,7 +6252,7 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  1 file changed, 17 insertions(+), 7 deletions(-)
 
 diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 41e6498..0d7bad3 100644
+index 16c53c874bb9..23666e34abbc 100644
 --- a/arch/x86/mm/fault.c
 +++ b/arch/x86/mm/fault.c
 @@ -704,6 +704,18 @@ pgtable_bad(struct pt_regs *regs, unsigned long error_code,
@@ -5529,15 +6307,77 @@ index 41e6498..0d7bad3 100644
  	set_signal_archinfo(address, error_code);
  
  #ifdef CONFIG_MEMORY_FAILURE
--- 
-2.25.4
 
+From patchwork Mon Jun  1 07:52:14 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581669
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 4564960D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:28 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 37F572074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:28 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728123AbgFAHy1 (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:54:27 -0400
+Received: from mga18.intel.com ([134.134.136.126]:18154 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727828AbgFAHy0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:54:26 -0400
+IronPort-SDR: 
+ 5vSDb7MnqOCJdPXmsMX/7MBQGBff2hpMmDL4a9w0LmfxxVTwqI8sbXESReHLZFmpL7IeRGRcV+
+ IrGmHi1jwcCQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:54:26 -0700
+IronPort-SDR: 
+ 1ts4H7NbqFNQbcSptf7aHjsDnKZJLpipkvvo0ARX+Hklwnn2EgJ1U6fqkn5COgvrvND5sLHVV0
+ EdgfcueKbWXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879843"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:54:20 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 17/21] x86/traps: Attempt to fixup exceptions in vDSO
+ before signaling
+Date: Mon,  1 Jun 2020 10:52:14 +0300
+Message-Id: <20200601075218.65618-18-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
-From 0162c2d4c233723a22f1df7eea5a8d84678f57b9 Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Tue, 7 Jul 2020 06:37:43 +0300
-Subject: [PATCH 20/24] x86/traps: Attempt to fixup exceptions in vDSO before
- signaling
 
 vDSO functions can now leverage an exception fixup mechanism similar to
 kernel exception fixup.  For vDSO exception fixup, the initial user is
@@ -5570,7 +6410,7 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  2 files changed, 22 insertions(+)
 
 diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index d54cffd..3ed546c 100644
+index d54cffdc7cac..cce8fb2c560d 100644
 --- a/arch/x86/kernel/traps.c
 +++ b/arch/x86/kernel/traps.c
 @@ -57,6 +57,7 @@
@@ -5606,7 +6446,7 @@ index d54cffd..3ed546c 100644
  		goto exit;
  
 +	if (user_mode(regs) &&
-+	    fixup_vdso_exception(regs, X86_TRAP_DB, 0, 0))
++	    fixup_vdso_exception(regs, X86_TRAP_DB, error_code, 0))
 +		goto exit;
 +
  	/*
@@ -5616,14 +6456,14 @@ index d54cffd..3ed546c 100644
  	if (!si_code)
  		return;
  
-+	if (fixup_vdso_exception(regs, trapnr, 0, 0))
++	if (fixup_vdso_exception(regs, trapnr, error_code, 0))
 +		return;
 +
  	force_sig_fault(SIGFPE, si_code,
  			(void __user *)uprobe_get_trap_addr(regs));
  }
 diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 0d7bad3..40f4fd7 100644
+index 23666e34abbc..e9ed3c7299ac 100644
 --- a/arch/x86/mm/fault.c
 +++ b/arch/x86/mm/fault.c
 @@ -30,6 +30,7 @@
@@ -5655,14 +6495,78 @@ index 0d7bad3..40f4fd7 100644
  	set_signal_archinfo(address, error_code);
  
  #ifdef CONFIG_MEMORY_FAILURE
--- 
-2.25.4
 
+From patchwork Mon Jun  1 07:52:15 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581685
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 713C2139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:55:10 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 5960B2074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:55:10 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728089AbgFAHzG (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:55:06 -0400
+Received: from mga17.intel.com ([192.55.52.151]:59282 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728423AbgFAHzF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:55:05 -0400
+IronPort-SDR: 
+ 0ptRb6RaXgqKFPUtMAvCVrWNoa4d6l8b5gNkGc06DXYXT5xXU+uaCTQ6fFvhtIgtMGnO0Q5olg
+ YCjfrB8rIf6Q==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:54:34 -0700
+IronPort-SDR: 
+ DWEPvYCnd7O+mGGp4fS6gaw+wkzejVYUFT0gI0Efq//fTIGT9qmttc3lsmM/FWKHTcu8UNqYkq
+ 2GXswSGBZUkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879940"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:54:26 -0700
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 18/21] x86/vdso: Implement a vDSO for Intel SGX enclave
+ call
+Date: Mon,  1 Jun 2020 10:52:15 +0300
+Message-Id: <20200601075218.65618-19-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
-From 3274f4bac169a2c95088e4366573da2d2ad5bbeb Mon Sep 17 00:00:00 2001
 From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Tue, 7 Jul 2020 06:37:44 +0300
-Subject: [PATCH 21/24] x86/vdso: Implement a vDSO for Intel SGX enclave call
 
 An SGX runtime must be aware of the exceptions, which happen inside an
 enclave. Introduce a vDSO call that wraps EENTER/ERESUME cycle and returns
@@ -5682,29 +6586,28 @@ Co-developed-by: Cedric Xing <cedric.xing@intel.com>
 Signed-off-by: Cedric Xing <cedric.xing@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- arch/x86/entry/vdso/Makefile             |   3 +
+ arch/x86/entry/vdso/Makefile             |   2 +
  arch/x86/entry/vdso/vdso.lds.S           |   1 +
  arch/x86/entry/vdso/vsgx_enter_enclave.S | 131 +++++++++++++++++++++++
  arch/x86/include/asm/enclu.h             |   8 ++
  arch/x86/include/uapi/asm/sgx.h          |  98 +++++++++++++++++
- 5 files changed, 241 insertions(+)
+ 5 files changed, 240 insertions(+)
  create mode 100644 arch/x86/entry/vdso/vsgx_enter_enclave.S
  create mode 100644 arch/x86/include/asm/enclu.h
 
 diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 657e01d..d7baaec 100644
+index 657e01d34d02..fa50c76a17a8 100644
 --- a/arch/x86/entry/vdso/Makefile
 +++ b/arch/x86/entry/vdso/Makefile
-@@ -25,6 +25,8 @@ VDSO32-$(CONFIG_IA32_EMULATION)	:= y
+@@ -24,6 +24,7 @@ VDSO32-$(CONFIG_IA32_EMULATION)	:= y
+ 
  # files to link into the vdso
  vobjs-y := vdso-note.o vclock_gettime.o vgetcpu.o
- 
 +vobjs-$(VDSO64-y)		+= vsgx_enter_enclave.o
-+
+ 
  # files to link into kernel
  obj-y				+= vma.o extable.o
- OBJECT_FILES_NON_STANDARD_vma.o	:= n
-@@ -90,6 +92,7 @@ $(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS) $(RETPOLINE_CFLAGS
+@@ -90,6 +91,7 @@ $(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS) $(RETPOLINE_CFLAGS
  CFLAGS_REMOVE_vclock_gettime.o = -pg
  CFLAGS_REMOVE_vdso32/vclock_gettime.o = -pg
  CFLAGS_REMOVE_vgetcpu.o = -pg
@@ -5713,7 +6616,7 @@ index 657e01d..d7baaec 100644
  #
  # X32 processes use x32 vDSO to access 64bit kernel data.
 diff --git a/arch/x86/entry/vdso/vdso.lds.S b/arch/x86/entry/vdso/vdso.lds.S
-index 36b644e..4bf4846 100644
+index 36b644e16272..4bf48462fca7 100644
 --- a/arch/x86/entry/vdso/vdso.lds.S
 +++ b/arch/x86/entry/vdso/vdso.lds.S
 @@ -27,6 +27,7 @@ VERSION {
@@ -5726,7 +6629,7 @@ index 36b644e..4bf4846 100644
  }
 diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.S b/arch/x86/entry/vdso/vsgx_enter_enclave.S
 new file mode 100644
-index 0000000..be7e467
+index 000000000000..be7e467e1efb
 --- /dev/null
 +++ b/arch/x86/entry/vdso/vsgx_enter_enclave.S
 @@ -0,0 +1,131 @@
@@ -5863,7 +6766,7 @@ index 0000000..be7e467
 +SYM_FUNC_END(__vdso_sgx_enter_enclave)
 diff --git a/arch/x86/include/asm/enclu.h b/arch/x86/include/asm/enclu.h
 new file mode 100644
-index 0000000..06157b3
+index 000000000000..06157b3e9ede
 --- /dev/null
 +++ b/arch/x86/include/asm/enclu.h
 @@ -0,0 +1,8 @@
@@ -5876,7 +6779,7 @@ index 0000000..06157b3
 +
 +#endif /* _ASM_X86_ENCLU_H */
 diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 57d0d30..3760e5d 100644
+index 57d0d30c79b3..3760e5d5dc0c 100644
 --- a/arch/x86/include/uapi/asm/sgx.h
 +++ b/arch/x86/include/uapi/asm/sgx.h
 @@ -74,4 +74,102 @@ struct sgx_enclave_set_attribute {
@@ -5982,14 +6885,73 @@ index 57d0d30..3760e5d 100644
 +					sgx_enclave_exit_handler_t handler);
 +
  #endif /* _UAPI_ASM_X86_SGX_H */
--- 
-2.25.4
 
-
-From 62fa2bd21ce00056245e514d41d977a874ee8e0d Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:16 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581675
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 5CA8A60D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:43 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 4924A20734
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:43 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728445AbgFAHym (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:54:42 -0400
+Received: from mga14.intel.com ([192.55.52.115]:9711 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728089AbgFAHyl (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:54:41 -0400
+IronPort-SDR: 
+ eeqfPSzxQxX7m2+NnxQotPQNFofdKzeAKW2CckkpvyANDk4oXUHn98rxCvocbd/sbUf/NKFHWj
+ 3N9OHacT1dvg==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:54:41 -0700
+IronPort-SDR: 
+ U999mXn+Sfq8KBi8KtRm8o6yj2jIFRoM4fV1+UjjXYIB50OjOoXJA7gNJ9DdLKZsz8NNtiO/9i
+ fG0WbdF5uzyw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879952"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:54:35 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 7 Jul 2020 06:37:45 +0300
-Subject: [PATCH 22/24] selftests/x86: Add a selftest for SGX
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kselftest@vger.kernel.org, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, sean.j.christopherson@intel.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 19/21] selftests/x86: Add a selftest for SGX
+Date: Mon,  1 Jun 2020 10:52:16 +0300
+Message-Id: <20200601075218.65618-20-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 Add a selftest for SGX. It is a trivial test where a simple enclave
 copies one 64-bit word of memory between two memory locations.
@@ -6023,7 +6985,7 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  create mode 100644 tools/testing/selftests/sgx/test_encl_bootstrap.S
 
 diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 2ff6870..0084974 100644
+index 2ff68702fd41..008497495ae4 100644
 --- a/tools/testing/selftests/Makefile
 +++ b/tools/testing/selftests/Makefile
 @@ -64,6 +64,7 @@ TARGETS += user
@@ -6036,7 +6998,7 @@ index 2ff6870..0084974 100644
  # "make quicktest=1 kselftest" from top level Makefile
 diff --git a/tools/testing/selftests/sgx/.gitignore b/tools/testing/selftests/sgx/.gitignore
 new file mode 100644
-index 0000000..fbaf0bd
+index 000000000000..fbaf0bda9a92
 --- /dev/null
 +++ b/tools/testing/selftests/sgx/.gitignore
 @@ -0,0 +1,2 @@
@@ -6044,7 +7006,7 @@ index 0000000..fbaf0bd
 +test_encl.elf
 diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftests/sgx/Makefile
 new file mode 100644
-index 0000000..95e5c4d
+index 000000000000..95e5c4df8014
 --- /dev/null
 +++ b/tools/testing/selftests/sgx/Makefile
 @@ -0,0 +1,53 @@
@@ -6103,7 +7065,7 @@ index 0000000..95e5c4d
 +	$(OUTPUT)/test_sgx.o \
 diff --git a/tools/testing/selftests/sgx/call.S b/tools/testing/selftests/sgx/call.S
 new file mode 100644
-index 0000000..77131e8
+index 000000000000..77131e83db42
 --- /dev/null
 +++ b/tools/testing/selftests/sgx/call.S
 @@ -0,0 +1,54 @@
@@ -6163,7 +7125,7 @@ index 0000000..77131e8
 +	.cfi_endproc
 diff --git a/tools/testing/selftests/sgx/defines.h b/tools/testing/selftests/sgx/defines.h
 new file mode 100644
-index 0000000..be89699
+index 000000000000..be8969922804
 --- /dev/null
 +++ b/tools/testing/selftests/sgx/defines.h
 @@ -0,0 +1,21 @@
@@ -6190,7 +7152,7 @@ index 0000000..be89699
 +#endif /* DEFINES_H */
 diff --git a/tools/testing/selftests/sgx/load.c b/tools/testing/selftests/sgx/load.c
 new file mode 100644
-index 0000000..9140703
+index 000000000000..91407036541c
 --- /dev/null
 +++ b/tools/testing/selftests/sgx/load.c
 @@ -0,0 +1,282 @@
@@ -6478,7 +7440,7 @@ index 0000000..9140703
 +}
 diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
 new file mode 100644
-index 0000000..5394b2f
+index 000000000000..5394b2f6af8e
 --- /dev/null
 +++ b/tools/testing/selftests/sgx/main.c
 @@ -0,0 +1,199 @@
@@ -6683,7 +7645,7 @@ index 0000000..5394b2f
 +}
 diff --git a/tools/testing/selftests/sgx/main.h b/tools/testing/selftests/sgx/main.h
 new file mode 100644
-index 0000000..999422c
+index 000000000000..999422cc7343
 --- /dev/null
 +++ b/tools/testing/selftests/sgx/main.h
 @@ -0,0 +1,38 @@
@@ -6727,7 +7689,7 @@ index 0000000..999422c
 +#endif /* MAIN_H */
 diff --git a/tools/testing/selftests/sgx/sigstruct.c b/tools/testing/selftests/sgx/sigstruct.c
 new file mode 100644
-index 0000000..ceddad4
+index 000000000000..ceddad478672
 --- /dev/null
 +++ b/tools/testing/selftests/sgx/sigstruct.c
 @@ -0,0 +1,395 @@
@@ -7128,7 +8090,7 @@ index 0000000..ceddad4
 +}
 diff --git a/tools/testing/selftests/sgx/test_encl.c b/tools/testing/selftests/sgx/test_encl.c
 new file mode 100644
-index 0000000..ede9153
+index 000000000000..ede915399742
 --- /dev/null
 +++ b/tools/testing/selftests/sgx/test_encl.c
 @@ -0,0 +1,20 @@
@@ -7154,7 +8116,7 @@ index 0000000..ede9153
 +}
 diff --git a/tools/testing/selftests/sgx/test_encl.lds b/tools/testing/selftests/sgx/test_encl.lds
 new file mode 100644
-index 0000000..0fbbda7
+index 000000000000..0fbbda7e665e
 --- /dev/null
 +++ b/tools/testing/selftests/sgx/test_encl.lds
 @@ -0,0 +1,40 @@
@@ -7200,7 +8162,7 @@ index 0000000..0fbbda7
 +ASSERT(!DEFINED(.got.plt), "Libcalls are not supported in enclaves")
 diff --git a/tools/testing/selftests/sgx/test_encl_bootstrap.S b/tools/testing/selftests/sgx/test_encl_bootstrap.S
 new file mode 100644
-index 0000000..6836ea8
+index 000000000000..6836ea86126e
 --- /dev/null
 +++ b/tools/testing/selftests/sgx/test_encl_bootstrap.S
 @@ -0,0 +1,89 @@
@@ -7293,15 +8255,74 @@ index 0000000..6836ea8
 +	.balign 4096
 +	.space 8192
 +encl_stack:
--- 
-2.25.4
 
-
-From f5fdacedee8f67138d65ad817ac2d2c8677009be Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:17 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581681
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 3D376139A
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:52 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 25A1620734
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:52 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728147AbgFAHys (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:54:48 -0400
+Received: from mga11.intel.com ([192.55.52.93]:20054 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728089AbgFAHys (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:54:48 -0400
+IronPort-SDR: 
+ SS+KVN6bOJKGTxha5kVbA3bbpUjWS7nRXipXR6Cf5D6TZwsuumdWBVmisC6a7kgQ9p0cwQCrgk
+ V3OcBMNc1g4A==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:54:47 -0700
+IronPort-SDR: 
+ S/UchgGB9/klTrIbdaTxWvBRyIZxBH4PuyOCBIcEKrByOKa86wAbz0DGYX6zS14k64JHaQumA9
+ IOXDzt3wgI2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879965"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:54:42 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 7 Jul 2020 06:37:46 +0300
-Subject: [PATCH 23/24] docs: x86/sgx: Document SGX micro architecture and
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-doc@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, bp@alien8.de, cedric.xing@intel.com,
+        chenalexchen@google.com, conradparker@google.com,
+        cyhanish@google.com, dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: [PATCH v32 20/21] docs: x86/sgx: Document SGX micro architecture and
  kernel internals
+Date: Mon,  1 Jun 2020 10:52:17 +0300
+Message-Id: <20200601075218.65618-21-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 Document the Intel SGX kernel architecture. The fine-grained micro
 architecture details can be looked up from Intel SDM Volume 3D.
@@ -7313,12 +8334,12 @@ Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
  Documentation/x86/index.rst |   1 +
- Documentation/x86/sgx.rst   | 198 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 199 insertions(+)
+ Documentation/x86/sgx.rst   | 206 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 207 insertions(+)
  create mode 100644 Documentation/x86/sgx.rst
 
 diff --git a/Documentation/x86/index.rst b/Documentation/x86/index.rst
-index 265d9e9..807290b 100644
+index 265d9e9a093b..807290bf357c 100644
 --- a/Documentation/x86/index.rst
 +++ b/Documentation/x86/index.rst
 @@ -30,3 +30,4 @@ x86-specific Documentation
@@ -7328,10 +8349,10 @@ index 265d9e9..807290b 100644
 +   sgx
 diff --git a/Documentation/x86/sgx.rst b/Documentation/x86/sgx.rst
 new file mode 100644
-index 0000000..5bcbcf0
+index 000000000000..9609a3409ad1
 --- /dev/null
 +++ b/Documentation/x86/sgx.rst
-@@ -0,0 +1,198 @@
+@@ -0,0 +1,206 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
 +============
@@ -7452,19 +8473,24 @@ index 0000000..5bcbcf0
 +Remote Attestation
 +------------------
 +
-+Provisioning Certification Enclave (PCE), the root of trust for other enclaves,
-+generates a signing key from a fused key called Provisioning Certification Key.
-+PCE can then use this key to certify an attestation key of a Quoting Enclave
-+(QE), e.g. we get the chain of trust down to the hardware if the Intel signed
-+PCE is used.
++For remote attestation (or provisioning) there are schemes available:
 +
-+To use the needed keys, ATTRIBUTE.PROVISIONKEY is required but should be only
-+allowed for those who actually need it so that only the trusted parties can
-+certify QE's.
++* EPID scheme, which requires the use of Intel managed attestation service.
++* ECDSA scheme, which allows a 3rd party to act as an attestation service.
 +
-+A device file called /dev/sgx/provision exists to provide file descriptors that
-+act as privilege tokens for building provisioning enclaves. These can be
-+associated with enclaves with the ioctl SGX_IOC_ENCLAVE_SET_ATTRIBUTE.
++Intel has released an open source *Quoting Enclave (QE)* and *Provisioning
++Certification Enclave (PCE)* for the ECDSA based scheme. A PCE is used to
++certify the locally used QE's.
++
++Intel also provides a proprietary of the PCE. This is a necessary when one
++needs to be able to prove that an enclave is running on real hardware. To
++achieve this the enclave needs to be rooted to the Intel's PKI, which obviously
++cannot be exposed to 3rd parties.
++
++Both schemes require **ATTRIBUTES.PROVISIONKEY** but only EPID scheme uses the
++on-die provisioning key. This privilege should be under normal conditions given
++only to QE's because uncontrolled use of attestation could be used by malware
++for benefit.
 +
 +Encryption engines
 +==================
@@ -7527,17 +8553,80 @@ index 0000000..5bcbcf0
 +References
 +==========
 +
++"Intel® Software Guard Extensions: EPID Provisioning and Attestation Services"
++   https://software.intel.com/sites/default/files/managed/57/0e/ww10-2016-sgx-provisioning-and-attestation-final.pdf
++
 +"Supporting Third Party Attestation for Intel® SGX with Intel® Data Center
 +Attestation Primitives"
 +   https://software.intel.com/sites/default/files/managed/f1/b8/intel-sgx-support-for-third-party-attestation.pdf
--- 
-2.25.4
 
-
-From d03b906f7d5503cef522ec7319437e495edcfcc2 Mon Sep 17 00:00:00 2001
+From patchwork Mon Jun  1 07:52:18 2020
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Patchwork-Id: 11581683
+Return-Path: <SRS0=Np89=7O=vger.kernel.org=linux-sgx-owner@kernel.org>
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
+ [172.30.200.123])
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id AF27460D
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:55 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 977142074B
+	for <patchwork-linux-sgx@patchwork.kernel.org>;
+ Mon,  1 Jun 2020 07:54:55 +0000 (UTC)
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1728156AbgFAHyz (ORCPT
+        <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
+        Mon, 1 Jun 2020 03:54:55 -0400
+Received: from mga07.intel.com ([134.134.136.100]:48860 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728089AbgFAHyy (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:54:54 -0400
+IronPort-SDR: 
+ j3CRKgpM3WvcoNWMjL0uNX9fi7T4tNiLgKj/nwhQSRYJVYekXyKEt3zVY2lZM0Iou5Ax5NKYqI
+ YRFNoFCEEDyA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Jun 2020 00:54:54 -0700
+IronPort-SDR: 
+ 4Z+NoaAQhS2Ooz6g4003qw9yMkeXa/o15X0b3JQ4F8TRFsdMk3L3S7Tnr+CBDdFj73N4gDTfpd
+ sisgwMOSgo/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,460,1583222400";
+   d="scan'208";a="311879995"
+Received: from yhanin-mobl1.ger.corp.intel.com (HELO localhost)
+ ([10.249.43.17])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Jun 2020 00:54:48 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date: Tue, 7 Jul 2020 06:37:47 +0300
-Subject: [PATCH 24/24] x86/sgx: Update MAINTAINERS
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, sean.j.christopherson@intel.com,
+        yaozhangx@google.com
+Subject: [PATCH v32 21/21] x86/sgx: Update MAINTAINERS
+Date: Mon,  1 Jun 2020 10:52:18 +0300
+Message-Id: <20200601075218.65618-22-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+References: <20200601075218.65618-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Sender: linux-sgx-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-sgx.vger.kernel.org>
+X-Mailing-List: linux-sgx@vger.kernel.org
 
 Add the maintainer information for the SGX subsystem.
 
@@ -7549,7 +8638,7 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  1 file changed, 11 insertions(+)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 50659d7..2aa6d50 100644
+index 50659d76976b..2aa6d50afc44 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
 @@ -8840,6 +8840,17 @@ F:	Documentation/x86/intel_txt.rst
@@ -7570,6 +8659,3 @@ index 50659d7..2aa6d50 100644
  INTERCONNECT API
  M:	Georgi Djakov <georgi.djakov@linaro.org>
  L:	linux-pm@vger.kernel.org
--- 
-2.25.4
-
