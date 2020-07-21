@@ -1,47 +1,47 @@
-From patchwork Tue Jul  7 03:37:24 2020
+From patchwork Thu Jul 16 13:52:40 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647483
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667455
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 1D1A713B4
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 5E4EC6C1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:38:18 +0000 (UTC)
+ Thu, 16 Jul 2020 13:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 08A6B20708
+	by mail.kernel.org (Postfix) with ESMTP id 497B32084C
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:38:18 +0000 (UTC)
+ Thu, 16 Jul 2020 13:53:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727949AbgGGDiN (ORCPT
+        id S1728799AbgGPNxh (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:38:13 -0400
-Received: from mga09.intel.com ([134.134.136.24]:7472 "EHLO mga09.intel.com"
+        Thu, 16 Jul 2020 09:53:37 -0400
+Received: from mga14.intel.com ([192.55.52.115]:11202 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728182AbgGGDiM (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:38:12 -0400
+        id S1728479AbgGPNxg (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:53:36 -0400
 IronPort-SDR: 
- eGGvtC+5uutnlZOlGggP5p41x7QSJt4J12KIske+0sBKvXGLU6V4DbPY28qV4mznaSv+5MIwds
- QZZRKYu5Jx8A==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="149044521"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="149044521"
+ /PhmuxPOh2YC+MN8cbNmwcgsTohC0r9QWKmbrW50UsgP9RTNsfAv3Ott4I+Biq9h+xW6wPGeZY
+ uifvbh0l/wiw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="148533809"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="148533809"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:38:12 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:53:32 -0700
 IronPort-SDR: 
- FvQz/ZqtlajcX3G35bWe9Sf/lpcgZQw2RMuopzEoasusUD5UciD29A723hwZCrJpcOMdjWWAyQ
- kXWe/ojwEWFg==
+ 8isOYeRx5q+fC1pvwKjci+e567n7YiEHP60UQ7Z9EitF+7fylWCsJl0YJhVHwo+mdkUXP2Iyba
+ eGuUuKVb5r/w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314166"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:38:01 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150013"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:53:20 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -57,13 +57,13 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 01/24] x86/cpufeatures: x86/msr: Add Intel SGX hardware
+Subject: [PATCH v36 01/24] x86/cpufeatures: x86/msr: Add Intel SGX hardware
  bits
-Date: Tue,  7 Jul 2020 06:37:24 +0300
-Message-Id: <20200707033747.142828-2-jarkko.sakkinen@linux.intel.com>
+Date: Thu, 16 Jul 2020 16:52:40 +0300
+Message-Id: <20200716135303.276442-2-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -255,50 +255,50 @@ index 95c090a45b4b..7aecf5d07c70 100644
  	eax = cpuid_eax(0x80000000);
  	c->extended_cpuid_level = eax;
 
-From patchwork Tue Jul  7 03:37:25 2020
+From patchwork Thu Jul 16 13:52:41 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647485
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667457
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 5A4CA13B4
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id C81416C1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:38:26 +0000 (UTC)
+ Thu, 16 Jul 2020 13:53:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D62920708
+	by mail.kernel.org (Postfix) with ESMTP id B7B2E20825
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:38:26 +0000 (UTC)
+ Thu, 16 Jul 2020 13:53:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbgGGDi0 (ORCPT
+        id S1728093AbgGPNxp (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:38:26 -0400
-Received: from mga05.intel.com ([192.55.52.43]:51716 "EHLO mga05.intel.com"
+        Thu, 16 Jul 2020 09:53:45 -0400
+Received: from mga11.intel.com ([192.55.52.93]:48056 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727871AbgGGDiZ (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:38:25 -0400
+        id S1726986AbgGPNxp (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:53:45 -0400
 IronPort-SDR: 
- DGwDBL7wDYHPWeoltRn8VYAQyUqmTIVMYbrUHkeHns5g/dGIfDriaYNL+crHLbzA5LmKfldDZ2
- JbUnQntzBB5A==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="232394687"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="232394687"
+ 5wX9w7WCQsvMGzSmK9p0H/m6QsfNquohN/AEjODJO+6oXCqmLNKEeS681xmbvfxQzrjTl0GzwU
+ 3Dvgnh3E3TyA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="147368384"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="147368384"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:38:25 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:53:44 -0700
 IronPort-SDR: 
- jmGptrlNDI66DjBNA4P8MA0fdMsxVL0D6NnH5kn0f2VkWsSH6e+fOYbITqtD+ed/PZd/CqRF/W
- fktHPLci+lSg==
+ d/mYQX24GIFvWrFe0ojmopRlk2JfmMU2TdM3wve6JY9CRav7lpyy0beitzmo3shyRjfd04SBfB
+ 5UUIU4O/hjUA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314193"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:38:14 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150023"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:53:34 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -314,13 +314,13 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 02/24] x86/cpufeatures: x86/msr: Add Intel SGX Launch
+Subject: [PATCH v36 02/24] x86/cpufeatures: x86/msr: Add Intel SGX Launch
  Control hardware bits
-Date: Tue,  7 Jul 2020 06:37:25 +0300
-Message-Id: <20200707033747.142828-3-jarkko.sakkinen@linux.intel.com>
+Date: Thu, 16 Jul 2020 16:52:41 +0300
+Message-Id: <20200716135303.276442-3-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -399,50 +399,50 @@ index 18e08da19f16..3d7c89a8533f 100644
  #define MSR_IA32_SMBASE			0x0000009e
  
 
-From patchwork Tue Jul  7 03:37:26 2020
+From patchwork Thu Jul 16 13:52:42 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647487
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667459
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id C854514B7
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 444E813B1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:38:38 +0000 (UTC)
+ Thu, 16 Jul 2020 13:54:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA49B20773
+	by mail.kernel.org (Postfix) with ESMTP id 35535207BC
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:38:38 +0000 (UTC)
+ Thu, 16 Jul 2020 13:54:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbgGGDii (ORCPT
+        id S1728892AbgGPNyB (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:38:38 -0400
-Received: from mga14.intel.com ([192.55.52.115]:28969 "EHLO mga14.intel.com"
+        Thu, 16 Jul 2020 09:54:01 -0400
+Received: from mga03.intel.com ([134.134.136.65]:23644 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727094AbgGGDii (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:38:38 -0400
+        id S1726986AbgGPNyA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:54:00 -0400
 IronPort-SDR: 
- F4C7oaRz1a4cMLGoTsmPaOeIW1l1cSYPtLg3hXFv7+urbq+BI9L70JmUOfgHu9DeRgLVEjDD7z
- Pozfy8b+8rnw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="146609028"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="146609028"
+ w+QU2Sg+icR1dR85uuECpxybGKfHJGuSjzJNoEYxXBNoPoiWEcJZwRsM07/u4ONivELCISWtkp
+ 8hA1d34X8I1Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="149368483"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="149368483"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:38:37 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:53:59 -0700
 IronPort-SDR: 
- 2NjR3t2ea/FOKojabu1JpuYneXZIc+OGF2G5cme2RcgHsi9eJKestLVScar0iiaWnTLJBNWzXR
- 4emc1qw6XJhg==
+ M2g6KUIQiTyzoq8ctF3vSur4t1WL2Oln3sweHYzSn5sAT2s6eO38HvdiKXiBkRZLSOxdEucH75
+ 1aUB6rHMcunQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314226"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:38:26 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150042"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:53:46 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -457,12 +457,12 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 03/24] x86/mm: x86/sgx: Signal SIGSEGV with PF_SGX
-Date: Tue,  7 Jul 2020 06:37:26 +0300
-Message-Id: <20200707033747.142828-4-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v36 03/24] x86/mm: x86/sgx: Signal SIGSEGV with PF_SGX
+Date: Thu, 16 Jul 2020 16:52:42 +0300
+Message-Id: <20200716135303.276442-4-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -554,50 +554,50 @@ index 1ead568c0101..1db6fbd7af8e 100644
  	 * Make sure to check the VMA so that we do not perform
  	 * faults just to hit a X86_PF_PK as soon as we fill in a
 
-From patchwork Tue Jul  7 03:37:27 2020
+From patchwork Thu Jul 16 13:52:43 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647489
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667469
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 4CA2D13B4
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 7494C6C1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:38:56 +0000 (UTC)
+ Thu, 16 Jul 2020 13:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3492820771
+	by mail.kernel.org (Postfix) with ESMTP id 5B6AA207BC
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:38:56 +0000 (UTC)
+ Thu, 16 Jul 2020 13:54:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728272AbgGGDiw (ORCPT
+        id S1728940AbgGPNyo (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:38:52 -0400
-Received: from mga09.intel.com ([134.134.136.24]:7504 "EHLO mga09.intel.com"
+        Thu, 16 Jul 2020 09:54:44 -0400
+Received: from mga12.intel.com ([192.55.52.136]:43911 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728250AbgGGDiv (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:38:51 -0400
+        id S1726986AbgGPNyn (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:54:43 -0400
 IronPort-SDR: 
- KJeQXbhIVduAyflS1LF32yPYhNMbv+EfZ6igjbdMNMFPod5JYY01mP/yn6u3QuQetzKlegx/kH
- Ey5vuDayHTGQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="149044551"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="149044551"
+ UDawhXXM3T1J+31p4BkD29AWRIOTNy9dNBhzHJikmLy2b0pak41LIYtHF0DrT1C+tYgLH3aY4Z
+ 6eAyzevCUCIg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="128945625"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="128945625"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:38:50 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:54:12 -0700
 IronPort-SDR: 
- LJZkP5l0CyOVYKJJk/X053/5L5FYu8fL8DgyqP+5+epJlPk4zA5acJlSUd+EuAEPZLKRsdNz8s
- wKf0uPbXEJ/A==
+ oxMOGumcgzl1MzqhzKElaSvN+yE6P4zVYDO5gP/Pu3bXsL+smFPCJHmypbsJ4TlX0RaWLVBTIU
+ nLlUax6gUyfg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314272"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:38:39 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150082"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:53:59 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -612,12 +612,12 @@ Cc: linux-kernel@vger.kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, sean.j.christopherson@intel.com,
         tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 04/24] x86/sgx: Add SGX microarchitectural data structures
-Date: Tue,  7 Jul 2020 06:37:27 +0300
-Message-Id: <20200707033747.142828-5-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v36 04/24] x86/sgx: Add SGX microarchitectural data structures
+Date: Thu, 16 Jul 2020 16:52:43 +0300
+Message-Id: <20200716135303.276442-5-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -989,50 +989,50 @@ index 000000000000..ddae55e9d4d8
 +
 +#endif /* _ASM_X86_SGX_ARCH_H */
 
-From patchwork Tue Jul  7 03:37:28 2020
+From patchwork Thu Jul 16 13:52:44 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647491
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667463
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 1868014B7
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id B7AF46C1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:39:06 +0000 (UTC)
+ Thu, 16 Jul 2020 13:54:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0523220771
+	by mail.kernel.org (Postfix) with ESMTP id A394A207BC
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:39:06 +0000 (UTC)
+ Thu, 16 Jul 2020 13:54:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728290AbgGGDjF (ORCPT
+        id S1728910AbgGPNy1 (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:39:05 -0400
-Received: from mga14.intel.com ([192.55.52.115]:29011 "EHLO mga14.intel.com"
+        Thu, 16 Jul 2020 09:54:27 -0400
+Received: from mga09.intel.com ([134.134.136.24]:52179 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727077AbgGGDjF (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:39:05 -0400
+        id S1728777AbgGPNy0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:54:26 -0400
 IronPort-SDR: 
- TiTegoShNlK8IC2IJsrYnw5qoNRmPxoyJDBGmRiYRHu4dbIIyfpFvYqegRwciiHXjDD6pYRT5P
- xIxQCEiOXJow==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="146609052"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="146609052"
+ ZkPQks/8Eg6evEPunES3Odf21opVI0ldjikk4nlA+OxIxhO7c6J5n9P4MZs1Gh/EuHJpGJttdm
+ qfYpvT63FEKQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="150758681"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="150758681"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:39:04 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:54:26 -0700
 IronPort-SDR: 
- V/3LR+R5HEhHe9nc2IayUqEmOwjBE+LQJbWngN58znmPfbG0fYfbG9SEMcp3CCNXA6YLooXURS
- RWCV5WjV1zLw==
+ tL0Zf55GJgAorGus/ECLEVZO3GcBR7odvD9eQ4+2M903B+V2WE7Hmp3A7vDSUYvmXdIMcuafkd
+ ZomfSYMc3yNQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314317"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:38:52 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150132"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:54:14 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -1047,12 +1047,12 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 05/24] x86/sgx: Add wrappers for ENCLS leaf functions
-Date: Tue,  7 Jul 2020 06:37:28 +0300
-Message-Id: <20200707033747.142828-6-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v36 05/24] x86/sgx: Add wrappers for ENCLS leaf functions
+Date: Thu, 16 Jul 2020 16:52:44 +0300
+Message-Id: <20200716135303.276442-6-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -1329,50 +1329,50 @@ index 000000000000..f716b4328614
 +
 +#endif /* _X86_ENCLS_H */
 
-From patchwork Tue Jul  7 03:37:29 2020
+From patchwork Thu Jul 16 13:52:45 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647493
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667467
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 7480814B7
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id DB0266C1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:39:18 +0000 (UTC)
+ Thu, 16 Jul 2020 13:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65D8620708
+	by mail.kernel.org (Postfix) with ESMTP id CB61220787
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:39:18 +0000 (UTC)
+ Thu, 16 Jul 2020 13:54:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbgGGDjS (ORCPT
+        id S1728929AbgGPNyk (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:39:18 -0400
-Received: from mga07.intel.com ([134.134.136.100]:36300 "EHLO mga07.intel.com"
+        Thu, 16 Jul 2020 09:54:40 -0400
+Received: from mga14.intel.com ([192.55.52.115]:11326 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727077AbgGGDjR (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:39:17 -0400
+        id S1728777AbgGPNyk (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:54:40 -0400
 IronPort-SDR: 
- QFzbGWMvLSQQVtGp58inws4AwMrC5IYDevKCxYpmrmuMAvGVWGg38RM1v0vwHtSJ0xJEv30a/c
- A4zKeLsKEQ1g==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="212506270"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="212506270"
+ 6uzWk+PBly2hvgFiB8RpPI5czNPukw0CY0JY1d3DcWide1OTqJNbJ8iVdkLD1bpQdGFNGaly7d
+ qiaBSeQfxzeg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="148533959"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="148533959"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:39:17 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:54:39 -0700
 IronPort-SDR: 
- 9Pgfd9BNiibO2O7b4CsJ1xqNkXppyeqkd7hdQVXiZCIAgb3uKSj1IBjkW/Nf4Ticpj5a6y/2vB
- t510zump9X5A==
+ FhAbqed1WR8mMNAnirPcHNE3QgZ94+2hgjMIrUjJo5LVfmPCGvyHU8t0UIEIVrJW/FrqN5aLIB
+ RFvVxkS/CZIg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314348"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:39:05 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150189"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:54:27 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -1387,12 +1387,12 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 06/24] x86/cpu/intel: Detect SGX support
-Date: Tue,  7 Jul 2020 06:37:29 +0300
-Message-Id: <20200707033747.142828-7-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v36 06/24] x86/cpu/intel: Detect SGX support
+Date: Thu, 16 Jul 2020 16:52:45 +0300
+Message-Id: <20200716135303.276442-7-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -1503,50 +1503,50 @@ index 29a3bedabd06..c3afcd2e4342 100644
 +	}
  }
 
-From patchwork Tue Jul  7 03:37:30 2020
+From patchwork Thu Jul 16 13:52:46 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647495
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667475
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id E05E714B7
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id BEE396C1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:39:29 +0000 (UTC)
+ Thu, 16 Jul 2020 13:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1DA520773
+	by mail.kernel.org (Postfix) with ESMTP id AFA86207BC
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:39:29 +0000 (UTC)
+ Thu, 16 Jul 2020 13:54:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbgGGDj3 (ORCPT
+        id S1728961AbgGPNyx (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:39:29 -0400
-Received: from mga04.intel.com ([192.55.52.120]:31510 "EHLO mga04.intel.com"
+        Thu, 16 Jul 2020 09:54:53 -0400
+Received: from mga03.intel.com ([134.134.136.65]:23723 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727077AbgGGDj3 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:39:29 -0400
+        id S1726986AbgGPNyx (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:54:53 -0400
 IronPort-SDR: 
- xdJeGRSVjBevQtsw98DgVrMgGynJtRfi+GJFBIPgJTmt0IYcdg5k2Xj1TpHqAFdjNzaQKKxk1r
- y68u9R747T1Q==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="145033928"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="145033928"
+ TTFTckpVfOVRHBASFc118NUGQFckibRU/RFqpklsW4nauQl49dfJttpNYWsRffhhZPcpurx8nc
+ lGtnXQCaknzw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="149368652"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="149368652"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:39:28 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:54:52 -0700
 IronPort-SDR: 
- Tn3zawX67V2t+dV/tmFKSdbhwq4gNGnpwWCH2dRbhGOVLJnsqhRIV6RnUMmOmibCQ7V9JgcMCQ
- 52BBK3rihUCw==
+ 4Hsp0/7pF6CyNlqAI1X69eEtm1GZnBZGzxnKMqEADGY+ZL65f/G03qtPLNSnxXVsiS+vsFoU2p
+ GfeO2rouhYvA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314418"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:39:18 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150239"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:54:41 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -1560,12 +1560,12 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 07/24] x86/cpu/intel: Add nosgx kernel parameter
-Date: Tue,  7 Jul 2020 06:37:30 +0300
-Message-Id: <20200707033747.142828-8-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v36 07/24] x86/cpu/intel: Add nosgx kernel parameter
+Date: Thu, 16 Jul 2020 16:52:46 +0300
+Message-Id: <20200716135303.276442-8-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -1616,50 +1616,50 @@ index c3afcd2e4342..1837df39527f 100644
  {
  	bool tboot = tboot_enabled();
 
-From patchwork Tue Jul  7 03:37:31 2020
+From patchwork Thu Jul 16 13:52:47 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647501
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667477
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 8C33413B4
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 6F0FC13B1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:39:57 +0000 (UTC)
+ Thu, 16 Jul 2020 13:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7306520772
+	by mail.kernel.org (Postfix) with ESMTP id 5A630207BC
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:39:57 +0000 (UTC)
+ Thu, 16 Jul 2020 13:55:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbgGGDj5 (ORCPT
+        id S1728967AbgGPNzJ (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:39:57 -0400
-Received: from mga01.intel.com ([192.55.52.88]:33996 "EHLO mga01.intel.com"
+        Thu, 16 Jul 2020 09:55:09 -0400
+Received: from mga12.intel.com ([192.55.52.136]:44020 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727077AbgGGDj4 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:39:56 -0400
+        id S1728909AbgGPNzI (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:55:08 -0400
 IronPort-SDR: 
- aYVZrzLuQNMZxyO0y+QSppVO0KAXY6VzUneok6oAtEKylqVEGSwcsuOIbMGDB+TZWKZ/BEFAyD
- KhR3Kwa5K/YQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="165606965"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="165606965"
+ vEWp1kvDQfhZwtyr46B2EdcCYyDL41o24sFF6gRVpVyK4cVY8aODWFhvvip8IHALXfnwX4xtVK
+ FYuLklazNMhg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="128945755"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="128945755"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:39:42 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:55:07 -0700
 IronPort-SDR: 
- v84a8ZGnggTgOeQbN/nf02xookHKMBCd2+3nxny8wMOCHOtkMt3VG5j6aY07Uct3ZAWTEIN7Ge
- /fs+Bob4NC2A==
+ CtBXRE6awZp5mGuJYq0j1sv1tO0DG4MeErsoTBWIIsioWpVg0wMEFGIvba+AX6n7ya/iarV711
+ DBGm3eajHvvA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314471"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:39:30 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150303"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:54:54 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -1675,13 +1675,13 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 08/24] x86/sgx: Initialize metadata for Enclave Page Cache
+Subject: [PATCH v36 08/24] x86/sgx: Initialize metadata for Enclave Page Cache
  (EPC) sections
-Date: Tue,  7 Jul 2020 06:37:31 +0300
-Message-Id: <20200707033747.142828-9-jarkko.sakkinen@linux.intel.com>
+Date: Thu, 16 Jul 2020 16:52:47 +0300
+Message-Id: <20200716135303.276442-9-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -2045,50 +2045,50 @@ index 000000000000..dff4f5f16d09
 +
 +#endif /* _X86_SGX_H */
 
-From patchwork Tue Jul  7 03:37:32 2020
+From patchwork Thu Jul 16 13:52:48 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647499
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667479
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id D639414B7
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 2438C6C1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:39:53 +0000 (UTC)
+ Thu, 16 Jul 2020 13:55:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C60DC20708
+	by mail.kernel.org (Postfix) with ESMTP id 156F1207BC
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:39:53 +0000 (UTC)
+ Thu, 16 Jul 2020 13:55:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728025AbgGGDjx (ORCPT
+        id S1728991AbgGPNzU (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:39:53 -0400
-Received: from mga11.intel.com ([192.55.52.93]:38648 "EHLO mga11.intel.com"
+        Thu, 16 Jul 2020 09:55:20 -0400
+Received: from mga11.intel.com ([192.55.52.93]:48248 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727107AbgGGDjx (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:39:53 -0400
+        id S1728929AbgGPNzU (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:55:20 -0400
 IronPort-SDR: 
- Z6k/PgpfJ01n9vGzNFcEImKWwuAtdPDwCXaoGnn/gyOMBLa0h3ygCKm0/T6T1+02Yytsias3Lc
- uuqj7pcrb1Rw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="145634072"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="145634072"
+ RGaWZH6GzWmXIwZSzNWYPrgGkz4QJPcxNK7vtVcgHR4Nz+QtI3xCEeH23+v7UaSO7Jr2xQ54p2
+ +021cKGvtFzw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="147368627"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="147368627"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
   by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:39:52 -0700
+ 16 Jul 2020 06:55:19 -0700
 IronPort-SDR: 
- ngV3nWz2failHVGzOb3ZueGrUNxlr9gJQcYT2SYXygFOz8L/EBKFfgJbq9Y5Qpu4wqJ2kUtzNS
- 2LSfMfvORI2g==
+ /J8TKlXZxJdbzCmy9cTdXOofHyJ50NDnFPOjSupd5YkC7TdG7zc8KDjVPkyZciif1HppLibeAI
+ zIEbzN3K3y5w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314497"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:39:42 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150344"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:55:09 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -2103,13 +2103,13 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 09/24] x86/sgx: Add __sgx_alloc_epc_page() and
+Subject: [PATCH v36 09/24] x86/sgx: Add __sgx_alloc_epc_page() and
  sgx_free_epc_page()
-Date: Tue,  7 Jul 2020 06:37:32 +0300
-Message-Id: <20200707033747.142828-10-jarkko.sakkinen@linux.intel.com>
+Date: Thu, 16 Jul 2020 16:52:48 +0300
+Message-Id: <20200716135303.276442-10-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -2217,50 +2217,50 @@ index dff4f5f16d09..fce756c3434b 100644
 +
  #endif /* _X86_SGX_H */
 
-From patchwork Tue Jul  7 03:37:33 2020
+From patchwork Thu Jul 16 13:52:49 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647503
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667483
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id EA6B914B7
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id ACC626C1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:40:04 +0000 (UTC)
+ Thu, 16 Jul 2020 13:55:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB37D20771
+	by mail.kernel.org (Postfix) with ESMTP id 9C92B20787
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:40:04 +0000 (UTC)
+ Thu, 16 Jul 2020 13:55:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728012AbgGGDkE (ORCPT
+        id S1728817AbgGPNzt (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:40:04 -0400
-Received: from mga07.intel.com ([134.134.136.100]:36383 "EHLO mga07.intel.com"
+        Thu, 16 Jul 2020 09:55:49 -0400
+Received: from mga02.intel.com ([134.134.136.20]:3709 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727995AbgGGDkE (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:40:04 -0400
+        id S1728418AbgGPNzt (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:55:49 -0400
 IronPort-SDR: 
- hQQYLRByDry7EB+7N0uFc0tpuR1nxeOr7xjPkD81k0Aak5niWMESgi8FpkorFUS+VvoVbJHNgu
- N+ZtJ7/cljHw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="212506318"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="212506318"
+ aIUu1wy8ZCtLFcPtNv7B0ojtJxap6OcF+fNivX3D51V+0Ae2kaSLGSrFbKP9XFxqu9SWpc10JY
+ C6PwqwSv9dgA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="137503104"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="137503104"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:40:04 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:55:42 -0700
 IronPort-SDR: 
- hHcW9QrB98Kv5wQtBy3s1zY0CJGdPoksCXtarw6VJ0Cw6vAcBeGtoUGoJ6N3Kypf4F2Y2jTCCR
- aH5JPKk0kH4A==
+ B4HalyJrsEM8N/ae32r6qbEtX7zWufdSx74IGi0JnQJHSpsFR6gjSFx7/O/WNot/3dOPe6M1uO
+ 4ShV7/gXMiKg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314540"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:39:53 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150392"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:55:21 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -2277,12 +2277,12 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 10/24] mm: Add vm_ops->mprotect()
-Date: Tue,  7 Jul 2020 06:37:33 +0300
-Message-Id: <20200707033747.142828-11-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v36 10/24] mm: Add vm_ops->mprotect()
+Date: Thu, 16 Jul 2020 16:52:49 +0300
+Message-Id: <20200716135303.276442-11-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -2308,98 +2308,88 @@ Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Matthew Wilcox <willy@infradead.org>
 Acked-by: Jethro Beekman <jethro@fortanix.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- include/linux/mm.h |  2 ++
- mm/mprotect.c      | 13 ++++++++++---
- 2 files changed, 12 insertions(+), 3 deletions(-)
+ include/linux/mm.h | 3 +++
+ mm/mprotect.c      | 5 ++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index dc7b87310c10..fc0e3ef28873 100644
+index dc7b87310c10..458e8cb99aaf 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -542,6 +542,8 @@ struct vm_operations_struct {
+@@ -542,6 +542,9 @@ struct vm_operations_struct {
  	void (*close)(struct vm_area_struct * area);
  	int (*split)(struct vm_area_struct * area, unsigned long addr);
  	int (*mremap)(struct vm_area_struct * area);
-+	int (*mprotect)(struct vm_area_struct *vma, unsigned long start,
-+			unsigned long end, unsigned long prot);
++	int (*mprotect)(struct vm_area_struct *vma,
++			struct vm_area_struct **pprev, unsigned long start,
++			unsigned long end, unsigned long newflags);
  	vm_fault_t (*fault)(struct vm_fault *vmf);
  	vm_fault_t (*huge_fault)(struct vm_fault *vmf,
  			enum page_entry_size pe_size);
 diff --git a/mm/mprotect.c b/mm/mprotect.c
-index ce8b8a5eacbb..e23dfd8d18bc 100644
+index ce8b8a5eacbb..f170f3da8a4f 100644
 --- a/mm/mprotect.c
 +++ b/mm/mprotect.c
-@@ -603,13 +603,20 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
- 			goto out;
- 		}
- 
-+		tmp = vma->vm_end;
-+		if (tmp > end)
-+			tmp = end;
-+
- 		error = security_file_mprotect(vma, reqprot, prot);
+@@ -610,7 +610,10 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
+ 		tmp = vma->vm_end;
+ 		if (tmp > end)
+ 			tmp = end;
+-		error = mprotect_fixup(vma, &prev, nstart, tmp, newflags);
++		if (vma->vm_ops && vma->vm_ops->mprotect)
++			error = vma->vm_ops->mprotect(vma, &prev, nstart, tmp, newflags);
++		else
++			error = mprotect_fixup(vma, &prev, nstart, tmp, newflags);
  		if (error)
  			goto out;
- 
--		tmp = vma->vm_end;
--		if (tmp > end)
--			tmp = end;
-+		if (vma->vm_ops && vma->vm_ops->mprotect) {
-+			error = vma->vm_ops->mprotect(vma, nstart, tmp, prot);
-+			if (error)
-+				goto out;
-+		}
-+
- 		error = mprotect_fixup(vma, &prev, nstart, tmp, newflags);
- 		if (error)
- 			goto out;
+ 		nstart = tmp;
 
-From patchwork Tue Jul  7 03:37:34 2020
+From patchwork Thu Jul 16 13:52:50 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647507
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667605
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id C647614B7
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id A4FC8618
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:40:19 +0000 (UTC)
+ Thu, 16 Jul 2020 14:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A28A320771
+	by mail.kernel.org (Postfix) with ESMTP id 7B201207BC
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:40:19 +0000 (UTC)
+ Thu, 16 Jul 2020 14:04:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbgGGDkT (ORCPT
+        id S1728817AbgGPOEH (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:40:19 -0400
-Received: from mga14.intel.com ([192.55.52.115]:29093 "EHLO mga14.intel.com"
+        Thu, 16 Jul 2020 10:04:07 -0400
+Received: from mga04.intel.com ([192.55.52.120]:27937 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726478AbgGGDkT (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:40:19 -0400
+        id S1728418AbgGPOEG (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 10:04:06 -0400
 IronPort-SDR: 
- vaXPkgTKooo4FPY3bgzGQbk2igDFIaVRJqHjQExuWJemHuT6Ci4Tanzqtg4qf7+ZgAXvO9WPdE
- K0gV2XeswFMQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="146609148"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="146609148"
+ OrCtEn9g6LK4RE7pc1QcCyaPLn3zlicujTW5wgSHFRalW+GaKA8WxRC2Mjq98xOxIy4uTGCKyl
+ x9TDWUdikRcQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="146890385"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="146890385"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:40:18 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:56:04 -0700
 IronPort-SDR: 
- JkHttf1dPuh2qfQ9e6LpKp3K97AkE2RBA2A3+2/Fgs3MVePMGby+SSXoGEFMd5ppyURQ0j5L09
- dVfg7lISIXJA==
+ Mc1cpc6ARCVvNYGc3M5mSF0wp4DUH/aFNNeo8GTgLQP4R0ivfeIc4ZGovbgD+mMskzmPNMJyDJ
+ K0yJlszkdb1Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314605"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:40:05 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150482"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:55:49 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -2423,23 +2413,22 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
         tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 11/24] x86/sgx: Add SGX enclave driver
-Date: Tue,  7 Jul 2020 06:37:34 +0300
-Message-Id: <20200707033747.142828-12-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v36 11/24] x86/sgx: Add SGX enclave driver
+Date: Thu, 16 Jul 2020 16:52:50 +0300
+Message-Id: <20200716135303.276442-12-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-sgx.vger.kernel.org>
 X-Mailing-List: linux-sgx@vger.kernel.org
 
-Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
-can be used by applications to set aside private regions of code and
-data. The code outside the SGX hosted software entity is disallowed to
-access the memory inside the enclave enforced by the CPU. We call these
-entities enclaves.
+Intel Software Guard eXtensions (SGX) is a set of CPU instructions that can
+be used by applications to set aside private regions of code and data. The
+code outside the SGX hosted software entity is prevented from accessing the
+memory inside the enclave by the CPU. We call these entities enclaves.
 
 Add a driver that provides an ioctl API to construct and run enclaves.
 Enclaves are constructed from pages residing in reserved physical memory
@@ -2486,12 +2475,12 @@ Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
  arch/x86/kernel/cpu/sgx/Makefile |   2 +
- arch/x86/kernel/cpu/sgx/driver.c | 178 ++++++++++++++++
+ arch/x86/kernel/cpu/sgx/driver.c | 177 ++++++++++++++++
  arch/x86/kernel/cpu/sgx/driver.h |  29 +++
- arch/x86/kernel/cpu/sgx/encl.c   | 335 +++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/encl.c   | 333 +++++++++++++++++++++++++++++++
  arch/x86/kernel/cpu/sgx/encl.h   |  87 ++++++++
  arch/x86/kernel/cpu/sgx/main.c   |  11 +
- 6 files changed, 642 insertions(+)
+ 6 files changed, 639 insertions(+)
  create mode 100644 arch/x86/kernel/cpu/sgx/driver.c
  create mode 100644 arch/x86/kernel/cpu/sgx/driver.h
  create mode 100644 arch/x86/kernel/cpu/sgx/encl.c
@@ -2508,10 +2497,10 @@ index 79510ce01b3b..3fc451120735 100644
  	main.o
 diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
 new file mode 100644
-index 000000000000..682ec78230ac
+index 000000000000..b52520407f5b
 --- /dev/null
 +++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -0,0 +1,178 @@
+@@ -0,0 +1,177 @@
 +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
 +// Copyright(c) 2016-18 Intel Corporation.
 +
@@ -2546,7 +2535,7 @@ index 000000000000..682ec78230ac
 +
 +	atomic_set(&encl->flags, 0);
 +	kref_init(&encl->refcount);
-+	INIT_RADIX_TREE(&encl->page_tree, GFP_KERNEL);
++	xa_init(&encl->page_array);
 +	mutex_init(&encl->lock);
 +	INIT_LIST_HEAD(&encl->mm_list);
 +	spin_lock_init(&encl->mm_lock);
@@ -2587,7 +2576,7 @@ index 000000000000..682ec78230ac
 +		synchronize_srcu(&encl->srcu);
 +		mmu_notifier_unregister(&encl_mm->mmu_notifier, encl_mm->mm);
 +		kfree(encl_mm);
-+	};
++	}
 +
 +	mutex_lock(&encl->lock);
 +	atomic_or(SGX_ENCL_DEAD, &encl->flags);
@@ -2602,8 +2591,7 @@ index 000000000000..682ec78230ac
 +	struct sgx_encl *encl = file->private_data;
 +	int ret;
 +
-+	ret = sgx_encl_may_map(encl, vma->vm_start, vma->vm_end,
-+			       vma->vm_flags & (VM_READ | VM_WRITE | VM_EXEC));
++	ret = sgx_encl_may_map(encl, vma->vm_start, vma->vm_end, vma->vm_flags);
 +	if (ret)
 +		return ret;
 +
@@ -2727,10 +2715,10 @@ index 000000000000..f7ce40dedc91
 +#endif /* __ARCH_X86_SGX_DRIVER_H__ */
 diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
 new file mode 100644
-index 000000000000..c3755f8bbcba
+index 000000000000..af5df6bc58f3
 --- /dev/null
 +++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -0,0 +1,335 @@
+@@ -0,0 +1,333 @@
 +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
 +// Copyright(c) 2016-18 Intel Corporation.
 +
@@ -2762,7 +2750,7 @@ index 000000000000..c3755f8bbcba
 +	if ((flags & SGX_ENCL_DEAD) || !(flags & SGX_ENCL_INITIALIZED))
 +		return ERR_PTR(-EFAULT);
 +
-+	entry = radix_tree_lookup(&encl->page_tree, addr >> PAGE_SHIFT);
++	entry = xa_load(&encl->page_array, PFN_DOWN(addr));
 +	if (!entry)
 +		return ERR_PTR(-EFAULT);
 +
@@ -2936,10 +2924,13 @@ index 000000000000..c3755f8bbcba
 + *   -EACCES if VMA permissions exceed enclave page permissions
 + */
 +int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
-+		     unsigned long end, unsigned long vm_prot_bits)
++		     unsigned long end, unsigned long vm_flags)
 +{
-+	unsigned long idx, idx_start, idx_end;
++	unsigned long vm_prot_bits = vm_flags & (VM_READ | VM_WRITE | VM_EXEC);
++	unsigned long idx_start = PFN_DOWN(start);
++	unsigned long idx_end = PFN_DOWN(end - 1);
 +	struct sgx_encl_page *page;
++	XA_STATE(xas, &encl->page_array, idx_start);
 +
 +	/*
 +	 * Disallow RIE tasks as their VMA permissions might conflict with the
@@ -2948,26 +2939,24 @@ index 000000000000..c3755f8bbcba
 +	if (!!(current->personality & READ_IMPLIES_EXEC))
 +		return -EACCES;
 +
-+	idx_start = PFN_DOWN(start);
-+	idx_end = PFN_DOWN(end - 1);
-+
-+	for (idx = idx_start; idx <= idx_end; ++idx) {
-+		mutex_lock(&encl->lock);
-+		page = radix_tree_lookup(&encl->page_tree, idx);
-+		mutex_unlock(&encl->lock);
-+
++	xas_for_each(&xas, page, idx_end)
 +		if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
 +			return -EACCES;
-+	}
 +
 +	return 0;
 +}
 +
-+static int sgx_vma_mprotect(struct vm_area_struct *vma, unsigned long start,
-+			    unsigned long end, unsigned long prot)
++static int sgx_vma_mprotect(struct vm_area_struct *vma,
++			    struct vm_area_struct **pprev, unsigned long start,
++			    unsigned long end, unsigned long newflags)
 +{
-+	return sgx_encl_may_map(vma->vm_private_data, start, end,
-+				calc_vm_prot_bits(prot, 0));
++	int ret;
++
++	ret = sgx_encl_may_map(vma->vm_private_data, start, end, newflags);
++	if (ret)
++		return ret;
++
++	return mprotect_fixup(vma, pprev, start, end, newflags);
 +}
 +
 +const struct vm_operations_struct sgx_vm_ops = {
@@ -3015,24 +3004,21 @@ index 000000000000..c3755f8bbcba
 +void sgx_encl_destroy(struct sgx_encl *encl)
 +{
 +	struct sgx_encl_page *entry;
-+	struct radix_tree_iter iter;
-+	void **slot;
++	unsigned long index;
 +
 +	atomic_or(SGX_ENCL_DEAD, &encl->flags);
 +
-+	radix_tree_for_each_slot(slot, &encl->page_tree, &iter, 0) {
-+		entry = *slot;
-+
++	xa_for_each(&encl->page_array, index, entry) {
 +		if (entry->epc_page) {
 +			sgx_free_epc_page(entry->epc_page);
 +			encl->secs_child_cnt--;
 +			entry->epc_page = NULL;
 +		}
 +
-+		radix_tree_delete(&entry->encl->page_tree,
-+				  PFN_DOWN(entry->desc));
 +		kfree(entry);
 +	}
++
++	xa_destroy(&encl->page_array);
 +
 +	if (!encl->secs_child_cnt && encl->secs.epc_page) {
 +		sgx_free_epc_page(encl->secs.epc_page);
@@ -3068,7 +3054,7 @@ index 000000000000..c3755f8bbcba
 +}
 diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
 new file mode 100644
-index 000000000000..1d1bc5d590ee
+index 000000000000..74ad6c4da783
 --- /dev/null
 +++ b/arch/x86/kernel/cpu/sgx/encl.h
 @@ -0,0 +1,87 @@
@@ -3086,9 +3072,9 @@ index 000000000000..1d1bc5d590ee
 +#include <linux/mmu_notifier.h>
 +#include <linux/mutex.h>
 +#include <linux/notifier.h>
-+#include <linux/radix-tree.h>
 +#include <linux/srcu.h>
 +#include <linux/workqueue.h>
++#include <linux/xarray.h>
 +#include "sgx.h"
 +
 +/**
@@ -3143,7 +3129,7 @@ index 000000000000..1d1bc5d590ee
 +	unsigned long base;
 +	unsigned long size;
 +	unsigned long ssaframesize;
-+	struct radix_tree_root page_tree;
++	struct xarray page_array;
 +	struct sgx_encl_page secs;
 +	cpumask_t cpumask;
 +};
@@ -3156,7 +3142,7 @@ index 000000000000..1d1bc5d590ee
 +void sgx_encl_release(struct kref *ref);
 +int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm);
 +int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
-+		     unsigned long end, unsigned long vm_prot_bits);
++		     unsigned long end, unsigned long vm_flags);
 +
 +#endif /* _X86_ENCL_H */
 diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
@@ -3198,50 +3184,50 @@ index 97c6895fb6c9..4137254fb29e 100644
  	sgx_page_cache_teardown();
  }
 
-From patchwork Tue Jul  7 03:37:35 2020
+From patchwork Thu Jul 16 13:52:51 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647513
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667491
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 4E5CC13B4
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id AA3F713B1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:40:34 +0000 (UTC)
+ Thu, 16 Jul 2020 13:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 345F8206E2
+	by mail.kernel.org (Postfix) with ESMTP id 8F1E2207BC
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:40:34 +0000 (UTC)
+ Thu, 16 Jul 2020 13:56:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbgGGDke (ORCPT
+        id S1728799AbgGPN4V (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:40:34 -0400
-Received: from mga14.intel.com ([192.55.52.115]:29105 "EHLO mga14.intel.com"
+        Thu, 16 Jul 2020 09:56:21 -0400
+Received: from mga12.intel.com ([192.55.52.136]:44199 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726478AbgGGDkd (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:40:33 -0400
+        id S1728762AbgGPN4T (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:56:19 -0400
 IronPort-SDR: 
- TJEc2f1wviRrnm3gp6ierceLM60QtijAFH0woTYDggo7kYhGdC+hF7yqvK6LylYfhGM0/8a2qc
- lZO0tNd3gHTw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="146609158"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="146609158"
+ dSOHzKDt/QDsrEPw5+oZ3jDcdlimioJbsinvWuGids8HwvIPEgqCIOBJ+NZUMrbYgYDskw7bhw
+ QQ23C8+mDJ2Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="128945946"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="128945946"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:40:32 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:56:18 -0700
 IronPort-SDR: 
- 4tEInhZqOMww1FoueqG3EDHwgBxWXSSVFz5BH4Gc/aASKPaGcTGD+qQmSsX+JFgY0XwCzMZqGK
- HYNiD50FJfIg==
+ jhtdS144ZQem8YkYpvxcDv+ke/ThBzE5Nv/SLlkSHDIY9XtQPADxRPNHRR4SZLjsIoAODefHF0
+ NKvVldus4deg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314631"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:40:19 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150520"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:56:06 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -3262,12 +3248,12 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
         tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 12/24] x86/sgx: Add SGX_IOC_ENCLAVE_CREATE
-Date: Tue,  7 Jul 2020 06:37:35 +0300
-Message-Id: <20200707033747.142828-13-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v36 12/24] x86/sgx: Add SGX_IOC_ENCLAVE_CREATE
+Date: Thu, 16 Jul 2020 16:52:51 +0300
+Message-Id: <20200716135303.276442-13-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -3361,10 +3347,10 @@ index 3fc451120735..91d3dc784a29 100644
 +	ioctl.o \
  	main.o
 diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index 682ec78230ac..20c3254675e9 100644
+index b52520407f5b..5559bc18de41 100644
 --- a/arch/x86/kernel/cpu/sgx/driver.c
 +++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -119,10 +119,22 @@ static unsigned long sgx_get_unmapped_area(struct file *file,
+@@ -118,10 +118,22 @@ static unsigned long sgx_get_unmapped_area(struct file *file,
  	return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
  }
  
@@ -3632,50 +3618,50 @@ index 000000000000..7981c411b05a
 +	return ret;
 +}
 
-From patchwork Tue Jul  7 03:37:36 2020
+From patchwork Thu Jul 16 13:52:52 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647515
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667493
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 6048C13B4
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 423AC13B1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:41:03 +0000 (UTC)
+ Thu, 16 Jul 2020 13:56:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4414320708
+	by mail.kernel.org (Postfix) with ESMTP id 27D87207BC
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:41:03 +0000 (UTC)
+ Thu, 16 Jul 2020 13:56:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728056AbgGGDlC (ORCPT
+        id S1728257AbgGPN4m (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:41:02 -0400
-Received: from mga11.intel.com ([192.55.52.93]:38738 "EHLO mga11.intel.com"
+        Thu, 16 Jul 2020 09:56:42 -0400
+Received: from mga11.intel.com ([192.55.52.93]:48432 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726478AbgGGDlC (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:41:02 -0400
+        id S1728087AbgGPN4m (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:56:42 -0400
 IronPort-SDR: 
- 3m/mHz7SjqWu6T9T8Na4HbP/s5+Dmz+Cr2yxwN7sz9v7Sj73Xncr8zL4Y1dKPecOAPAkvnp0Ws
- OKsHTVB6If3A==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="145634131"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="145634131"
+ /7y3ssFXJ3jxuyscds/5AMRsbzkQrTRVk76f7NFIacIx1vwGrR9EOHdxhUIsPsuLsLsiv5BF2o
+ 5e9FPmsPXb/w==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="147368828"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="147368828"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
   by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:40:47 -0700
+ 16 Jul 2020 06:56:34 -0700
 IronPort-SDR: 
- W4SxnsOSTV6HrWUdhiZ3T4pCtYV9S+W8Snb0pXpxEkMbfOTViOrmlvtCbU2LH/3vf3QfWfJSPg
- 2qvmxxYvf7Ug==
+ eCDszYloFbCxUm5INFg1wbxUW6E0S6ISIgtsYFZALWeSw6/2VerH5QZhvxod5kqrPaJ67CsHiS
+ q4Wz2CLLzFRw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314667"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:40:34 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150545"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:56:20 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -3696,12 +3682,12 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
         tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 13/24] x86/sgx: Add SGX_IOC_ENCLAVE_ADD_PAGES
-Date: Tue,  7 Jul 2020 06:37:36 +0300
-Message-Id: <20200707033747.142828-14-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v36 13/24] x86/sgx: Add SGX_IOC_ENCLAVE_ADD_PAGES
+Date: Thu, 16 Jul 2020 16:52:52 +0300
+Message-Id: <20200716135303.276442-14-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -3727,8 +3713,8 @@ Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
  arch/x86/include/uapi/asm/sgx.h |  30 ++++
- arch/x86/kernel/cpu/sgx/ioctl.c | 292 ++++++++++++++++++++++++++++++++
- 2 files changed, 322 insertions(+)
+ arch/x86/kernel/cpu/sgx/ioctl.c | 291 ++++++++++++++++++++++++++++++++
+ 2 files changed, 321 insertions(+)
 
 diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
 index 3787d278e84b..c8f199b3fb6f 100644
@@ -3781,10 +3767,10 @@ index 3787d278e84b..c8f199b3fb6f 100644
 +
  #endif /* _UAPI_ASM_X86_SGX_H */
 diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 7981c411b05a..595da21a368d 100644
+index 7981c411b05a..c63a51362d14 100644
 --- a/arch/x86/kernel/cpu/sgx/ioctl.c
 +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -197,6 +197,295 @@ static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
+@@ -197,6 +197,294 @@ static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
  	return ret;
  }
  
@@ -3934,8 +3920,8 @@ index 7981c411b05a..595da21a368d 100644
 +	 * can't be gracefully unwound, while failure on EADD/EXTEND is limited
 +	 * to userspace errors (or kernel/hardware bugs).
 +	 */
-+	ret = radix_tree_insert(&encl->page_tree, PFN_DOWN(encl_page->desc),
-+				encl_page);
++	ret = xa_insert(&encl->page_array, PFN_DOWN(encl_page->desc),
++			encl_page, GFP_KERNEL);
 +	if (ret)
 +		goto err_out_unlock;
 +
@@ -3964,8 +3950,7 @@ index 7981c411b05a..595da21a368d 100644
 +	return ret;
 +
 +err_out:
-+	radix_tree_delete(&encl_page->encl->page_tree,
-+			  PFN_DOWN(encl_page->desc));
++	xa_erase(&encl->page_array, PFN_DOWN(encl_page->desc));
 +
 +err_out_unlock:
 +	mutex_unlock(&encl->lock);
@@ -4080,7 +4065,7 @@ index 7981c411b05a..595da21a368d 100644
  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
  {
  	struct sgx_encl *encl = filep->private_data;
-@@ -215,6 +504,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+@@ -215,6 +503,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
  	case SGX_IOC_ENCLAVE_CREATE:
  		ret = sgx_ioc_enclave_create(encl, (void __user *)arg);
  		break;
@@ -4091,50 +4076,50 @@ index 7981c411b05a..595da21a368d 100644
  		ret = -ENOIOCTLCMD;
  		break;
 
-From patchwork Tue Jul  7 03:37:37 2020
+From patchwork Thu Jul 16 13:52:53 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647517
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667495
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 2894213B4
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 2F8696C1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:41:08 +0000 (UTC)
+ Thu, 16 Jul 2020 13:56:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16D4920708
+	by mail.kernel.org (Postfix) with ESMTP id 1A86A2083B
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:41:08 +0000 (UTC)
+ Thu, 16 Jul 2020 13:56:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728190AbgGGDlD (ORCPT
+        id S1728093AbgGPN4v (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:41:03 -0400
-Received: from mga01.intel.com ([192.55.52.88]:34126 "EHLO mga01.intel.com"
+        Thu, 16 Jul 2020 09:56:51 -0400
+Received: from mga01.intel.com ([192.55.52.88]:18704 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727844AbgGGDlD (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:41:03 -0400
+        id S1728087AbgGPN4v (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:56:51 -0400
 IronPort-SDR: 
- 2VfsDY1duy6dZ3flhz3drfKzDO7dO8CwkKkMSQZ8ilPvbs9/kUlU6rS12cHRXPqL+8fOxx/9/V
- Uv1jgKmwiPYA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="165607055"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="165607055"
+ 8OqLJGCdO9aRdPFMBQtQVj/+EbUuF6n5L1WDjIGlzzV8Wlyi5Qjbh0Q1Y5RUEYb1BaHip8JfrO
+ iJmF1i3MH2EA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="167511061"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="167511061"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
   by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:41:00 -0700
+ 16 Jul 2020 06:56:51 -0700
 IronPort-SDR: 
- RB2r7ZdqKuwvjnqLwLfF0OSLGi+NucrMCqhL43CjIcl7v2iDLOudMNhwLkOkP6Yx2QWeog+WKH
- VOtJz+09nIvw==
+ A0C22MGicheGfFdx2tqpUBeKZ205x/OZUnjUTHehwHdrh5OerLV2/rF3k6OL63NZbci3roW2Ym
+ rfKxCRXkku3g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314700"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:40:48 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150591"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:56:36 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -4155,12 +4140,12 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
         tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 14/24] x86/sgx: Add SGX_IOC_ENCLAVE_INIT
-Date: Tue,  7 Jul 2020 06:37:37 +0300
-Message-Id: <20200707033747.142828-15-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v36 14/24] x86/sgx: Add SGX_IOC_ENCLAVE_INIT
+Date: Thu, 16 Jul 2020 16:52:53 +0300
+Message-Id: <20200716135303.276442-15-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -4216,7 +4201,7 @@ index c8f199b3fb6f..5edb08ab8fd0 100644
 +
  #endif /* _UAPI_ASM_X86_SGX_H */
 diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 595da21a368d..599bd30c6d05 100644
+index c63a51362d14..3444de955191 100644
 --- a/arch/x86/kernel/cpu/sgx/ioctl.c
 +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
 @@ -16,6 +16,9 @@
@@ -4229,7 +4214,7 @@ index 595da21a368d..599bd30c6d05 100644
  static u32 sgx_calc_ssa_frame_size(u32 miscselect, u64 xfrm)
  {
  	u32 size_max = PAGE_SIZE;
-@@ -486,6 +489,188 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
+@@ -485,6 +488,188 @@ static long sgx_ioc_enclave_add_pages(struct sgx_encl *encl, void __user *arg)
  	return ret;
  }
  
@@ -4418,7 +4403,7 @@ index 595da21a368d..599bd30c6d05 100644
  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
  {
  	struct sgx_encl *encl = filep->private_data;
-@@ -507,6 +692,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+@@ -506,6 +691,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
  	case SGX_IOC_ENCLAVE_ADD_PAGES:
  		ret = sgx_ioc_enclave_add_pages(encl, (void __user *)arg);
  		break;
@@ -4429,50 +4414,50 @@ index 595da21a368d..599bd30c6d05 100644
  		ret = -ENOIOCTLCMD;
  		break;
 
-From patchwork Tue Jul  7 03:37:38 2020
+From patchwork Thu Jul 16 13:52:54 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647521
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667499
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 8E0BC13B4
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id EBD0413B1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:41:15 +0000 (UTC)
+ Thu, 16 Jul 2020 13:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B92320773
+	by mail.kernel.org (Postfix) with ESMTP id D8D67207BC
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:41:15 +0000 (UTC)
+ Thu, 16 Jul 2020 13:57:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728388AbgGGDlN (ORCPT
+        id S1728928AbgGPN5G (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:41:13 -0400
-Received: from mga18.intel.com ([134.134.136.126]:19984 "EHLO mga18.intel.com"
+        Thu, 16 Jul 2020 09:57:06 -0400
+Received: from mga02.intel.com ([134.134.136.20]:3858 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727844AbgGGDlN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:41:13 -0400
+        id S1728891AbgGPN5F (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:57:05 -0400
 IronPort-SDR: 
- Ijrsya/M6Inn6BCTozzcAofBTfDOqvUsKsedkMAn5BlSb1a1lmR8b1YbtbPLkt8Mi1FWHfKDzf
- Q78vMmaKRK3A==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="134999775"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="134999775"
+ 6NtJxy/n+/BdehSMYT3TK9HQswMIGp9Q0yoPvTzPP4fuMWGGFp/XI+EuygFHPH2UM+h6FF76CB
+ lt748erWzPwQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="137503259"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="137503259"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:41:12 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:57:04 -0700
 IronPort-SDR: 
- 48l7uKieWs2TtWLzDDdpuByBtjnzxklhqtImxcJewelc8wZnkVFe6H1ock4TjaRUi322TTOyoB
- NeZc52WXg72Q==
+ M8sjhSfa7qr+6J6F0oEtSGIoAa9oF3cU8Ydfy95gMWjc37PHRJTd02tJKPfM2o1iNMOvK/4jab
+ cSSA8nAUgsrw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314745"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:41:01 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150613"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:56:52 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -4489,13 +4474,13 @@ Cc: linux-kernel@vger.kernel.org,
         npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
         sean.j.christopherson@intel.com, tglx@linutronix.de,
         yaozhangx@google.com
-Subject: [PATCH v35 15/24] x86/sgx: Allow a limited use of
+Subject: [PATCH v36 15/24] x86/sgx: Allow a limited use of
  ATTRIBUTE.PROVISIONKEY for attestation
-Date: Tue,  7 Jul 2020 06:37:38 +0300
-Message-Id: <20200707033747.142828-16-jarkko.sakkinen@linux.intel.com>
+Date: Thu, 16 Jul 2020 16:52:54 +0300
+Message-Id: <20200716135303.276442-16-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -4560,10 +4545,10 @@ index 5edb08ab8fd0..57d0d30c79b3 100644
 +
  #endif /* _UAPI_ASM_X86_SGX_H */
 diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index 20c3254675e9..1cebb6e9c9b7 100644
+index 5559bc18de41..b9af330a16fa 100644
 --- a/arch/x86/kernel/cpu/sgx/driver.c
 +++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -139,6 +139,10 @@ static const struct file_operations sgx_encl_fops = {
+@@ -138,6 +138,10 @@ static const struct file_operations sgx_encl_fops = {
  	.get_unmapped_area	= sgx_get_unmapped_area,
  };
  
@@ -4574,7 +4559,7 @@ index 20c3254675e9..1cebb6e9c9b7 100644
  static struct miscdevice sgx_dev_enclave = {
  	.minor = MISC_DYNAMIC_MINOR,
  	.name = "enclave",
-@@ -146,6 +150,13 @@ static struct miscdevice sgx_dev_enclave = {
+@@ -145,6 +149,13 @@ static struct miscdevice sgx_dev_enclave = {
  	.fops = &sgx_encl_fops,
  };
  
@@ -4588,7 +4573,7 @@ index 20c3254675e9..1cebb6e9c9b7 100644
  int __init sgx_drv_init(void)
  {
  	unsigned int eax, ebx, ecx, edx;
-@@ -186,5 +197,12 @@ int __init sgx_drv_init(void)
+@@ -185,5 +196,12 @@ int __init sgx_drv_init(void)
  		return ret;
  	}
  
@@ -4615,10 +4600,10 @@ index e4063923115b..72747d01c046 100644
  
  int sgx_drv_init(void);
 diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 599bd30c6d05..07aa45e77dd0 100644
+index 3444de955191..95b0a1e62ea7 100644
 --- a/arch/x86/kernel/cpu/sgx/ioctl.c
 +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -670,6 +670,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
+@@ -669,6 +669,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
  	return ret;
  }
  
@@ -4669,7 +4654,7 @@ index 599bd30c6d05..07aa45e77dd0 100644
  
  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
  {
-@@ -695,6 +739,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+@@ -694,6 +738,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
  	case SGX_IOC_ENCLAVE_INIT:
  		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
  		break;
@@ -4680,50 +4665,50 @@ index 599bd30c6d05..07aa45e77dd0 100644
  		ret = -ENOIOCTLCMD;
  		break;
 
-From patchwork Tue Jul  7 03:37:39 2020
+From patchwork Thu Jul 16 13:52:55 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647525
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667543
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 815B013B4
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 43B6613B1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:41:38 +0000 (UTC)
+ Thu, 16 Jul 2020 14:00:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6271920708
+	by mail.kernel.org (Postfix) with ESMTP id 1B5EA206C1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:41:38 +0000 (UTC)
+ Thu, 16 Jul 2020 14:00:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727844AbgGGDli (ORCPT
+        id S1729198AbgGPOA0 (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:41:38 -0400
-Received: from mga03.intel.com ([134.134.136.65]:50142 "EHLO mga03.intel.com"
+        Thu, 16 Jul 2020 10:00:26 -0400
+Received: from mga12.intel.com ([192.55.52.136]:44313 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727092AbgGGDlh (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:41:37 -0400
+        id S1728087AbgGPOAY (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 10:00:24 -0400
 IronPort-SDR: 
- 5PTMdG0jJAIGuy8e/t7K0V630QlYdcndpAkzi5X6jfbAFTSfaF7XjwhhYTQacCQZCZZk9wKb1C
- pTjMKMR0OktA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="147544490"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="147544490"
+ pRDlWuX/m86sACACK2wzu4V+DmsTB8+GCB9gTgPTcHCmnh48XanVeEChqPTg/99icWTvYhQvwL
+ hbiHh6ARwP6Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="128946101"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="128946101"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:41:27 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:57:19 -0700
 IronPort-SDR: 
- WO2YraqmbnHAk7Xns5iOluMe9vNiY6nXb7Uw0o6/2zJVdSPKljqAx0pE3cwiTcr7plhHIlPmI2
- zdIUde89XzZA==
+ 7tA6x5RoJkP64EJF/ZVoIK7yugQ1ZrY0J5+d3nUgDWfBBNsTrJaD/7+4TtcaQoyNj5pXLvS6+h
+ QWeWLZqhQs7Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314789"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:41:14 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150644"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:57:06 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -4742,12 +4727,12 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
         tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 16/24] x86/sgx: Add a page reclaimer
-Date: Tue,  7 Jul 2020 06:37:39 +0300
-Message-Id: <20200707033747.142828-17-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v36 16/24] x86/sgx: Add a page reclaimer
+Date: Thu, 16 Jul 2020 16:52:55 +0300
+Message-Id: <20200716135303.276442-17-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -4792,19 +4777,19 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  6 files changed, 925 insertions(+), 7 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index 1cebb6e9c9b7..83e186495e67 100644
+index b9af330a16fa..948bc81573d9 100644
 --- a/arch/x86/kernel/cpu/sgx/driver.c
 +++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -32,6 +32,7 @@ static int sgx_open(struct inode *inode, struct file *file)
- 
+@@ -33,6 +33,7 @@ static int sgx_open(struct inode *inode, struct file *file)
  	atomic_set(&encl->flags, 0);
  	kref_init(&encl->refcount);
+ 	xa_init(&encl->page_array);
 +	INIT_LIST_HEAD(&encl->va_pages);
- 	INIT_RADIX_TREE(&encl->page_tree, GFP_KERNEL);
  	mutex_init(&encl->lock);
  	INIT_LIST_HEAD(&encl->mm_list);
+ 	spin_lock_init(&encl->mm_lock);
 diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index c3755f8bbcba..b22e7187142d 100644
+index af5df6bc58f3..27a7904d7f5a 100644
 --- a/arch/x86/kernel/cpu/sgx/encl.c
 +++ b/arch/x86/kernel/cpu/sgx/encl.c
 @@ -12,9 +12,84 @@
@@ -4909,12 +4894,12 @@ index c3755f8bbcba..b22e7187142d 100644
 +		if (IS_ERR(epc_page))
 +			return ERR_CAST(epc_page);
 +	}
-+
+ 
+-	return ERR_PTR(-EFAULT);
 +	epc_page = sgx_encl_eldu(entry, encl->secs.epc_page);
 +	if (IS_ERR(epc_page))
 +		return ERR_CAST(epc_page);
- 
--	return ERR_PTR(-EFAULT);
++
 +	encl->secs_child_cnt++;
 +	sgx_mark_page_reclaimable(entry->epc_page);
 +
@@ -4941,17 +4926,17 @@ index c3755f8bbcba..b22e7187142d 100644
  out:
  	mutex_unlock(&encl->lock);
  	return ret;
-@@ -281,6 +378,7 @@ int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
+@@ -282,6 +379,7 @@ int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
   */
  void sgx_encl_destroy(struct sgx_encl *encl)
  {
 +	struct sgx_va_page *va_page;
  	struct sgx_encl_page *entry;
- 	struct radix_tree_iter iter;
- 	void **slot;
-@@ -291,6 +389,13 @@ void sgx_encl_destroy(struct sgx_encl *encl)
- 		entry = *slot;
+ 	unsigned long index;
  
+@@ -289,6 +387,13 @@ void sgx_encl_destroy(struct sgx_encl *encl)
+ 
+ 	xa_for_each(&encl->page_array, index, entry) {
  		if (entry->epc_page) {
 +			/*
 +			 * The page and its radix tree entry cannot be freed
@@ -4963,7 +4948,7 @@ index c3755f8bbcba..b22e7187142d 100644
  			sgx_free_epc_page(entry->epc_page);
  			encl->secs_child_cnt--;
  			entry->epc_page = NULL;
-@@ -305,6 +410,19 @@ void sgx_encl_destroy(struct sgx_encl *encl)
+@@ -303,6 +408,19 @@ void sgx_encl_destroy(struct sgx_encl *encl)
  		sgx_free_epc_page(encl->secs.epc_page);
  		encl->secs.epc_page = NULL;
  	}
@@ -4983,7 +4968,7 @@ index c3755f8bbcba..b22e7187142d 100644
  }
  
  /**
-@@ -333,3 +451,221 @@ void sgx_encl_release(struct kref *ref)
+@@ -331,3 +449,221 @@ void sgx_encl_release(struct kref *ref)
  
  	kfree(encl);
  }
@@ -5206,7 +5191,7 @@ index c3755f8bbcba..b22e7187142d 100644
 +	return slot == SGX_VA_SLOT_COUNT;
 +}
 diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-index 1d1bc5d590ee..f0f72e591244 100644
+index 74ad6c4da783..df7bc22bcefd 100644
 --- a/arch/x86/kernel/cpu/sgx/encl.h
 +++ b/arch/x86/kernel/cpu/sgx/encl.h
 @@ -19,6 +19,10 @@
@@ -5244,7 +5229,7 @@ index 1d1bc5d590ee..f0f72e591244 100644
  	struct sgx_encl *encl;
  };
  
-@@ -63,17 +74,27 @@ struct sgx_encl {
+@@ -63,6 +74,7 @@ struct sgx_encl {
  	struct mutex lock;
  	struct list_head mm_list;
  	spinlock_t mm_lock;
@@ -5252,11 +5237,11 @@ index 1d1bc5d590ee..f0f72e591244 100644
  	struct file *backing;
  	struct kref refcount;
  	struct srcu_struct srcu;
- 	unsigned long base;
+@@ -70,10 +82,19 @@ struct sgx_encl {
  	unsigned long size;
  	unsigned long ssaframesize;
+ 	struct xarray page_array;
 +	struct list_head va_pages;
- 	struct radix_tree_root page_tree;
  	struct sgx_encl_page secs;
  	cpumask_t cpumask;
  };
@@ -5274,7 +5259,7 @@ index 1d1bc5d590ee..f0f72e591244 100644
  int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
 @@ -84,4 +105,24 @@ int sgx_encl_mm_add(struct sgx_encl *encl, struct mm_struct *mm);
  int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
- 		     unsigned long end, unsigned long vm_prot_bits);
+ 		     unsigned long end, unsigned long vm_flags);
  
 +struct sgx_backing {
 +	pgoff_t page_index;
@@ -5298,7 +5283,7 @@ index 1d1bc5d590ee..f0f72e591244 100644
 +
  #endif /* _X86_ENCL_H */
 diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index 07aa45e77dd0..3c8db3edcab3 100644
+index 95b0a1e62ea7..a245baed41dc 100644
 --- a/arch/x86/kernel/cpu/sgx/ioctl.c
 +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
 @@ -19,6 +19,43 @@
@@ -5439,8 +5424,8 @@ index 07aa45e77dd0..3c8db3edcab3 100644
  	mutex_unlock(&encl->lock);
  	mmap_read_unlock(current->mm);
  	return ret;
-@@ -380,9 +445,11 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
- 			  PFN_DOWN(encl_page->desc));
+@@ -379,9 +444,11 @@ static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long src,
+ 	xa_erase(&encl->page_array, PFN_DOWN(encl_page->desc));
  
  err_out_unlock:
 +	sgx_encl_shrink(encl, va_page);
@@ -6017,50 +6002,50 @@ index fce756c3434b..1a6ca5f734e5 100644
  
  #endif /* _X86_SGX_H */
 
-From patchwork Tue Jul  7 03:37:40 2020
+From patchwork Thu Jul 16 13:52:56 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647527
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667505
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id A376B13B4
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id DF78013B1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:41:41 +0000 (UTC)
+ Thu, 16 Jul 2020 13:57:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94EA5206E2
+	by mail.kernel.org (Postfix) with ESMTP id D0C4B20787
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:41:41 +0000 (UTC)
+ Thu, 16 Jul 2020 13:57:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728056AbgGGDlk (ORCPT
+        id S1728455AbgGPN5d (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:41:40 -0400
-Received: from mga04.intel.com ([192.55.52.120]:31688 "EHLO mga04.intel.com"
+        Thu, 16 Jul 2020 09:57:33 -0400
+Received: from mga17.intel.com ([192.55.52.151]:45684 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727092AbgGGDlj (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:41:39 -0400
+        id S1728093AbgGPN5d (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:57:33 -0400
 IronPort-SDR: 
- 3Wx8anRhQoucOe3MJi9HJm/yrlBxU7d/BNpPr7I/SlEFaXMt6WECHRzGY3+bpm4RR9ywj+2ask
- dJ6J77UU5AUw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="145034056"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="145034056"
+ uR83mvQR0BDb3xukE/99dXB6i/Dsq6wgalzrlVS51fA+bAl7zN4SjVydFZvASw/p9Pdft8ev0y
+ 36WzxJe7eJ3Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="129449677"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="129449677"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:41:38 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:57:32 -0700
 IronPort-SDR: 
- WyVq7hkjfL0Z14JMdd+sU44L08lTqZs+erCnht/NQeMSVIM5qIxS5lIS5HfjPXJjySiCwHEGRo
- RaodmBoQE59Q==
+ X5qChEt8+NPOsxAyVJwnFY8igk+FDvTYMwr3hcRrmzO60jyutURIeFFgHwuPGQ9oxKzWZT5sWC
+ 4SwhQzEJfxwQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314807"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:41:29 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150689"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:57:21 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -6075,12 +6060,12 @@ Cc: linux-kernel@vger.kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, sean.j.christopherson@intel.com,
         tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 17/24] x86/sgx: ptrace() support for the SGX driver
-Date: Tue,  7 Jul 2020 06:37:40 +0300
-Message-Id: <20200707033747.142828-18-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v36 17/24] x86/sgx: ptrace() support for the SGX driver
+Date: Thu, 16 Jul 2020 16:52:56 +0300
+Message-Id: <20200716135303.276442-18-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -6098,11 +6083,11 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  1 file changed, 87 insertions(+)
 
 diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index b22e7187142d..a0c84a7fb6f9 100644
+index 27a7904d7f5a..0ea4701adad5 100644
 --- a/arch/x86/kernel/cpu/sgx/encl.c
 +++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -334,10 +334,97 @@ static int sgx_vma_mprotect(struct vm_area_struct *vma, unsigned long start,
- 				calc_vm_prot_bits(prot, 0));
+@@ -335,10 +335,97 @@ static int sgx_vma_mprotect(struct vm_area_struct *vma,
+ 	return mprotect_fixup(vma, pprev, start, end, newflags);
  }
  
 +static int sgx_edbgrd(struct sgx_encl *encl, struct sgx_encl_page *page,
@@ -6200,50 +6185,50 @@ index b22e7187142d..a0c84a7fb6f9 100644
  
  /**
 
-From patchwork Tue Jul  7 03:37:41 2020
+From patchwork Thu Jul 16 13:52:57 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647529
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667507
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 9211914B7
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id DEB7F6C1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:41:52 +0000 (UTC)
+ Thu, 16 Jul 2020 13:57:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A37620758
+	by mail.kernel.org (Postfix) with ESMTP id C5082207BC
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:41:52 +0000 (UTC)
+ Thu, 16 Jul 2020 13:57:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbgGGDlw (ORCPT
+        id S1728962AbgGPN5v (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:41:52 -0400
-Received: from mga03.intel.com ([134.134.136.65]:50172 "EHLO mga03.intel.com"
+        Thu, 16 Jul 2020 09:57:51 -0400
+Received: from mga09.intel.com ([134.134.136.24]:52553 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727092AbgGGDlw (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:41:52 -0400
+        id S1728093AbgGPN5u (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:57:50 -0400
 IronPort-SDR: 
- cLNsgeTP7rHEBmStGs49c/cOgqLgrBvH5agC8qGREeHFtl/vC4tLHOJpfvoAvSfQVG3JqAPntA
- FLwh7usm6+qw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="147544581"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="147544581"
+ XrDPQf3blodM6/HU4rutvQQmNc1GjNAhVQvMYbveLzvPcrVQqsKPI/wVWPhXrET/fh/EhGSZ4I
+ MYEnXd4ptbqg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="150759131"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="150759131"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:41:49 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:57:46 -0700
 IronPort-SDR: 
- 31yDJx40IfzlDDj+mwITAc4Vaw6NQsNS1OK578dcnzfQqBy8u5T+rXn4QVanoEU6YRezO/Qbna
- bpoXoKDRyo1w==
+ 0MP1Kx/bEzQkfySRQJFI0K/Ut93bpYDLIKBEWnEjZOxW5rwnzimfj/5C0CjizC4zDOxn2ivwQv
+ GpXWD6joaIhA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314827"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:41:40 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150711"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:57:34 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -6259,13 +6244,13 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 18/24] x86/vdso: Add support for exception fixup in vDSO
+Subject: [PATCH v36 18/24] x86/vdso: Add support for exception fixup in vDSO
  functions
-Date: Tue,  7 Jul 2020 06:37:41 +0300
-Message-Id: <20200707033747.142828-19-jarkko.sakkinen@linux.intel.com>
+Date: Thu, 16 Jul 2020 16:52:57 +0300
+Message-Id: <20200716135303.276442-19-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -6617,50 +6602,50 @@ index bbcdc7b8f963..b5d23470f56b 100644
  
  #endif /* _ASM_X86_VDSO_H */
 
-From patchwork Tue Jul  7 03:37:42 2020
+From patchwork Thu Jul 16 13:52:58 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647531
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667509
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 2810E13B4
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id EEF0F6C1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:42:02 +0000 (UTC)
+ Thu, 16 Jul 2020 13:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17ACF20722
+	by mail.kernel.org (Postfix) with ESMTP id DFCD420842
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:42:02 +0000 (UTC)
+ Thu, 16 Jul 2020 13:58:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727962AbgGGDmB (ORCPT
+        id S1728952AbgGPN6A (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:42:01 -0400
-Received: from mga18.intel.com ([134.134.136.126]:20040 "EHLO mga18.intel.com"
+        Thu, 16 Jul 2020 09:58:00 -0400
+Received: from mga14.intel.com ([192.55.52.115]:11734 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727092AbgGGDmB (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:42:01 -0400
+        id S1728777AbgGPN57 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:57:59 -0400
 IronPort-SDR: 
- ckpXfEmP9miHgkGQVySpNvGfaF29gstnd+mniSp5UFATaHWpaQQ9mTrWi+j9pCHwjtW1O5+v0p
- uFclG+Wxq/xw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="134999810"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="134999810"
+ G1miGBOv1x2+qOL0Lqlr2EbleKOZBJSHba0b6OTZuynwQwBxeQtXImpRryqj8WtlJqXRngPeQT
+ lU+UxxmFpiUA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="148534370"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="148534370"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:42:01 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:57:59 -0700
 IronPort-SDR: 
- W9EYdyyTGQP7vLYm7mR/2xma0viHSyy6+0yMLFnlnylMz1y5ocZpTF3RZPZeuL8e8Nhxb/2Lmg
- CE7RXFtjBUKA==
+ 7LNZlzBRPae0GCTphOaT0qFd1MMj84ooKYw7ium+PWRdl/78GgDJvkHoRWxBpUDAFAVW0WQdD6
+ Bm1gm29WycEA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314861"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:41:51 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150746"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:57:47 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -6675,13 +6660,13 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 19/24] x86/fault: Add helper function to sanitize error
+Subject: [PATCH v36 19/24] x86/fault: Add helper function to sanitize error
  code
-Date: Tue,  7 Jul 2020 06:37:42 +0300
-Message-Id: <20200707033747.142828-20-jarkko.sakkinen@linux.intel.com>
+Date: Thu, 16 Jul 2020 16:52:58 +0300
+Message-Id: <20200716135303.276442-20-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -6758,50 +6743,50 @@ index 1db6fbd7af8e..8ba78384ea73 100644
  
  #ifdef CONFIG_MEMORY_FAILURE
 
-From patchwork Tue Jul  7 03:37:43 2020
+From patchwork Thu Jul 16 13:52:59 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647533
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667511
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id EC0BD13B4
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id B52DC13B1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:42:13 +0000 (UTC)
+ Thu, 16 Jul 2020 13:58:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9874206E2
+	by mail.kernel.org (Postfix) with ESMTP id A1428207BC
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:42:13 +0000 (UTC)
+ Thu, 16 Jul 2020 13:58:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728163AbgGGDmN (ORCPT
+        id S1728777AbgGPN6P (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:42:13 -0400
-Received: from mga14.intel.com ([192.55.52.115]:29256 "EHLO mga14.intel.com"
+        Thu, 16 Jul 2020 09:58:15 -0400
+Received: from mga06.intel.com ([134.134.136.31]:8285 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727092AbgGGDmN (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:42:13 -0400
+        id S1728579AbgGPN6O (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:58:14 -0400
 IronPort-SDR: 
- u/KjaNwq3hJI4ehjgqsPSNAkZa4sW5nttvIwt1HwZFhmuE0fHASxqr9t0+0wP5uvQHIlT6JEtq
- 6C8Un4RP00Tg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="146609277"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="146609277"
+ 4bh/u52qGbkf+DzHb7UInrrRYMZXpv9V77Hbd0B2G362dHCUqJpeCQBoqilGSPblkACstCeWe3
+ AqyYML6d1RrQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="210910878"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="210910878"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:42:12 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:58:13 -0700
 IronPort-SDR: 
- htVF15fpDPNOZyV+/LNfYafP+VQZnlx+Dq3gC4YrPrHbRUoVoZMrOCO7Dek2Ck1HcOqHtmoBUK
- 2S111Srjb8Lg==
+ BWXDzhDeG0OnfD2wXCj+mJxgU840yq8J/y/LI3qF/gA7UOUXJM1/jJs0uNRj0sjz6QdvQAKVVC
+ nTX6hnXj+dBQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314894"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:42:02 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150774"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:58:01 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -6817,13 +6802,13 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 20/24] x86/traps: Attempt to fixup exceptions in vDSO
+Subject: [PATCH v36 20/24] x86/traps: Attempt to fixup exceptions in vDSO
  before signaling
-Date: Tue,  7 Jul 2020 06:37:43 +0300
-Message-Id: <20200707033747.142828-21-jarkko.sakkinen@linux.intel.com>
+Date: Thu, 16 Jul 2020 16:52:59 +0300
+Message-Id: <20200716135303.276442-21-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -6954,50 +6939,50 @@ index 8ba78384ea73..9f44ff217418 100644
  
  #ifdef CONFIG_MEMORY_FAILURE
 
-From patchwork Tue Jul  7 03:37:44 2020
+From patchwork Thu Jul 16 13:53:00 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647535
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667515
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id A446C13B4
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 47EEF6C1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:42:29 +0000 (UTC)
+ Thu, 16 Jul 2020 13:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B28F206E2
+	by mail.kernel.org (Postfix) with ESMTP id 2DB57207BC
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:42:29 +0000 (UTC)
+ Thu, 16 Jul 2020 13:58:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728291AbgGGDm0 (ORCPT
+        id S1728909AbgGPN6b (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:42:26 -0400
-Received: from mga18.intel.com ([134.134.136.126]:20067 "EHLO mga18.intel.com"
+        Thu, 16 Jul 2020 09:58:31 -0400
+Received: from mga12.intel.com ([192.55.52.136]:44442 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727092AbgGGDm0 (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:42:26 -0400
+        id S1726537AbgGPN6b (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:58:31 -0400
 IronPort-SDR: 
- D8w+wnX3VfHW0CfXgSOtCaxxlgVeWrS3x6EnuKlJtOt92v1V+p2M+orFpqSOBTMRnt3OuERt7J
- nFMrtUN/SKow==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="134999837"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="134999837"
+ SbwXdayH7KGCuLdpZRF+Xv+7bXd0WenIrCPVWWh/rUF8cXvvM4q9ucoBhAbqVZupUuOLaTjl/g
+ 1jCG58WIep6A==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="128946235"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="128946235"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:42:24 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:58:26 -0700
 IronPort-SDR: 
- s6N2zTbjxrl7n5GcsHZ86ZAybNIG11GTDZ+6mQR+3lNNsieQHIFN8d6FwkY04ZwR0SGDZdAcrf
- gd0/y/jnkgTg==
+ aw4Qp1t26oEuapbs/VYpSRn6ZpFdSVJ8UyNph8fQmu6osGzCrPoPEXdhD4s+jewrEktrHfmeEq
+ 7f0bdr6Ktoog==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314909"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:42:14 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150831"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:58:15 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -7014,13 +6999,13 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 21/24] x86/vdso: Implement a vDSO for Intel SGX enclave
+Subject: [PATCH v36 21/24] x86/vdso: Implement a vDSO for Intel SGX enclave
  call
-Date: Tue,  7 Jul 2020 06:37:44 +0300
-Message-Id: <20200707033747.142828-22-jarkko.sakkinen@linux.intel.com>
+Date: Thu, 16 Jul 2020 16:53:00 +0300
+Message-Id: <20200716135303.276442-22-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -7347,50 +7332,50 @@ index 57d0d30c79b3..3760e5d5dc0c 100644
 +
  #endif /* _UAPI_ASM_X86_SGX_H */
 
-From patchwork Tue Jul  7 03:37:45 2020
+From patchwork Thu Jul 16 13:53:01 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647561
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667635
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 9BDE460D
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 5F12813B1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:58:39 +0000 (UTC)
+ Thu, 16 Jul 2020 14:12:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F2F32053B
+	by mail.kernel.org (Postfix) with ESMTP id 37435207DD
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:58:39 +0000 (UTC)
+ Thu, 16 Jul 2020 14:12:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727792AbgGGD6j (ORCPT
+        id S1728589AbgGPOMn (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:58:39 -0400
-Received: from mga12.intel.com ([192.55.52.136]:5927 "EHLO mga12.intel.com"
+        Thu, 16 Jul 2020 10:12:43 -0400
+Received: from mga05.intel.com ([192.55.52.43]:14991 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727092AbgGGD6i (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:58:38 -0400
+        id S1726537AbgGPOMm (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 10:12:42 -0400
 IronPort-SDR: 
- t3qV4PGUyck1Rp11ERaras+oL9cadHZjNKDfYawQmL53C6oR08i5GP2eyNrtWrjQpx8nXFfkGE
- otm7TxiefjGA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="127127401"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="127127401"
+ AWY/GDH7POjYJaE3m2h+iAHqzeNZ7hkcR/ljG2hJfa3szkXkqVr92hLbQvS/3lxtp68Lbb+GE+
+ ikvZb5G07+zw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="234236626"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="234236626"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:42:36 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:58:40 -0700
 IronPort-SDR: 
- V9iI1uuQLBvwlhBkuTZaLOQhp4B5PCGJCbOKheWylVeRsTTgdTx2TxQEUOC1SGgs65YDDsFr3G
- YRXsGAwpJ0Wg==
+ KiPFl/u7bKWya2aXJrOfSQPH2oNkC/QYXsbsIHlv0acyC4tBiYnXaDxfAEh9J3RQu+uBuncERq
+ AdU6JyQr0l6g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314925"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:42:26 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150867"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:58:28 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -7405,12 +7390,12 @@ Cc: linux-kernel@vger.kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, sean.j.christopherson@intel.com,
         tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 22/24] selftests/x86: Add a selftest for SGX
-Date: Tue,  7 Jul 2020 06:37:45 +0300
-Message-Id: <20200707033747.142828-23-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v36 22/24] selftests/x86: Add a selftest for SGX
+Date: Thu, 16 Jul 2020 16:53:01 +0300
+Message-Id: <20200716135303.276442-23-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -7904,7 +7889,7 @@ index 000000000000..91407036541c
 +}
 diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
 new file mode 100644
-index 000000000000..5394b2f6af8e
+index 000000000000..8d95569e7a66
 --- /dev/null
 +++ b/tools/testing/selftests/sgx/main.c
 @@ -0,0 +1,199 @@
@@ -8062,7 +8047,7 @@ index 000000000000..5394b2f6af8e
 +			    seg->prot, MAP_SHARED | MAP_FIXED, encl.fd, 0);
 +		if (addr == MAP_FAILED) {
 +			fprintf(stderr, "mmap() failed, errno=%d.\n", errno);
-+			return false;
++			exit(1);
 +		}
 +	}
 +
@@ -8720,50 +8705,50 @@ index 000000000000..6836ea86126e
 +	.space 8192
 +encl_stack:
 
-From patchwork Tue Jul  7 03:37:46 2020
+From patchwork Thu Jul 16 13:53:02 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647537
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667519
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id D13BC13B4
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 11AAB6C1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:42:50 +0000 (UTC)
+ Thu, 16 Jul 2020 13:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC46020758
+	by mail.kernel.org (Postfix) with ESMTP id EBF4820825
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:42:50 +0000 (UTC)
+ Thu, 16 Jul 2020 13:59:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728191AbgGGDmu (ORCPT
+        id S1728562AbgGPN7N (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:42:50 -0400
-Received: from mga12.intel.com ([192.55.52.136]:5954 "EHLO mga12.intel.com"
+        Thu, 16 Jul 2020 09:59:13 -0400
+Received: from mga05.intel.com ([192.55.52.43]:15029 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728184AbgGGDmu (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:42:50 -0400
+        id S1728455AbgGPN7K (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:59:10 -0400
 IronPort-SDR: 
- RbbmoX31Dy7NTE+bJ7uOqphWuLvjL4YH1z4mEtOIOgkDWMI5PYktBLuPdoQF8ePNFDn3eG0F1L
- l7grUT3dOX+A==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="127127407"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="127127407"
+ xkczyOyCiaE8rGrwjGpjFC1YjiQ+g2Xl+X8o/0WhXDjsVdx+AvUCcrZl/aFexFDFrhY3rfdhIo
+ BXwbtkKwXBRg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="234236663"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="234236663"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:42:49 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:58:54 -0700
 IronPort-SDR: 
- 1QroUdYaJQYE2esnb30BhCKHzZ/65r6YLJkMnWrI40IFEda+mDwNYReniAogVN6a91bvjp/VZU
- A1HGSHnKeNEQ==
+ VvjZkRA0y6Ay05Y68rWp9IYCF7T+Mm9s5X5Wq07Wjg5GY9gNRsfmf3apcqEbMvYfPxKblhK3wN
+ VAVw9jHbFK3Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314942"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:42:37 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150903"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:58:41 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -8778,13 +8763,13 @@ Cc: linux-kernel@vger.kernel.org,
         kmoy@google.com, ludloff@google.com, luto@kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: [PATCH v35 23/24] docs: x86/sgx: Document SGX micro architecture and
+Subject: [PATCH v36 23/24] docs: x86/sgx: Document SGX micro architecture and
  kernel internals
-Date: Tue,  7 Jul 2020 06:37:46 +0300
-Message-Id: <20200707033747.142828-24-jarkko.sakkinen@linux.intel.com>
+Date: Thu, 16 Jul 2020 16:53:02 +0300
+Message-Id: <20200716135303.276442-24-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -9019,50 +9004,50 @@ index 000000000000..5bcbcf0ee7bc
 +Attestation Primitives"
 +   https://software.intel.com/sites/default/files/managed/f1/b8/intel-sgx-support-for-third-party-attestation.pdf
 
-From patchwork Tue Jul  7 03:37:47 2020
+From patchwork Thu Jul 16 13:53:03 2020
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Patchwork-Submitter: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-Patchwork-Id: 11647539
-Return-Path: <SRS0=kNj5=AS=vger.kernel.org=linux-sgx-owner@kernel.org>
+X-Patchwork-Id: 11667517
+Return-Path: <SRS0=YHr7=A3=vger.kernel.org=linux-sgx-owner@kernel.org>
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org
  [172.30.200.123])
-	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 3B20513B4
+	by pdx-korg-patchwork-2.web.codeaurora.org (Postfix) with ESMTP id 667C813B1
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:43:01 +0000 (UTC)
+ Thu, 16 Jul 2020 13:59:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BCF020708
+	by mail.kernel.org (Postfix) with ESMTP id 563F4207BC
 	for <patchwork-linux-sgx@patchwork.kernel.org>;
- Tue,  7 Jul 2020 03:43:01 +0000 (UTC)
+ Thu, 16 Jul 2020 13:59:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728037AbgGGDnA (ORCPT
+        id S1728799AbgGPN7J (ORCPT
         <rfc822;patchwork-linux-sgx@patchwork.kernel.org>);
-        Mon, 6 Jul 2020 23:43:00 -0400
-Received: from mga05.intel.com ([192.55.52.43]:52092 "EHLO mga05.intel.com"
+        Thu, 16 Jul 2020 09:59:09 -0400
+Received: from mga07.intel.com ([134.134.136.100]:17212 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728025AbgGGDnA (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
-        Mon, 6 Jul 2020 23:43:00 -0400
+        id S1728562AbgGPN7I (ORCPT <rfc822;linux-sgx@vger.kernel.org>);
+        Thu, 16 Jul 2020 09:59:08 -0400
 IronPort-SDR: 
- H1dD52WgPVhxu7w0h6Xnh9j4NjFzsWhj35nzJRctmjwO63XdhzE88Mue0oGUy7kEha6h6+R0mq
- Tm2edDTALP6g==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="232394992"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="232394992"
+ 4bkiFI4WIJMQeR8YSNZ53ucF1N6pKIU3HU7oCe4WSEB+YBi1sZJod0AwdrpSd1Rjon9j5akD7R
+ uGy030cyllcQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="214115590"
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="214115590"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jul 2020 20:42:59 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Jul 2020 06:59:07 -0700
 IronPort-SDR: 
- 9deDu+rO1Dz5OFPUizwEUeh+NeZp0Hzs8Ri+zlcEyldeSV74XDJTSoQcqdSOIU5yL9dsxGN+3O
- YAdo3WzzMsRw==
+ /3OqlGk3Ujl7hOsy8kswWwmJWTSDI2OyXFDGihXfAczM4/jFDyz4xCx4dM+kuov+nvMLDqdvMD
+ OQdE7FRNqhng==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800";
-   d="scan'208";a="427314977"
-Received: from apiccion-mobl1.ger.corp.intel.com (HELO localhost)
- ([10.249.45.178])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jul 2020 20:42:50 -0700
+X-IronPort-AV: E=Sophos;i="5.75,359,1589266800";
+   d="scan'208";a="325150932"
+Received: from lettner-mobl.ger.corp.intel.com (HELO localhost)
+ ([10.252.32.212])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2020 06:58:56 -0700
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: x86@kernel.org, linux-sgx@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -9078,12 +9063,12 @@ Cc: linux-kernel@vger.kernel.org,
         nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
         rientjes@google.com, sean.j.christopherson@intel.com,
         yaozhangx@google.com
-Subject: [PATCH v35 24/24] x86/sgx: Update MAINTAINERS
-Date: Tue,  7 Jul 2020 06:37:47 +0300
-Message-Id: <20200707033747.142828-25-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v36 24/24] x86/sgx: Update MAINTAINERS
+Date: Thu, 16 Jul 2020 16:53:03 +0300
+Message-Id: <20200716135303.276442-25-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
-References: <20200707033747.142828-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
+References: <20200716135303.276442-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Sender: linux-sgx-owner@vger.kernel.org
 Precedence: bulk
@@ -9100,10 +9085,10 @@ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
  1 file changed, 11 insertions(+)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 1d4aa7f942de..9b5268aa26db 100644
+index b4a43a9e7fbc..a9e77b6e4171 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -8968,6 +8968,17 @@ F:	Documentation/x86/intel_txt.rst
+@@ -8969,6 +8969,17 @@ F:	Documentation/x86/intel_txt.rst
  F:	arch/x86/kernel/tboot.c
  F:	include/linux/tboot.h
  
