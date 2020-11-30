@@ -87,7 +87,7 @@ Summary: The Linux kernel
 %global zcpu `nproc --all`
 %endif
 
-# define buildid .local
+%define buildid .1.enarx.sgx.up
 
 
 %if 0%{?fedora}
@@ -742,6 +742,7 @@ Source4000: README.rst
 %if !%{nopatches}
 
 Patch1: patch-%{rpmversion}-redhat.patch
+Patch1000: 1000-sgx-upstream.patch
 %endif
 
 # empty final patch to facilitate testing of kernel patches
@@ -1245,6 +1246,7 @@ cp -a %{SOURCE1} .
 %if !%{nopatches}
 
 ApplyOptionalPatch patch-%{rpmversion}-redhat.patch
+ApplyOptionalPatch 1000-sgx-upstream.patch
 %endif
 
 ApplyOptionalPatch linux-kernel-test.patch
