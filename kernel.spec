@@ -58,7 +58,7 @@ Summary: The Linux kernel
 %global zcpu `nproc --all`
 %endif
 
-# define buildid .local
+%define buildid .1.enarx.sgx.39
 
 %if 0%{?fedora}
 %define primary_target fedora
@@ -848,6 +848,8 @@ Patch103: arm-pandaboard-fix-add-bluetooth.patch
 
 # Nouveau mDP detection fix
 Patch107: 0001-drm-nouveau-kms-handle-mDP-connectors.patch
+
+Patch1000: 1000-sgx-39.patch
 
 # END OF PATCH DEFINITIONS
 
